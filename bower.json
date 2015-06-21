@@ -1,5 +1,5 @@
 {
-  "name": "qoole-gui-test-1",
+  "name": "qoole-gui-tests",
   "version": "0.1.0",
   "authors": [
     "Alex Milanov <alex@i4web.biz>"
@@ -14,6 +14,9 @@
     "tests"
   ],
   "dependencies": {
-    "jquery": "~2.1.4"
+    "jquery": "~2.1.4",
+    "threex.keyboardstate": "*",
+    "lodash": "~3.9.3",
+    "three.js": "~0.71.0"
   }
 }

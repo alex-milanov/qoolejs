@@ -1,180 +1,81 @@
 
-var _canvas = {
-  "tl": $(".canvas-tl")[0],
-  "tr": $(".canvas-tr")[0],
-  "bl": $(".canvas-bl")[0],
-  "br": $(".canvas-br")[0]
+var _views = {
+	"tl": {
+		"canvas": $(".canvas-tl")[0],
+		"perspective": "top" // x, z
+	},
+	"tr": {
+		"canvas": $(".canvas-tr")[0],
+		"perspective": "3d"
+	},
+	"bl": {
+		"canvas": $(".canvas-bl")[0],
+		"perspective": "front" // x, y
+	},
+	"br": {
+		"canvas": $(".canvas-br")[0],
+		"perspective": "side" // z, y
+	}
 }
 
-var rect = [
-  [0,0],[120,20],[20,120],[150,150]
-]
 
-var _rect = {
-	position: [50,-50],
-	size: 50
-}
 
-var objects = [
-	{
-		type: "square",
-		position: [50,-50],
+
+var _entities = [
+	/*{
+		type: "cube",
+		position: [25,25,25],  // x, y, z
 		size: 50
+	},*/
+	{ // ground
+		type: "block",
+		start: [-200,-5,-100],
+		finish: [200,0,100]
 	},
-	{
-		type: "square",
-		position: [20,20],
-		size: 20
+	{ // left wall
+		type: "block",
+		start: [-100,0,-100],
+		finish: [-95,70,50]
 	},
-	{
-		type: "square",
-		position: [-100,-100],
-		size: 70
+	{ // left wall front
+		type: "block",
+		start: [-95,0,50],
+		finish: [-170,70,55]
 	},
-	{
-		type: "rect",
-		start: [-160,20],
-		finish: [-20,40]
+	{ // right wall
+		type: "block",
+		start: [95,0,-100],
+		finish: [100,70,50]
+	},
+	{ // right wall front
+		type: "block",
+		start: [95,0,50],
+		finish: [170,70,55]
+	},
+	{ // back wall
+		type: "block",
+		start: [-95,0,-95],
+		finish: [95,70,-100]
 	}
 ]
 
-function drawLine(ctx, start, finish, dash, stroke){
-	ctx.beginPath();
-	ctx.moveTo(start[0],start[1]);
-	ctx.lineTo(finish[0],finish[1]);
-	ctx.setLineDash(dash);
-	ctx.strokeStyle = stroke;
-	ctx.stroke();
+var tlView = new QLView2D(_views.tl);
+var blView = new QLView2D(_views.bl);
+var brView = new QLView2D(_views.br);
+
+
+var trView = new QLView3D(_views.tr);
+trView.addEntities(_entities);
+
+function refresh2dViews(){
+	tlView.draw(_entities);
+	blView.draw(_entities);
+	brView.draw(_entities);
 }
 
-function drawRect(ctx, _obj){
-	var center = [
-		ctx.canvas.width/2,
-		ctx.canvas.height/2
-	]
-
-	var start = [
-		center[0]+_obj.start[0],
-		center[1]+_obj.start[1]
-	]
-
-	var finish = [
-		_obj.finish[0]-_obj.start[0],
-		_obj.finish[1]-_obj.start[1]
-	]
-
-	ctx.beginPath();
-	ctx.rect(start[0],start[1],finish[0],finish[1]);
-	ctx.strokeStyle = '#777';
-	ctx.setLineDash([0]);
-	ctx.stroke();
-}
-
-function drawSquare(ctx, _obj){
-	var center = [
-		ctx.canvas.width/2,
-		ctx.canvas.height/2
-	]
-
-	var start = [
-		center[0]+_obj.position[0]-_obj.size/2,
-		center[1]+_obj.position[1]-_obj.size/2,
-	]
-
-	var finish = [
-		center[0]+_obj.position[0]+_obj.size/2-start[0],
-		center[1]+_obj.position[1]+_obj.size/2-start[1],
-	]
-	ctx.beginPath();
-	ctx.rect(start[0], start[1], finish[0], finish[1]);
-	ctx.strokeStyle = '#777';
-	ctx.setLineDash([0]);
-	ctx.stroke();
-}
-
-function drawHorizontalLines(ctx){
-	drawLine(ctx, [
-		0, ctx.canvas.height/2
-	],[
-		ctx.canvas.width, ctx.canvas.height/2
-	],[5],'#444')
-
-	var step = 10;
-
-	for(var yPos = ctx.canvas.height/2-step; yPos > 0; yPos-=step){
-		drawLine(ctx, [
-			0, yPos
-		],[
-			ctx.canvas.width, yPos
-		],[0],'#333')
-	}
-
-	for(var yPos = ctx.canvas.height/2+step; yPos < ctx.canvas.height; yPos+=step){
-		drawLine(ctx, [
-			0, yPos
-		],[
-			ctx.canvas.width, yPos
-		],[0],'#333')
-	}
-}
-
-
-function drawVerticalLines(ctx){
-	drawLine(ctx, [
-		ctx.canvas.width/2, 0
-	],[
-		ctx.canvas.width/2, ctx.canvas.height
-	],[5],'#444')
-
-	var step = 10;
-
-	for(var xPos = ctx.canvas.width/2-step; xPos > 0; xPos-=step){
-		drawLine(ctx, [
-			xPos, 0
-		],[
-			xPos, ctx.canvas.height
-		],[0],'#333')
-	}
-
-	for(var xPos = ctx.canvas.width/2+step; xPos < ctx.canvas.width; xPos+=step){
-		drawLine(ctx, [
-			xPos, 0
-		],[
-			xPos, ctx.canvas.height
-		],[0],'#333')
-	}
-
-}
-
-function draw(_canvas, entities){
-	var ctx = _canvas.getContext("2d");
-	ctx.canvas.width  = window.innerWidth/2;
-	ctx.canvas.height = window.innerHeight/2;
-	// draw lines in the middle
-	drawHorizontalLines(ctx)
-	drawVerticalLines(ctx)
-
-	objects.forEach(function(_obj){
-		switch(_obj.type){
-			case "square":
-				drawSquare(ctx, _obj);
-				break;
-			case "rect":
-				drawRect(ctx, _obj);
-				break;
-		}
-	})
-}
-
-function refresh(){
-	draw(_canvas.tl, objects);
-	draw(_canvas.tr, objects);
-	draw(_canvas.bl, objects);
-	draw(_canvas.br, objects);
-}
-
-refresh();
+refresh2dViews();
+trView.animate();
 
 $(window).resize(function(){
-	refresh();
+	refresh2dViews();
 });

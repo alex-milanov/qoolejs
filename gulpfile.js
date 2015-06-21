@@ -8,7 +8,7 @@ var nodemon = require('gulp-nodemon');
 var rename = require('gulp-rename');
 var sh = require('shelljs');
 var es = require('event-stream');
-var bowerFiles = require('main-bower-files');
+var bowerFiles = require('main-bower-files')();
 var gulpFilter = require('gulp-filter');
 var del = require('del');
 var livereload  = require('gulp-livereload');
@@ -23,6 +23,10 @@ var paths = {
 	jade: ['./src/jade/**/*.jade'],
 	js: ['./src/js/**/*.js']
 };
+
+// additional, not recognized bower files
+bowerFiles
+	.push("./src/lib/threex.keyboardstate/threex.keyboardstate.js")
 
 gulp.task('sass', function(done) {
 	// www
@@ -62,7 +66,8 @@ gulp.task("bower-files", function(done){
 	del([
 		'./dist/lib/**/*'
 	], function(){
-		gulp.src(bowerFiles())
+		console.log(bowerFiles);
+		gulp.src(bowerFiles)
 			// .pipe(filterForWww)
 			.pipe(gulp.dest("./dist/lib"))
 			// .pipe(filterForWww.restore())
