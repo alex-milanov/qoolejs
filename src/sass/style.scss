@@ -1,0 +1,23 @@
+.canvas {
+	width: 50%;
+	height: 50%;
+	border:1px solid #d3d3d3;
+	background: #222;
+	position: absolute;
+	&.canvas-tl {
+		top: 0px;
+		left: 0px;
+	}
+	&.canvas-tr {
+		top: 0px;
+		right: 0px;
+	}
+	&.canvas-bl {
+		bottom: 0px;
+		left: 0px;
+	}
+	&.canvas-br {
+		bottom: 0px;
+		right: 0px;
+	}
+}
