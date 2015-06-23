@@ -1,19 +1,19 @@
 
 var _views = {
 	"tl": {
-		"canvas": $(".canvas-tl")[0],
+		"canvas": ".canvas-tl",
 		"perspective": "top" // x, z
 	},
 	"tr": {
-		"canvas": $(".canvas-tr")[0],
+		"canvas": ".canvas-tr",
 		"perspective": "3d"
 	},
 	"bl": {
-		"canvas": $(".canvas-bl")[0],
+		"canvas": ".canvas-bl",
 		"perspective": "front" // x, y
 	},
 	"br": {
-		"canvas": $(".canvas-br")[0],
+		"canvas": ".canvas-br",
 		"perspective": "side" // z, y
 	}
 }
@@ -56,6 +56,56 @@ var _entities = [
 		type: "block",
 		start: [-95,0,-95],
 		finish: [95,70,-100]
+	},
+	{ // left wall
+		type: "block",
+		start: [-105,70,-105],
+		finish: [-100,80,50]
+	},
+	{ // left wall front
+		type: "block",
+		start: [-105,70,45],
+		finish: [-170,80,50]
+	},
+	{ // right wall
+		type: "block",
+		start: [100,70,-105],
+		finish: [105,80,50]
+	},
+	{ // right wall front
+		type: "block",
+		start: [105,70,45],
+		finish: [170,80,50]
+	},
+	{ // back wall
+		type: "block",
+		start: [-100,70,-100],
+		finish: [100,80,-105]
+	},
+	{ // left wall
+		type: "block",
+		start: [-100,80,-100],
+		finish: [-95,100,50]
+	},
+	{ // left wall front
+		type: "block",
+		start: [-95,80,50],
+		finish: [-170,100,55]
+	},
+	{ // right wall
+		type: "block",
+		start: [95,80,-100],
+		finish: [100,100,50]
+	},
+	{ // right wall front
+		type: "block",
+		start: [95,80,50],
+		finish: [170,100,55]
+	},
+	{ // back wall
+		type: "block",
+		start: [-95,80,-95],
+		finish: [95,100,-100]
 	}
 ]
 

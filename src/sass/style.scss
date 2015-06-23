@@ -1,23 +1,49 @@
-.canvas {
-	width: 50%;
-	height: 50%;
-	border:1px solid #d3d3d3;
-	background: #222;
-	position: absolute;
-	&.canvas-tl {
-		top: 0px;
-		left: 0px;
-	}
-	&.canvas-tr {
+.interface {
+	.toolbar {
+		background: #555;
 		top: 0px;
 		right: 0px;
+		left: 0px;
+		height: 30px;
+		position: absolute;
 	}
-	&.canvas-bl {
+	.right-panel {
+		background: #555;
+		position: absolute;
+		top: 30px;
+		right: 0px;
+		bottom: 0px;
+		width: 200px;
+		border-top: 1px solid #ccc;
+	}
+	.views {
+		position: absolute;
+		top: 30px;
 		bottom: 0px;
 		left: 0px;
-	}
-	&.canvas-br {
-		bottom: 0px;
-		right: 0px;
+		right: 200px;
+		.canvas {
+			width: 50%;
+			height: 50%;
+			border:1px solid #d3d3d3;
+			background: #000;
+			position: absolute;
+			&.canvas-tl {
+				top: 0px;
+				left: 0px;
+			}
+			&.canvas-tr {
+				top: 0px;
+				right: 0px;
+			}
+			&.canvas-bl {
+				bottom: 0px;
+				left: 0px;
+			}
+			&.canvas-br {
+				bottom: 0px;
+				right: 0px;
+			}
+		}
 	}
 }

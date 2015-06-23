@@ -9,31 +9,7 @@ function drawLine(ctx, start, finish, dash, stroke){
 	ctx.stroke();
 }
 
-function drawHorizontalLines(ctx){
-	drawLine(ctx, [
-		0, ctx.canvas.height/2
-	],[
-		ctx.canvas.width, ctx.canvas.height/2
-	],[5],'#444')
 
-	var step = 10;
-
-	for(var yPos = ctx.canvas.height/2-step; yPos > 0; yPos-=step){
-		drawLine(ctx, [
-			0, yPos
-		],[
-			ctx.canvas.width, yPos
-		],[0],'#333')
-	}
-
-	for(var yPos = ctx.canvas.height/2+step; yPos < ctx.canvas.height; yPos+=step){
-		drawLine(ctx, [
-			0, yPos
-		],[
-			ctx.canvas.width, yPos
-		],[0],'#333')
-	}
-}
 
 
 
@@ -82,6 +58,31 @@ function drawSquare(ctx, _obj){
 	ctx.stroke();
 }
 
+function drawHorizontalLines(ctx){
+	drawLine(ctx, [
+		0, ctx.canvas.height/2
+	],[
+		ctx.canvas.width, ctx.canvas.height/2
+	],[5],'#444')
+
+	var step = 10;
+
+	for(var yPos = ctx.canvas.height/2-step; yPos > 0; yPos-=step){
+		drawLine(ctx, [
+			0, yPos
+		],[
+			ctx.canvas.width, yPos
+		],[0],'#333')
+	}
+
+	for(var yPos = ctx.canvas.height/2+step; yPos < ctx.canvas.height; yPos+=step){
+		drawLine(ctx, [
+			0, yPos
+		],[
+			ctx.canvas.width, yPos
+		],[0],'#333')
+	}
+}
 
 function drawVerticalLines(ctx){
 	drawLine(ctx, [
@@ -182,8 +183,8 @@ QLView2D.prototype.drawBlock = function(_obj){
 }
 
 QLView2D.prototype.draw = function(_entities){
-	this.ctx.canvas.width	= window.innerWidth/2;
-	this.ctx.canvas.height = window.innerHeight/2;
+	this.canvas.width = $(this.canvas.parentNode).width()/2;
+	this.canvas.height = $(this.canvas.parentNode).height()/2;
 	// draw lines in the middle
 	drawHorizontalLines(this.ctx)
 	drawVerticalLines(this.ctx)

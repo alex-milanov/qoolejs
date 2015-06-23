@@ -5,12 +5,13 @@ function QLView3D(_conf){
 	this.canvas = $(_conf.canvas)[0];
 	//this.ctx = this.canvas.getContext("2d");
 	this.perspective = _conf.perspective;
+	
+	this.canvas.width = $(this.canvas.parentNode).width()/2;
+	this.canvas.height = $(this.canvas.parentNode).height()/2;
 	this.center = [
 		this.canvas.width/2,
 		this.canvas.height/2
 	]
-	this.canvas.width	= window.innerWidth/2;
-	this.canvas.height = window.innerHeight/2;
 	
 
 	this.keyboard = new THREEx.KeyboardState();
@@ -40,7 +41,7 @@ function QLView3D(_conf){
 	//this.scene.add( new THREE.AmbientLight( 0x555555 ) );
 
 	light = new THREE.DirectionalLight( 0xdfebff, 1.8 );
-	light.position.set( 40, 100, 40 );
+	light.position.set( 40, 50, 40 );
 	light.position.multiplyScalar( 1.3 );
 
 	light.castShadow = true;
@@ -114,8 +115,8 @@ QLView3D.prototype.animate = function(){
 	var _view = this;
 
 	function animStep(){
-		_view.canvas.width	= window.innerWidth/2;
-		_view.canvas.height = window.innerHeight/2;
+		_view.canvas.width = $(_view.canvas.parentNode).width()/2;
+		_view.canvas.height = $(_view.canvas.parentNode).height()/2;
 
 		_view.renderer.setSize(_view.canvas.width, _view.canvas.height );
 
