@@ -133,6 +133,7 @@ QL.gui.View2D = function(_conf, _scene){
 			this.mod.y = 2;
 			this.mod.u = "x";
 			this.mod.v = "z";
+			this.mod.z = "y";
 			this.mod.yD = 1;
 			break;
 		case "front":
@@ -140,17 +141,69 @@ QL.gui.View2D = function(_conf, _scene){
 			this.mod.y = 1;
 			this.mod.u = "x";
 			this.mod.v = "y";
+			this.mod.z = "z";
 			break;
 		case "side":
 			this.mod.x = 2;
 			this.mod.y = 1;
 			this.mod.u = "z";
 			this.mod.v = "y";
+			this.mod.z = "x";
 			this.mod.xD = -1;
 			break;
 	}
 
+	this.hitAreas = [];
+
 	this.scene = _scene;
+
+	var _editor = this;
+
+	$(this.canvas).click(function(ev){
+		
+		var hitPos = [
+			ev.offsetX,
+			ev.offsetY
+		]
+
+		var oldId = false;
+		if(typeof _editor.scene.selected !== "undefined" && _editor.scene.selected !== false){
+			oldId = _editor.scene.selected.id;
+		}
+
+		var selectedObj = false;
+		var hits = 0;
+		_editor.hitAreas.forEach(function(hitArea){
+			if((hitArea.start[0] <= hitPos[0] && hitPos[0] <= hitArea.finish[0])
+			   && (hitArea.start[1] <= hitPos[1] && hitPos[1] <= hitArea.finish[1])
+			) {
+				hits++;
+
+				var hitObj = _editor.scene.getObjectById(hitArea.objId);
+				if(!selectedObj || hitObj.position[_editor.mod.z] > selectedObj.position[_editor.mod.z]){
+					
+					if(hitArea.objId === oldId)
+						return true;
+					selectedObj = hitObj;
+				}
+			}
+		})
+
+		if(selectedObj !== false){
+			_editor.scene.selected = selectedObj;
+		} else if (hits === 0) {
+			_editor.scene.selected = false;
+		}
+
+		_editor.scene.children.forEach(function(_obj){
+			if(_editor.scene.selected !== false && _obj.type=="Mesh" && _obj.id == _editor.scene.selected.id) {
+				_obj.selected = true;
+			} else {
+				_obj.selected = false;
+			}
+
+		})
+	})
 }
 
 QL.gui.View2D.prototype.drawCube = function(_obj){
@@ -215,14 +268,31 @@ QL.gui.View2D.prototype.drawBox = function(_obj){
 				_mod.yD*(_quad.d[_mod.v]-_quad.a[_mod.v])
 			]
 
+			var end = [
+				start[0]+finish[0],
+				start[1]+finish[1]
+			]
+
 			if(finish[0]!=0 && finish[1]!=0){
 				that.ctx.beginPath();
 				that.ctx.rect(start[0],start[1],finish[0],finish[1]);
 
-				that.ctx.strokeStyle = '#777';
+				that.hitAreas.push({
+					start: [
+						((start[0]<end[0]) ? start[0] : end[0]),
+						((start[1]<end[1]) ? start[1] : end[1])
+					],
+					finish: [
+						((start[0]>end[0]) ? start[0] : end[0]),
+						((start[1]>end[1]) ? start[1] : end[1])
+					],
+					objId: _obj.id
+				})
+
+				that.ctx.strokeStyle = '#555';
 				var baseColor = new THREE.Color(0x555555);
-				if(_obj.material.color){
-					that.ctx.strokeStyle = "#"+baseColor.add(_obj.material.color).getHexString();
+				if(_obj.selected){
+					that.ctx.strokeStyle = "#995";
 				}
 
 				that.ctx.setLineDash([0]);
@@ -254,6 +324,8 @@ QL.gui.View2D.prototype.refresh = function(_entities){
 		this.ctx.canvas.height/2
 	]
 
+	this.hitAreas = [];
+
 	var that = this;
 
 	/*
@@ -278,4 +350,9 @@ QL.gui.View2D.prototype.refresh = function(_entities){
 			}
 		}
 	})
+
+	// draw the selected again
+	if(this.scene.selected){
+		that.drawBox(this.scene.selected);
+	}
 }
