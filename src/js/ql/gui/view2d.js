@@ -1,5 +1,9 @@
 "use strict";
 
+
+if(typeof QL === "undefined"){ var QL = {}; }
+if(typeof QL.gui === "undefined"){ QL.gui = {}; }
+
 function drawLine(ctx, start, finish, dash, stroke){
 	ctx.beginPath();
 	ctx.moveTo(start[0],start[1]);
@@ -8,10 +12,6 @@ function drawLine(ctx, start, finish, dash, stroke){
 	ctx.strokeStyle = stroke;
 	ctx.stroke();
 }
-
-
-
-
 
 function drawRect(ctx, _obj){
 	var center = [
@@ -111,7 +111,7 @@ function drawVerticalLines(ctx){
 
 }
 
-function QLView2D(_conf){
+QL.gui.View2D = function(_conf){
 	this.canvas = $(_conf.canvas)[0];
 	this.ctx = this.canvas.getContext("2d");
 	this.perspective = _conf.perspective;
@@ -143,7 +143,7 @@ function QLView2D(_conf){
 	}
 }
 
-QLView2D.prototype.drawCube = function(_obj){
+QL.gui.View2D.prototype.drawCube = function(_obj){
 	
 	var start = [
 		this.center[0]+this.mod.xD*(_obj.position[this.mod.x]-_obj.size/2),
@@ -163,7 +163,7 @@ QLView2D.prototype.drawCube = function(_obj){
 
 }
 
-QLView2D.prototype.drawBlock = function(_obj){
+QL.gui.View2D.prototype.drawBlock = function(_obj){
 
 	var start = [
 		this.center[0]+this.mod.xD*(_obj.start[this.mod.x]),
@@ -182,7 +182,7 @@ QLView2D.prototype.drawBlock = function(_obj){
 	this.ctx.stroke();
 }
 
-QLView2D.prototype.draw = function(_entities){
+QL.gui.View2D.prototype.refresh = function(_entities){
 	this.canvas.width = $(this.canvas.parentNode).width()/2;
 	this.canvas.height = $(this.canvas.parentNode).height()/2;
 	// draw lines in the middle

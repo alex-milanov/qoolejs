@@ -1,7 +1,9 @@
 "use strict";
 
+if(typeof QL === "undefined"){ var QL = {}; }
+if(typeof QL.gui === "undefined"){ QL.gui = {}; }
 
-function QLView3D(_conf){
+QL.gui.View3D = function(_conf, _scene){
 	this.canvas = $(_conf.canvas)[0];
 	//this.ctx = this.canvas.getContext("2d");
 	this.perspective = _conf.perspective;
@@ -13,16 +15,17 @@ function QLView3D(_conf){
 		this.canvas.height/2
 	]
 	
-
-	this.keyboard = new THREEx.KeyboardState();
+	if(typeof _scene === "undefined"){
+		this.scene = new THREE.Scene();
+	} else {
+		this.scene = _scene;
+	}
 
 	this.renderer = new THREE.WebGLRenderer({
 		canvas: this.canvas
 	});
 
 	this.renderer.setSize(this.canvas.width, this.canvas.height );
-
-	this.scene = new THREE.Scene();
 
 	this.scene.fog = new THREE.Fog( 0x33373f, 500, 10000 );
 
@@ -73,7 +76,7 @@ function QLView3D(_conf){
 	this.renderer.shadowMapEnabled = true;
 }
 
-QLView3D.prototype.addBlock = function(_entity){
+QL.gui.View3D.prototype.addBlock = function(_entity){
 
 	var width = _entity.finish[0]-_entity.start[0];
 	var height = _entity.finish[1]-_entity.start[1];
@@ -85,8 +88,9 @@ QLView3D.prototype.addBlock = function(_entity){
 		z: (_entity.start[2]+depth/2)
 	}
 
-	var geometry = new THREE.BoxGeometry( width, height, depth );
-	var material = new THREE.MeshBasicMaterial( { color: 0x777777, wireframe: false } );
+	var geometry = new QL.ext.BoxGeometry( width, height, depth );
+	var color = _entity.color || 0x777777
+	var material = new THREE.MeshBasicMaterial( { color: color, wireframe: false } );
 	var mesh = new THREE.Mesh( geometry, material );
 	mesh.position.set( pos.x, pos.y, pos.z );
 	mesh.receiveShadow = true;
@@ -94,7 +98,7 @@ QLView3D.prototype.addBlock = function(_entity){
 	this.scene.add( mesh );
 } 
 
-QLView3D.prototype.addEntities = function(_entities){
+QL.gui.View3D.prototype.addEntities = function(_entities){
 
 	var that = this;
 	_entities.forEach(function(_entity){
@@ -109,33 +113,28 @@ QLView3D.prototype.addEntities = function(_entities){
 	})
 }
 
-QLView3D.prototype.animate = function(){
+QL.gui.View3D.prototype.refresh = function(){
 	
 	
 	var _view = this;
 
-	function animStep(){
-		_view.canvas.width = $(_view.canvas.parentNode).width()/2;
-		_view.canvas.height = $(_view.canvas.parentNode).height()/2;
+	_view.canvas.width = $(_view.canvas.parentNode).width()/2;
+	_view.canvas.height = $(_view.canvas.parentNode).height()/2;
 
-		_view.renderer.setSize(_view.canvas.width, _view.canvas.height );
+	_view.renderer.setSize(_view.canvas.width, _view.canvas.height );
 
-		_view.camera.aspect = _view.canvas.width / _view.canvas.height;
-		_view.camera.updateProjectionMatrix()
-		
-		requestAnimationFrame( animStep );
-
-		_view.center = [
-			_view.canvas.width/2,
-			_view.canvas.height/2
-		]
-
-
-		_view.renderer.render( _view.scene, _view.camera );
+	_view.camera.aspect = _view.canvas.width / _view.canvas.height;
+	_view.camera.updateProjectionMatrix()
 	
-	}
 
-	animStep();
+	_view.center = [
+		_view.canvas.width/2,
+		_view.canvas.height/2
+	]
+
+
+	_view.renderer.render( _view.scene, _view.camera );
+	
 
 	// draw text
 	/*

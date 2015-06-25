@@ -30,91 +30,114 @@ var _entities = [
 	{ // ground
 		type: "block",
 		start: [-200,-5,-100],
-		finish: [200,0,100]
+		finish: [200,0,100],
+		color: 0x113311
 	},
+	/*
 	{ // left wall
 		type: "block",
 		start: [-100,0,-100],
-		finish: [-95,70,50]
+		finish: [-95,70,50],
+		color: 0x111122
 	},
 	{ // left wall front
 		type: "block",
 		start: [-95,0,50],
-		finish: [-170,70,55]
+		finish: [-170,70,55],
+		color: 0x111122
 	},
 	{ // right wall
 		type: "block",
 		start: [95,0,-100],
-		finish: [100,70,50]
+		finish: [100,70,50],
+		color: 0x111122
 	},
 	{ // right wall front
 		type: "block",
 		start: [95,0,50],
-		finish: [170,70,55]
+		finish: [170,70,55],
+		color: 0x111122
 	},
 	{ // back wall
 		type: "block",
 		start: [-95,0,-95],
-		finish: [95,70,-100]
+		finish: [95,70,-100],
+		color: 0x111122
 	},
-	{ // left wall
+	{ // left wall segment
 		type: "block",
 		start: [-105,70,-105],
-		finish: [-100,80,50]
+		finish: [-100,80,50],
+		color: 0x221111
 	},
-	{ // left wall front
+	{ // left wall front segment
 		type: "block",
 		start: [-105,70,45],
-		finish: [-170,80,50]
+		finish: [-170,80,50],
+		color: 0x221111
 	},
-	{ // right wall
+	{ // right wall segment
 		type: "block",
 		start: [100,70,-105],
-		finish: [105,80,50]
+		finish: [105,80,50],
+		color: 0x221111
 	},
-	{ // right wall front
+	{ // right wall front segment
 		type: "block",
 		start: [105,70,45],
-		finish: [170,80,50]
+		finish: [170,80,50],
+		color: 0x221111
 	},
-	{ // back wall
+	{ // back wall segment
 		type: "block",
 		start: [-100,70,-100],
-		finish: [100,80,-105]
+		finish: [100,80,-105],
+		color: 0x221111
 	},
-	{ // left wall
+	{ // left wall top
 		type: "block",
 		start: [-100,80,-100],
-		finish: [-95,100,50]
+		finish: [-95,100,50],
+		color: 0xaaaa55
 	},
-	{ // left wall front
+	{ // left wall front top
 		type: "block",
 		start: [-95,80,50],
-		finish: [-170,100,55]
+		finish: [-170,100,55],
+		color: 0xaaaa55
 	},
-	{ // right wall
+	{ // right wall top
 		type: "block",
 		start: [95,80,-100],
-		finish: [100,100,50]
+		finish: [100,100,50],
+		color: 0xaaaa55
 	},
-	{ // right wall front
+	{ // right wall front top
 		type: "block",
 		start: [95,80,50],
-		finish: [170,100,55]
+		finish: [170,100,55],
+		color: 0xaaaa55
 	},
-	{ // back wall
+	{ // back wall top
 		type: "block",
 		start: [-95,80,-95],
-		finish: [95,100,-100]
+		finish: [95,100,-100],
+		color: 0xaaaa55
 	}
+	*/
 ]
 
-var tlView = new QLView2D(_views.tl);
-var blView = new QLView2D(_views.bl);
-var brView = new QLView2D(_views.br);
+
+var editor = new QL.gui.Editor(_views,_entities);
+editor.init();
+
+/*
+var tlView = new QL.gui.View2D(_views.tl);
+var blView = new QL.gui.View2D(_views.bl);
+var brView = new QL.gui.View2D(_views.br);
 
 
-var trView = new QLView3D(_views.tr);
+var trView = new QL.gui.View3D(_views.tr);
 trView.addEntities(_entities);
 
 function refresh2dViews(){
@@ -129,3 +152,4 @@ trView.animate();
 $(window).resize(function(){
 	refresh2dViews();
 });
+*/
