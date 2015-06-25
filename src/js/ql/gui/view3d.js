@@ -65,6 +65,8 @@ QL.gui.View3D = function(_conf, _scene){
 
 	this.scene.add( light );
 
+	var grid = new THREE.GridHelper( 500, 25 );
+	this.scene.add(grid);
 
 	//this.scene.add( light );
 

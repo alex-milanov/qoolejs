@@ -27,7 +27,7 @@ QL.gui.Editor = function(_views, _entities){
 				this.views[key] = new QL.gui.View3D(viewConf, this.scene);
 				break;
 			default:
-				this.views[key] = new QL.gui.View2D(viewConf);
+				this.views[key] = new QL.gui.View2D(viewConf, this.scene);
 				break;
 		}
 	}

@@ -29,38 +29,37 @@ var _entities = [
 	},*/
 	{ // ground
 		type: "block",
-		start: [-200,-5,-100],
-		finish: [200,0,100],
+		start: [-200,0,-100],
+		finish: [200,5,100],
 		color: 0x113311
 	},
-	/*
 	{ // left wall
 		type: "block",
-		start: [-100,0,-100],
+		start: [-100,5,-100],
 		finish: [-95,70,50],
 		color: 0x111122
 	},
 	{ // left wall front
 		type: "block",
-		start: [-95,0,50],
+		start: [-95,5,50],
 		finish: [-170,70,55],
 		color: 0x111122
 	},
 	{ // right wall
 		type: "block",
-		start: [95,0,-100],
+		start: [95,5,-100],
 		finish: [100,70,50],
 		color: 0x111122
 	},
 	{ // right wall front
 		type: "block",
-		start: [95,0,50],
+		start: [95,5,50],
 		finish: [170,70,55],
 		color: 0x111122
 	},
 	{ // back wall
 		type: "block",
-		start: [-95,0,-95],
+		start: [-95,5,-95],
 		finish: [95,70,-100],
 		color: 0x111122
 	},
@@ -124,7 +123,6 @@ var _entities = [
 		finish: [95,100,-100],
 		color: 0xaaaa55
 	}
-	*/
 ]
 
 

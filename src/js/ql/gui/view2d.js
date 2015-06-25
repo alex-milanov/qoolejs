@@ -111,7 +111,7 @@ function drawVerticalLines(ctx){
 
 }
 
-QL.gui.View2D = function(_conf){
+QL.gui.View2D = function(_conf, _scene){
 	this.canvas = $(_conf.canvas)[0];
 	this.ctx = this.canvas.getContext("2d");
 	this.perspective = _conf.perspective;
@@ -122,25 +122,35 @@ QL.gui.View2D = function(_conf){
 
 	this.mod = {
 		x: 0, xD: 1,
-		y: 1, yD: -1
+		y: 1, yD: -1,
+		u: "x",
+		v: "y"
 	}
 
 	switch(this.perspective){
 		case "top":
 			this.mod.x = 0;
 			this.mod.y = 2;
+			this.mod.u = "x";
+			this.mod.v = "z";
 			this.mod.yD = 1;
 			break;
 		case "front":
 			this.mod.x = 0;
 			this.mod.y = 1;
+			this.mod.u = "x";
+			this.mod.v = "y";
 			break;
 		case "side":
 			this.mod.x = 2;
 			this.mod.y = 1;
+			this.mod.u = "z";
+			this.mod.v = "y";
 			this.mod.xD = -1;
 			break;
 	}
+
+	this.scene = _scene;
 }
 
 QL.gui.View2D.prototype.drawCube = function(_obj){
@@ -182,6 +192,50 @@ QL.gui.View2D.prototype.drawBlock = function(_obj){
 	this.ctx.stroke();
 }
 
+QL.gui.View2D.prototype.drawBox = function(_obj){
+
+	var _mod = this.mod;
+	var that = this;
+
+	//console.log(_obj)
+
+	_obj.geometry.quads.forEach(function(_quad, index){
+
+		//if(index == 4){
+
+			//console.log(_quad);
+
+			var start = [
+				that.center[0]+_mod.xD*(_obj.position[_mod.u]+_quad.a[_mod.u]),
+				that.center[1]+_mod.yD*(_obj.position[_mod.v]+_quad.a[_mod.v])
+			]
+
+			var finish = [
+				_mod.xD*(_quad.d[_mod.u]-_quad.a[_mod.u]),
+				_mod.yD*(_quad.d[_mod.v]-_quad.a[_mod.v])
+			]
+
+			if(finish[0]!=0 && finish[1]!=0){
+				that.ctx.beginPath();
+				that.ctx.rect(start[0],start[1],finish[0],finish[1]);
+
+				that.ctx.strokeStyle = '#777';
+				var baseColor = new THREE.Color(0x555555);
+				if(_obj.material.color){
+					that.ctx.strokeStyle = "#"+baseColor.add(_obj.material.color).getHexString();
+				}
+
+				that.ctx.setLineDash([0]);
+				that.ctx.stroke();
+			}
+		//}
+
+	})
+
+
+
+}
+
 QL.gui.View2D.prototype.refresh = function(_entities){
 	this.canvas.width = $(this.canvas.parentNode).width()/2;
 	this.canvas.height = $(this.canvas.parentNode).height()/2;
@@ -202,6 +256,7 @@ QL.gui.View2D.prototype.refresh = function(_entities){
 
 	var that = this;
 
+	/*
 	_entities.forEach(function(_obj){
 		switch(_obj.type){
 			case "cube":
@@ -210,6 +265,17 @@ QL.gui.View2D.prototype.refresh = function(_entities){
 			case "block":
 				that.drawBlock(_obj);
 				break;
+		}
+	})
+*/
+
+	this.scene.children.forEach(function(_obj){
+		if(_obj.type === "Mesh"){
+			switch(_obj.geometry.type){
+				case "BoxGeometry":
+					that.drawBox(_obj);
+				break;
+			}
 		}
 	})
 }
