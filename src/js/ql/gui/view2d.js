@@ -159,6 +159,8 @@ QL.gui.View2D = function(_conf, _scene){
 
 	var _editor = this;
 
+	// mouse manipulations
+	// select
 	$(this.canvas).click(function(ev){
 		
 		var hitPos = [
@@ -204,6 +206,58 @@ QL.gui.View2D = function(_conf, _scene){
 
 		})
 	})
+
+	this.operation = "idle"
+	this.dragStartPos = [];
+	this.dragPos = [];
+	this.dragOffset = [];
+	// mouse move
+	$(this.canvas).mousedown(function(ev){
+		_editor.operation = "dragstart";
+		_editor.dragStartPos = _editor.dragPos = [
+			ev.offsetX,
+			ev.offsetY
+		]
+		if(_editor.scene.selected){
+			var pos = [
+				_editor.scene.selected.position[_editor.mod.u],
+				_editor.scene.selected.position[_editor.mod.v]
+			]
+			_editor.dragOffset = [
+				pos[0],
+				pos[1]
+			]
+		}
+	});
+
+	$(this.canvas).mousemove(function(ev){
+		if(["dragstart","dragging"].indexOf(_editor.operation)>-1){
+			_editor.operation = "dragging";
+
+			_editor.dragPos = [
+				ev.offsetX,
+				ev.offsetY
+			]
+			var dragVector = [
+				_editor.dragPos[0]-_editor.dragStartPos[0],
+				_editor.dragPos[1]-_editor.dragStartPos[1]
+			]
+			if(_editor.scene.selected){
+				_editor.scene.selected.position[_editor.mod.u] = (_editor.mod.xD*dragVector[0])+_editor.dragOffset[0];
+				_editor.scene.selected.position[_editor.mod.v] = (_editor.mod.yD*dragVector[1])+_editor.dragOffset[1];
+			}
+			console.log(_editor.operation,_editor.dragPos,_editor.dragStartPos,_editor.scene.selected.position);
+
+		}
+	})
+
+	$(this.canvas).mouseup(function(ev){
+		_editor.operation="idle";
+		_editor.dragStartPos = [];
+		_editor.dragPos = [];
+		_editor.dragOffset = [];
+	})
+	
 }
 
 QL.gui.View2D.prototype.drawCube = function(_obj){
