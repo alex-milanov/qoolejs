@@ -63,7 +63,7 @@ function drawHorizontalLines(ctx){
 		0, ctx.canvas.height/2
 	],[
 		ctx.canvas.width, ctx.canvas.height/2
-	],[5],'#444')
+	],[0],'#96DC96')
 
 	var step = 10;
 
@@ -89,7 +89,7 @@ function drawVerticalLines(ctx){
 		ctx.canvas.width/2, 0
 	],[
 		ctx.canvas.width/2, ctx.canvas.height
-	],[5],'#444')
+	],[0],'#96DC96')
 
 	var step = 10;
 
@@ -346,7 +346,7 @@ QL.gui.View2D.prototype.drawBox = function(_obj){
 				that.ctx.strokeStyle = '#555';
 				var baseColor = new THREE.Color(0x555555);
 				if(_obj.selected){
-					that.ctx.strokeStyle = "#995";
+					that.ctx.strokeStyle = "#DC3333";
 				}
 
 				that.ctx.setLineDash([0]);

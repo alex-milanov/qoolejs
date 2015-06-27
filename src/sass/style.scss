@@ -7,20 +7,20 @@
 		height: 30px;
 		position: absolute;
 	}
-	.right-panel {
+	.left-panel {
 		background: #555;
 		position: absolute;
 		top: 30px;
-		right: 0px;
+		left: 0px;
 		bottom: 0px;
-		width: 0px;
+		width: 200px;
 		border-top: 1px solid #ccc;
 	}
 	.views {
 		position: absolute;
 		top: 30px;
 		bottom: 0px;
-		left: 0px;
+		left: 200px;
 		right: 0px;
 		.canvas {
 			width: 50%;
