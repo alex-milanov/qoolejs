@@ -8,8 +8,8 @@ QL.gui.View3D = function(_conf, _scene){
 	//this.ctx = this.canvas.getContext("2d");
 	this.perspective = _conf.perspective;
 	
-	this.canvas.width = $(this.canvas.parentNode).width()/2;
-	this.canvas.height = $(this.canvas.parentNode).height()/2;
+	this.canvas.width = $(this.canvas).width();
+	this.canvas.height = $(this.canvas).height();
 	this.center = [
 		this.canvas.width/2,
 		this.canvas.height/2
@@ -117,25 +117,25 @@ QL.gui.View3D.prototype.addEntities = function(_entities){
 
 QL.gui.View3D.prototype.refresh = function(){
 	
+
+	$(this.canvas).attr("style","");
+	this.canvas.width = $(this.canvas).width();
+	this.canvas.height = $(this.canvas).height();
+	console.log(this.canvas.width, this.canvas.height);
+
+	this.renderer.setSize(this.canvas.width, this.canvas.height );
+
+	this.camera.aspect = this.canvas.width / this.canvas.height;
+	this.camera.updateProjectionMatrix()
 	
-	var _view = this;
 
-	_view.canvas.width = $(_view.canvas.parentNode).width()/2;
-	_view.canvas.height = $(_view.canvas.parentNode).height()/2;
-
-	_view.renderer.setSize(_view.canvas.width, _view.canvas.height );
-
-	_view.camera.aspect = _view.canvas.width / _view.canvas.height;
-	_view.camera.updateProjectionMatrix()
-	
-
-	_view.center = [
-		_view.canvas.width/2,
-		_view.canvas.height/2
+	this.center = [
+		this.canvas.width/2,
+		this.canvas.height/2
 	]
 
 
-	_view.renderer.render( _view.scene, _view.camera );
+	this.renderer.render( this.scene, this.camera );
 	
 
 	// draw text

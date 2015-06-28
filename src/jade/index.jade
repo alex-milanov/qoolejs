@@ -2,12 +2,21 @@ doctype html
 html
 	head
 		title qoole gui tests
+		link(rel="stylesheet",href="lib/font-awesome.css")
 		link(rel="stylesheet",href="css/style.css")
 	body
 		.interface
 			.toolbar
-				h1 QooleJS
-			.left-panel
+				.logo QooleJS
+				a.panel-trigger.fa.fa-bars.selected
+				.left-bar
+					| Mode: &nbsp;
+					a.mode-move.selected M
+					a.mode-scale S
+					a.mode-rotate R
+				.right-bar
+					a.fullscreen-trigger Full Screen
+			.left-panel.opened
 				.level-name Test Level
 				ul.entities
 					li Block 1

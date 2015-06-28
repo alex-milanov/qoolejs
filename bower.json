@@ -17,6 +17,7 @@
     "jquery": "~2.1.4",
     "threex.keyboardstate": "*",
     "lodash": "~3.9.3",
-    "three.js": "~0.71.0"
+    "three.js": "~0.71.0",
+    "font-awesome": "~4.3.0"
   }
 }

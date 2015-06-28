@@ -95,6 +95,16 @@ QL.gui.Editor.prototype.init = function(){
 		}
 	}
 
-	_editor.updateToolbar();
 	animStep();
+
+	_editor.updateToolbar();
+	$(".panel-trigger").click(function(){
+		$(this).toggleClass("selected")
+		$(".left-panel").toggleClass("opened")
+	})
+	$(".fullscreen-trigger").click(function(){
+		$(this).toggleClass("selected")
+		$(".canvas-tr").toggleClass("fullscreen")
+	})
+
 }
