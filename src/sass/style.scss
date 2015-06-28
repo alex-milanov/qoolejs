@@ -99,22 +99,35 @@ body {
 			height: 25px;
 			line-height: 25px;
 		}
-		.entities {
-			margin: 0px;
-			list-style-type: none;
-			padding: 0px;
-			li {
-				margin-left: 0px;
-				padding: 0px 25px;
+		.section {
+			.title {
 				height: 25px;
 				line-height: 25px;
-				font-size:12px;
-				cursor: pointer;
-				&:hover {
-					background: #777;
-				}
-				&.selected {
-					background: #555;
+				width: 100%;
+				font-size: 16px;
+				background: #888;
+				border-top: 1px solid #aaa;
+				border-bottom: 1px solid #777;
+				padding-left: 10px;
+			}
+			.entities {
+				border-top: 1px solid #aaa;
+				margin: 0px;
+				list-style-type: none;
+				padding: 0px;
+				li {
+					margin-left: 0px;
+					padding: 0px 25px;
+					height: 25px;
+					line-height: 25px;
+					font-size:12px;
+					cursor: pointer;
+					&:hover {
+						background: #888;
+					}
+					&.selected {
+						background: #777;
+					}
 				}
 			}
 		}
@@ -132,32 +145,32 @@ body {
 		bottom: 0px;
 		right: 0px;
 		left: 0px;
-		border: 1px solid #999;
+		border: 0px solid #777;
 		.canvas {
 			width: 50%;
 			height: 50%;
-			border:0px solid #aaa;
+			border:0px solid #777;
 			background: #000;
 			position: absolute;
 			&.canvas-tl {
 				top: 0px;
 				left: 0px;
-				border-width: 0px 1px 1px 0px;
+				border-width: 0px 2px 2px 0px;
 			}
 			&.canvas-tr {
 				top: 0px;
 				right: 0px;
-				border-width: 0px 0px 1px 1px;
+				border-width: 0px 0px 2px 2px;
 			}
 			&.canvas-bl {
 				bottom: 0px;
 				left: 0px;
-				border-width: 1px 1px 0px 0px;
+				border-width: 2px 2px 0px 0px;
 			}
 			&.canvas-br {
 				bottom: 0px;
 				right: 0px;
-				border-width: 1px 0px 0px 1px;
+				border-width: 2px 0px 0px 2px;
 			}
 			&.fullscreen {
 				top: 0px;

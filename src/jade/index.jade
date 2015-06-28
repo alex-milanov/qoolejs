@@ -1,7 +1,7 @@
 doctype html
 html
 	head
-		title qoole gui tests
+		title QooleJS Alpha
 		link(rel="stylesheet",href="lib/font-awesome.css")
 		link(rel="stylesheet",href="css/style.css")
 	body
@@ -18,8 +18,14 @@ html
 					a.fullscreen-trigger Full Screen
 			.left-panel.opened
 				.level-name Test Level
-				ul.entities
-					li Block 1
+				.section
+					.title Lights
+				.section
+					.title Cameras
+				.section
+					.title Meshes
+					ul.entities#mesh-entities
+						li Block 1
 			.views
 				canvas.canvas.canvas-tl
 				canvas.canvas.canvas-tr

@@ -97,6 +97,11 @@ QL.gui.View3D.prototype.addBlock = function(_entity){
 	mesh.position.set( pos.x, pos.y, pos.z );
 	mesh.receiveShadow = true;
 	mesh.castShadow = true;
+
+	if(_entity.name){
+		mesh.name = _entity.name;
+	}
+
 	this.scene.add( mesh );
 } 
 
@@ -121,7 +126,6 @@ QL.gui.View3D.prototype.refresh = function(){
 	$(this.canvas).attr("style","");
 	this.canvas.width = $(this.canvas).width();
 	this.canvas.height = $(this.canvas).height();
-	console.log(this.canvas.width, this.canvas.height);
 
 	this.renderer.setSize(this.canvas.width, this.canvas.height );
 

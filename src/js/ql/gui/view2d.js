@@ -192,11 +192,8 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 			}
 		})
 
-		if(selectedObj !== false){
-			_view.editor.select(selectedObj.id);
-		} else if (hits === 0) {
-			_view.scene.selected = false;
-		}
+		_view.editor.select(selectedObj.id);
+		
 
 	})
 
@@ -293,7 +290,7 @@ QL.gui.View2D.prototype.drawBlock = function(_obj){
 	this.ctx.stroke();
 }
 
-QL.gui.View2D.prototype.drawBox = function(_obj){
+QL.gui.View2D.prototype.drawBox = function(_obj, _strokeStyle){
 
 	var _mod = this.mod;
 	var that = this;
@@ -337,11 +334,11 @@ QL.gui.View2D.prototype.drawBox = function(_obj){
 					objId: _obj.id
 				})
 
-				that.ctx.strokeStyle = '#555';
+				that.ctx.strokeStyle = _strokeStyle || '#555';
 				var baseColor = new THREE.Color(0x555555);
-				if(_obj.selected){
+				/*if(_obj.selected){
 					that.ctx.strokeStyle = "#DC3333";
-				}
+				}*/
 
 				that.ctx.setLineDash([0]);
 				that.ctx.stroke();
@@ -401,6 +398,6 @@ QL.gui.View2D.prototype.refresh = function(_entities){
 
 	// draw the selected again
 	if(this.scene.selected){
-		that.drawBox(this.scene.selected);
+		that.drawBox(this.scene.selected,"#DC3333");
 	}
 }

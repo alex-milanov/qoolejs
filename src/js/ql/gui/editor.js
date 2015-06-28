@@ -46,6 +46,8 @@ QL.gui.Editor.prototype.select = function(_objId){
 		this.scene.selected = false;
 	}
 
+	console.log(this.scene.selected);
+
 	var _editor = this;
 	this.scene.children.forEach(function(_obj){
 		if(_editor.scene.selected !== false && _obj.type=="Mesh" && _obj.id == _objId) {
@@ -59,16 +61,21 @@ QL.gui.Editor.prototype.select = function(_objId){
 }
 
 QL.gui.Editor.prototype.updateToolbar = function(){
-	var $panel = $(".left-panel .entities");
-	$panel.html("");
+	var $meshEntities = $(".entities#mesh-entities");
+	$meshEntities.html("");
 	var _editor = this;
 	this.scene.children.forEach(function(_entity){
 		var _el = $("<li></li>");
-		var _title = _entity.type;
-		if(_entity.geometry && _entity.geometry.type){
-			_title += "[ "+_entity.geometry.type+" ]"
+		var _name = '';
+		if(_entity.name){
+			_name = _entity.name;
+		} else {
+			_name = _entity.type;
+			if(_entity.geometry && _entity.geometry.type){
+				_name += "[ "+_entity.geometry.type+" ]"
+			}
 		}
-		_el.text(_title);
+		_el.text(_name);
 		_el.attr("data-obj-id",_entity.id);
 		if(_entity.selected){
 			_el.addClass("selected");
@@ -76,11 +83,15 @@ QL.gui.Editor.prototype.updateToolbar = function(){
 
 		if(_entity.type === "Mesh"){
 			_el.click(function(){
-				_editor.select($(this).attr("data-obj-id"));
+				_editor.select(parseInt($(this).attr("data-obj-id")));
 			})
 		}
 
-		$panel.append(_el);
+		switch(_entity.type){
+			case "Mesh":
+				$meshEntities.append(_el);
+				break;
+		}
 	})
 }
 
