@@ -24,10 +24,10 @@ QL.gui.Editor = function(_views, _entities){
 
 		switch(viewConf.perspective){
 			case "3d":
-				this.views[key] = new QL.gui.View3D(viewConf, this.scene);
+				this.views[key] = new QL.gui.View3D(viewConf, this.scene, this);
 				break;
 			default:
-				this.views[key] = new QL.gui.View2D(viewConf, this.scene);
+				this.views[key] = new QL.gui.View2D(viewConf, this.scene, this);
 				break;
 		}
 	}
@@ -35,6 +35,53 @@ QL.gui.Editor = function(_views, _entities){
 
 	this.views["tr"].addEntities(_entities);
 
+}
+
+
+QL.gui.Editor.prototype.select = function(_objId){
+
+	if(!this.scene.selected || this.scene.selected.id !== _objId){
+		this.scene.selected = this.scene.getObjectById(_objId);
+	} else {
+		this.scene.selected = false;
+	}
+
+	var _editor = this;
+	this.scene.children.forEach(function(_obj){
+		if(_editor.scene.selected !== false && _obj.type=="Mesh" && _obj.id == _objId) {
+			_obj.selected = true;
+		} else {
+			_obj.selected = false;
+		}
+	})
+
+	_editor.updateToolbar();
+}
+
+QL.gui.Editor.prototype.updateToolbar = function(){
+	var $panel = $(".left-panel .entities");
+	$panel.html("");
+	var _editor = this;
+	this.scene.children.forEach(function(_entity){
+		var _el = $("<li></li>");
+		var _title = _entity.type;
+		if(_entity.geometry && _entity.geometry.type){
+			_title += "[ "+_entity.geometry.type+" ]"
+		}
+		_el.text(_title);
+		_el.attr("data-obj-id",_entity.id);
+		if(_entity.selected){
+			_el.addClass("selected");
+		}
+
+		if(_entity.type === "Mesh"){
+			_el.click(function(){
+				_editor.select($(this).attr("data-obj-id"));
+			})
+		}
+
+		$panel.append(_el);
+	})
 }
 
 QL.gui.Editor.prototype.init = function(){
@@ -48,5 +95,6 @@ QL.gui.Editor.prototype.init = function(){
 		}
 	}
 
+	_editor.updateToolbar();
 	animStep();
 }

@@ -1,48 +1,115 @@
+
+@import url(http://fonts.googleapis.com/css?family=Play:400,700&subset=latin,cyrillic-ext,cyrillic);
+@import url(http://fonts.googleapis.com/css?family=PT+Sans:400,700,400italic,700italic&subset=latin,cyrillic-ext,cyrillic);
+@import url(http://fonts.googleapis.com/css?family=Dosis:200,300,400,500,600,700,800);
+@import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,200,200italic,300,300italic,400italic,600,600italic,700,700italic,900);
+@import url(http://fonts.googleapis.com/css?family=Noticia+Text:400,400italic,700,700italic);
+
+$ql-font: "Play" Helvetica Arial sans-serif;
+$ql-toolbar-height: 35px;
+$ql-panel-width: 200px;
+
+@mixin ql-gradient(){
+	background: rgba(128,128,128,1);
+	background: -moz-linear-gradient(top, rgba(128,128,128,1) 0%, rgba(105,105,105,1) 49%, rgba(110,110,110,1) 50%, rgba(115,115,115,1) 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(128,128,128,1)), color-stop(49%, rgba(105,105,105,1)), color-stop(50%, rgba(110,110,110,1)), color-stop(100%, rgba(115,115,115,1)));
+	background: -webkit-linear-gradient(top, rgba(128,128,128,1) 0%, rgba(105,105,105,1) 49%, rgba(110,110,110,1) 50%, rgba(115,115,115,1) 100%);
+	background: -o-linear-gradient(top, rgba(128,128,128,1) 0%, rgba(105,105,105,1) 49%, rgba(110,110,110,1) 50%, rgba(115,115,115,1) 100%);
+	background: -ms-linear-gradient(top, rgba(128,128,128,1) 0%, rgba(105,105,105,1) 49%, rgba(110,110,110,1) 50%, rgba(115,115,115,1) 100%);
+	background: linear-gradient(to bottom, rgba(128,128,128,1) 0%, rgba(105,105,105,1) 49%, rgba(110,110,110,1) 50%, rgba(115,115,115,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#808080', endColorstr='#737373', GradientType=0 );
+}
+
+body {
+	font-family: $ql-font;
+}
+
 .interface {
 	.toolbar {
-		background: #555;
+		background: #333;
 		top: 0px;
 		right: 0px;
 		left: 0px;
-		height: 30px;
+		height: $ql-toolbar-height;
 		position: absolute;
+		h1 {
+			height: $ql-toolbar-height;
+			line-height: $ql-toolbar-height;
+			color: #aaa;
+			margin: 0px;
+			font-size: 24px;
+			font-family: $ql-font;
+			font-weight: bold;
+			padding: 0px 7px;
+		}
 	}
 	.left-panel {
-		background: #555;
+		background: #999;
+		color: #000;
 		position: absolute;
-		top: 30px;
+		top: $ql-toolbar-height;
 		left: 0px;
 		bottom: 0px;
 		width: 200px;
-		border-top: 1px solid #ccc;
+		padding: 10px 0px;
+		border-top: 1px solid #999;
+		.level-name {
+			padding: 0px 10px;
+			height: 25px;
+			line-height: 25px;
+		}
+		.entities {
+			margin: 0px;
+			list-style-type: none;
+			padding: 0px;
+			li {
+				margin-left: 0px;
+				padding: 0px 25px;
+				height: 25px;
+				line-height: 25px;
+				font-size:12px;
+				cursor: pointer;
+				&:hover {
+					background: #777;
+				}
+				&.selected {
+					background: #555;
+				}
+			}
+		}
 	}
 	.views {
 		position: absolute;
-		top: 30px;
+		top: $ql-toolbar-height;
 		bottom: 0px;
 		left: 200px;
 		right: 0px;
+		border-top: 1px solid #999;
 		.canvas {
 			width: 50%;
 			height: 50%;
-			border:1px solid #d3d3d3;
+			border:0px solid #aaa;
 			background: #000;
 			position: absolute;
 			&.canvas-tl {
 				top: 0px;
 				left: 0px;
+				border-width: 0px 1px 1px 0px;
 			}
 			&.canvas-tr {
 				top: 0px;
 				right: 0px;
+				border-width: 0px 0px 1px 1px;
 			}
 			&.canvas-bl {
 				bottom: 0px;
 				left: 0px;
+				border-width: 1px 1px 0px 0px;
 			}
 			&.canvas-br {
 				bottom: 0px;
 				right: 0px;
+				border-width: 1px 0px 0px 1px;
 			}
 		}
 	}

@@ -111,7 +111,7 @@ function drawVerticalLines(ctx){
 
 }
 
-QL.gui.View2D = function(_conf, _scene){
+QL.gui.View2D = function(_conf, _scene, _editor){
 	this.canvas = $(_conf.canvas)[0];
 	this.ctx = this.canvas.getContext("2d");
 	this.perspective = _conf.perspective;
@@ -156,8 +156,9 @@ QL.gui.View2D = function(_conf, _scene){
 	this.hitAreas = [];
 
 	this.scene = _scene;
+	this.editor = _editor
 
-	var _editor = this;
+	var _view = this;
 
 	// mouse manipulations
 	// select
@@ -169,20 +170,20 @@ QL.gui.View2D = function(_conf, _scene){
 		]
 
 		var oldId = false;
-		if(typeof _editor.scene.selected !== "undefined" && _editor.scene.selected !== false){
-			oldId = _editor.scene.selected.id;
+		if(typeof _view.scene.selected !== "undefined" && _view.scene.selected !== false){
+			oldId = _view.scene.selected.id;
 		}
 
 		var selectedObj = false;
 		var hits = 0;
-		_editor.hitAreas.forEach(function(hitArea){
+		_view.hitAreas.forEach(function(hitArea){
 			if((hitArea.start[0] <= hitPos[0] && hitPos[0] <= hitArea.finish[0])
 			   && (hitArea.start[1] <= hitPos[1] && hitPos[1] <= hitArea.finish[1])
 			) {
 				hits++;
 
-				var hitObj = _editor.scene.getObjectById(hitArea.objId);
-				if(!selectedObj || hitObj.position[_editor.mod.z] > selectedObj.position[_editor.mod.z]){
+				var hitObj = _view.scene.getObjectById(hitArea.objId);
+				if(!selectedObj || hitObj.position[_view.mod.z] > selectedObj.position[_view.mod.z]){
 					
 					if(hitArea.objId === oldId)
 						return true;
@@ -192,19 +193,11 @@ QL.gui.View2D = function(_conf, _scene){
 		})
 
 		if(selectedObj !== false){
-			_editor.scene.selected = selectedObj;
+			_view.editor.select(selectedObj.id);
 		} else if (hits === 0) {
-			_editor.scene.selected = false;
+			_view.scene.selected = false;
 		}
 
-		_editor.scene.children.forEach(function(_obj){
-			if(_editor.scene.selected !== false && _obj.type=="Mesh" && _obj.id == _editor.scene.selected.id) {
-				_obj.selected = true;
-			} else {
-				_obj.selected = false;
-			}
-
-		})
 	})
 
 	this.operation = "idle"
@@ -213,17 +206,17 @@ QL.gui.View2D = function(_conf, _scene){
 	this.dragOffset = [];
 	// mouse move
 	$(this.canvas).mousedown(function(ev){
-		_editor.operation = "dragstart";
-		_editor.dragStartPos = _editor.dragPos = [
+		_view.operation = "dragstart";
+		_view.dragStartPos = _view.dragPos = [
 			ev.offsetX,
 			ev.offsetY
 		]
-		if(_editor.scene.selected){
+		if(_view.scene.selected){
 			var pos = [
-				_editor.scene.selected.position[_editor.mod.u],
-				_editor.scene.selected.position[_editor.mod.v]
+				_view.scene.selected.position[_view.mod.u],
+				_view.scene.selected.position[_view.mod.v]
 			]
-			_editor.dragOffset = [
+			_view.dragOffset = [
 				pos[0],
 				pos[1]
 			]
@@ -231,31 +224,32 @@ QL.gui.View2D = function(_conf, _scene){
 	});
 
 	$(this.canvas).mousemove(function(ev){
-		if(["dragstart","dragging"].indexOf(_editor.operation)>-1){
-			_editor.operation = "dragging";
+		if(["dragstart","dragging"].indexOf(_view.operation)>-1){
+			_view.operation = "dragging";
 
-			_editor.dragPos = [
+			_view.dragPos = [
 				ev.offsetX,
 				ev.offsetY
 			]
 			var dragVector = [
-				_editor.dragPos[0]-_editor.dragStartPos[0],
-				_editor.dragPos[1]-_editor.dragStartPos[1]
+				_view.dragPos[0]-_view.dragStartPos[0],
+				_view.dragPos[1]-_view.dragStartPos[1]
 			]
-			if(_editor.scene.selected){
-				_editor.scene.selected.position[_editor.mod.u] = (_editor.mod.xD*dragVector[0])+_editor.dragOffset[0];
-				_editor.scene.selected.position[_editor.mod.v] = (_editor.mod.yD*dragVector[1])+_editor.dragOffset[1];
+			if(_view.scene.selected){
+				if(dragVector[0]/5 === parseInt(dragVector[0]/5))
+					_view.scene.selected.position[_view.mod.u] = (_view.mod.xD*dragVector[0])+_view.dragOffset[0];
+				if(dragVector[1]/5 === parseInt(dragVector[1]/5))
+					_view.scene.selected.position[_view.mod.v] = (_view.mod.yD*dragVector[1])+_view.dragOffset[1];
 			}
-			console.log(_editor.operation,_editor.dragPos,_editor.dragStartPos,_editor.scene.selected.position);
-
+			
 		}
 	})
 
 	$(this.canvas).mouseup(function(ev){
-		_editor.operation="idle";
-		_editor.dragStartPos = [];
-		_editor.dragPos = [];
-		_editor.dragOffset = [];
+		_view.operation="idle";
+		_view.dragStartPos = [];
+		_view.dragPos = [];
+		_view.dragOffset = [];
 	})
 	
 }
