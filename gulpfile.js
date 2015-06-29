@@ -40,7 +40,7 @@ gulp.task('sass', function(done) {
 		}))
 		.pipe(rename({ extname: '.min.css' }))
 		.pipe(gulp.dest('./dist/css/'))
-		.pipe( livereload())
+//		.pipe( livereload())
 		.on('end',done)
 });
 
@@ -54,7 +54,7 @@ gulp.task('jade', function(done) {
 			pretty: true
 		}))
 		.pipe(gulp.dest('./dist/'))
-		.pipe( livereload())
+//		.pipe( livereload())
 		.on('end',done)
 });
 
@@ -73,7 +73,7 @@ gulp.task("bower-files", function(done){
 			// .pipe(filterForWww.restore())
 			// .pipe(filterForMobile)
 			// .pipe(gulp.dest("./mobile/www/lib"))
-			.pipe( livereload())
+//			.pipe( livereload())
 			.on('end',done)
 	})
 });
@@ -83,7 +83,7 @@ gulp.task('js', function(done) {
 		//.pipe( concat('all.min.js'))
 	gulp.src('./src/js/**/*.js')
 		.pipe( gulp.dest('./dist/js/'))
-		.pipe( livereload())
+//		.pipe( livereload())
 		.on('end',done)
 });
 
@@ -105,8 +105,11 @@ gulp.task('express', function() {
 	gutil.log('Listening on port: 1337');
 });
 
-gulp.task('watch', function() {
+gulp.task('livereload', function(){
 	livereload.listen({ basePath: './dist' });
+})
+
+gulp.task('watch', function() {
 	gulp.watch(paths.sass, ['sass']);
 	gulp.watch(paths.jade, ['jade']);
 	gulp.watch(paths.js, ['js']);
@@ -114,6 +117,6 @@ gulp.task('watch', function() {
 
 gulp.task('build', ['sass','jade','js','bower-files'])
 
-gulp.task('serve', ['express','watch']);
+gulp.task('serve', ['express','livereload','watch']);
 
 gulp.task('default',['build','serve']);
