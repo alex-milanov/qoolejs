@@ -9,6 +9,10 @@ QL.gui.Editor = function(_views, _entities){
 
 	
 
+	this.params = {
+		"obj-mode": "move"
+	}
+
 	this.entities = _entities;
 
 
@@ -109,13 +113,31 @@ QL.gui.Editor.prototype.init = function(){
 	animStep();
 
 	_editor.updateToolbar();
-	$(".panel-trigger").click(function(){
-		$(this).toggleClass("selected")
-		$(".left-panel").toggleClass("opened")
-	})
-	$(".fullscreen-trigger").click(function(){
-		$(this).toggleClass("selected")
-		$(".canvas-tr").toggleClass("fullscreen")
-	})
 
+	$(".toolbar").on("click","a[class*='-toggle']",function(){
+		$(this).toggleClass("toggled")
+		var $toggleRef = $($(this).data("toggle-ref")); 
+		var _toggleClass = $(this).data("toggle-class"); 
+		var _toggleParam = $(this).data("toggle-param");
+		$toggleRef.toggleClass(_toggleClass)
+		if(_toggleParam!=""){
+			_editor.params[_toggleParam] = !_editor.params[_toggleParam];
+		}
+	});
+
+	$(".toolbar").on("click","a[class*='-option']",function(_ev){
+		$("a[class*='-option']").removeClass("selected");
+		$(this).addClass("selected");
+
+		var _optionParam = $(this).data("option-param"); 
+		var _optionValue = $(this).data("option-value");
+
+		_editor.params[_optionParam] = _optionValue;
+	});
+
+	_editor.indexes = [];
+	$(".toolbar .indexes").keyup(function(){
+		_editor.indexes = $(this).val().split(",");
+		console.log(_editor.indexes);
+	})
 }

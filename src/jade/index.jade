@@ -8,14 +8,35 @@ html
 		.interface
 			.toolbar
 				.logo QooleJS
-				a.panel-trigger.fa.fa-bars.selected
+				a.panel-toggle.fa.fa-bars.toggled(
+					data-toggle-ref=".left-panel",
+					data-toggle-class="opened"
+				)
 				.left-bar
 					| Mode: &nbsp;
-					a.mode-move.selected M
-					a.mode-scale S
-					a.mode-rotate R
+					a.obj-mode-option.selected(
+						data-option-param="obj-mode",
+						data-option-value="move"
+					) M
+					a.obj-mode-option(
+						data-option-param="obj-mode",
+						data-option-value="scale"
+					) S
+					a.obj-mode-option(
+						data-option-param="obj-mode",
+						data-option-value="rotate"
+					) R
 				.right-bar
-					a.fullscreen-trigger Full Screen
+					a.debug-toggle(
+						data-toggle-ref=".indexes",
+						data-toggle-class="visible",
+						data-toggle-param="debug"
+					) Debug
+					input.indexes(placeholder="Indexes")
+					a.fullscreen-toggle(
+						data-toggle-ref=".canvas-tr",
+						data-toggle-class="fullscreen"
+					) Full Screen
 			.left-panel.opened
 				.level-name Test Level
 				.section
@@ -25,7 +46,12 @@ html
 				.section
 					.title Meshes
 					ul.entities#mesh-entities
-						li Block 1
+						li
+							| Block 1
+							a.entity-edit-trigger(
+								data-trigger-method="edit",
+								data-trigger-id="1"
+							)
 			.views
 				canvas.canvas.canvas-tl
 				canvas.canvas.canvas-tr

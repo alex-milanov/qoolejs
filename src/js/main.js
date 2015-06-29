@@ -27,6 +27,15 @@ var _entities = [
 		position: [25,25,25],  // x, y, z
 		size: 50
 	},*/
+/*
+	{ // ground
+		name: "ground",
+		type: "block",
+		start: [-150,0,-100],
+		finish: [150,50,100],
+		color: 0x113311
+	},*/
+	
 	{ // ground
 		name: "ground",
 		type: "block",
@@ -139,6 +148,7 @@ var _entities = [
 		finish: [95,100,-100],
 		color: 0xaaaa55
 	}
+	
 ]
 
 

@@ -290,12 +290,15 @@ QL.gui.View2D.prototype.drawBlock = function(_obj){
 	this.ctx.stroke();
 }
 
-QL.gui.View2D.prototype.drawBox = function(_obj, _strokeStyle){
+QL.gui.View2D.prototype.drawBox = function(_obj, _lineDash, _strokeStyle, _showCoords){
 
 	var _mod = this.mod;
 	var that = this;
 
 	//console.log(_obj)
+
+	var _center = [];
+	var _indexes = [];
 
 	_obj.geometry.quads.forEach(function(_quad, index){
 
@@ -309,8 +312,8 @@ QL.gui.View2D.prototype.drawBox = function(_obj, _strokeStyle){
 			]
 
 			var finish = [
-				_mod.xD*(_quad.d[_mod.u]-_quad.a[_mod.u]),
-				_mod.yD*(_quad.d[_mod.v]-_quad.a[_mod.v])
+				_mod.xD*(_quad.c[_mod.u]-_quad.a[_mod.u]),
+				_mod.yD*(_quad.c[_mod.v]-_quad.a[_mod.v])
 			]
 
 			var end = [
@@ -340,13 +343,36 @@ QL.gui.View2D.prototype.drawBox = function(_obj, _strokeStyle){
 					that.ctx.strokeStyle = "#DC3333";
 				}*/
 
-				that.ctx.setLineDash([0]);
+				that.ctx.setLineDash(_lineDash || [0]);
 				that.ctx.stroke();
+
+				if(_showCoords){
+					that.ctx.font="12px Arial";
+					that.ctx.fillStyle="#999";
+
+					_quad.d[_mod.u]
+
+					if(that.editor.indexes.length === 0 || that.editor.indexes.indexOf(index+"")>-1){
+						that.ctx.fillText("a("+_quad.a[_mod.u]+", "+_quad.a[_mod.v]+"), "+start.join(", "),start[0],start[1]);
+						that.ctx.fillText("b("+_quad.b[_mod.u]+", "+_quad.b[_mod.v]+"), "+(start[0]+finish[0])+", "+start[1],start[0]+finish[0],start[1]);
+						that.ctx.fillText("c("+_quad.c[_mod.u]+", "+_quad.c[_mod.v]+"), "+end.join(", "),end[0],end[1]);
+						that.ctx.fillText("d("+_quad.d[_mod.u]+", "+_quad.d[_mod.v]+"), "+start[0]+", "+(start[1]+finish[1]),start[0],start[1]+finish[1]);
+					}
+					_indexes.push(index);
+					_center = [
+						(start[0]+finish[0]/2),
+						(start[1]+finish[1]/2)
+					]
+				}
+
 			}
 		//}
 
 	})
-
+	
+	if(_showCoords){
+		that.ctx.fillText(_indexes.join(", "),_center[0],_center[1]);
+	}
 
 
 }
@@ -398,6 +424,10 @@ QL.gui.View2D.prototype.refresh = function(_entities){
 
 	// draw the selected again
 	if(this.scene.selected){
-		that.drawBox(this.scene.selected,"#DC3333");
+
+		this.drawBox(this.scene.selected,[0],"#DC3333",this.editor.params.debug);
+		if(this.editor.params["obj-mode"] == "scale"){
+			this.drawBox(this.scene.selected,[5,10],"#DCDC33");
+		}
 	}
 }

@@ -19,8 +19,8 @@ QL.ext.BoxGeometry = function ( width, height, depth, widthSegments, heightSegme
 		this.quads.push(new QL.ext.Quad(
 			this.vertices[0],
 			this.vertices[1],
-			this.vertices[2],
-			this.vertices[3]
+			this.vertices[3],
+			this.vertices[2]
 		));
 
 		// 4,6,5
@@ -29,27 +29,27 @@ QL.ext.BoxGeometry = function ( width, height, depth, widthSegments, heightSegme
 		this.quads.push(new QL.ext.Quad(
 			this.vertices[4],
 			this.vertices[5],
-			this.vertices[6],
-			this.vertices[7]
+			this.vertices[7],
+			this.vertices[6]
 		));
 
 		// 4,5,1
 		// 5,0,1
 		// top
 		this.quads.push(new QL.ext.Quad(
-			this.vertices[0],
+			this.vertices[4],
 			this.vertices[1],
-			this.vertices[5],
-			this.vertices[4]
+			this.vertices[0],
+			this.vertices[5]
 		));
 
 		// 7,6,2
 		// 6,3,2
 		// bottom
 		this.quads.push(new QL.ext.Quad(
+			this.vertices[7],
 			this.vertices[2],
 			this.vertices[3],
-			this.vertices[7],
 			this.vertices[6]
 		));
 
@@ -57,9 +57,9 @@ QL.ext.BoxGeometry = function ( width, height, depth, widthSegments, heightSegme
 		// 7,2,0
 		// front
 		this.quads.push(new QL.ext.Quad(
+			this.vertices[5],
 			this.vertices[0],
 			this.vertices[2],
-			this.vertices[5],
 			this.vertices[7]
 		));
 
@@ -68,9 +68,9 @@ QL.ext.BoxGeometry = function ( width, height, depth, widthSegments, heightSegme
 		// back
 		this.quads.push(new QL.ext.Quad(
 			this.vertices[1],
-			this.vertices[3],
 			this.vertices[4],
-			this.vertices[6]
+			this.vertices[6],
+			this.vertices[3]
 		));
 
 	}
