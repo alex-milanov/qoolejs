@@ -164,10 +164,10 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 	// select
 	$(this.canvas).click(function(ev){
 		
-		var hitPos = [
+		var hitPos = new QL.ext.Vector2(
 			ev.offsetX,
 			ev.offsetY
-		]
+		)
 
 		var oldId = false;
 		if(typeof _view.scene.selected !== "undefined" && _view.scene.selected !== false){
@@ -177,8 +177,8 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 		var selectedObj = false;
 		var hits = 0;
 		_view.hitAreas.forEach(function(hitArea){
-			if((hitArea.start[0] <= hitPos[0] && hitPos[0] <= hitArea.finish[0])
-			   && (hitArea.start[1] <= hitPos[1] && hitPos[1] <= hitArea.finish[1])
+			if((hitArea.start.x <= hitPos.x && hitPos.x <= hitArea.end.x)
+				&& (hitArea.start.y <= hitPos.y && hitPos.y <= hitArea.end.y)
 			) {
 				hits++;
 
@@ -305,35 +305,39 @@ QL.gui.View2D.prototype.drawBox = function(_obj, _lineDash, _strokeStyle, _showC
 		//if(index == 4){
 
 			//console.log(_quad);
+			var center2 = new QL.ext.Vector2(
+				that.center[0],
+				that.center[1]
+			)
 
-			var start = [
-				that.center[0]+_mod.xD*(_obj.position[_mod.u]+_quad.a[_mod.u]),
-				that.center[1]+_mod.yD*(_obj.position[_mod.v]+_quad.a[_mod.v])
-			]
+			var objPos3 = new QL.ext.Vector3()
+			objPos3.copy(_obj.position);
 
-			var finish = [
-				_mod.xD*(_quad.c[_mod.u]-_quad.a[_mod.u]),
-				_mod.yD*(_quad.c[_mod.v]-_quad.a[_mod.v])
-			]
+			var objStart3 = new QL.ext.Vector3();
+			objStart3.addVectors(objPos3,_quad.a);
 
-			var end = [
-				start[0]+finish[0],
-				start[1]+finish[1]
-			]
+			var objStart2 = objStart3.toVector2(_mod);
+			objStart2.add(center2);
 
-			if(finish[0]!=0 && finish[1]!=0){
+			var objSpan3 = new QL.ext.Vector3();
+			objSpan3.subVectors(_quad.c, _quad.a);
+			var objSpan2 = objSpan3.toVector2(_mod);
+
+			var objCenter2 = objStart2.clone().add(objSpan2.clone().divideScalar(2));	
+
+			if(objSpan2.x!=0 && objSpan2.y!=0){
 				that.ctx.beginPath();
-				that.ctx.rect(start[0],start[1],finish[0],finish[1]);
+				that.ctx.rect(objStart2.x,objStart2.y,objSpan2.x,objSpan2.y);
 
 				that.hitAreas.push({
-					start: [
-						((start[0]<end[0]) ? start[0] : end[0]),
-						((start[1]<end[1]) ? start[1] : end[1])
-					],
-					finish: [
-						((start[0]>end[0]) ? start[0] : end[0]),
-						((start[1]>end[1]) ? start[1] : end[1])
-					],
+					start: new QL.ext.Vector2(
+						((objSpan2.x > 0) ? objStart2.x : objStart2.x+objSpan2.x),
+						((objSpan2.y > 0) ? objStart2.y : objStart2.y+objSpan2.y)
+					),
+					end:  new QL.ext.Vector2(
+						((objSpan2.x < 0) ? objStart2.x : objStart2.x+objSpan2.x),
+						((objSpan2.y < 0) ? objStart2.y : objStart2.y+objSpan2.y)
+					),
 					objId: _obj.id
 				})
 
@@ -350,19 +354,14 @@ QL.gui.View2D.prototype.drawBox = function(_obj, _lineDash, _strokeStyle, _showC
 					that.ctx.font="12px Arial";
 					that.ctx.fillStyle="#999";
 
-					_quad.d[_mod.u]
-
-					if(that.editor.indexes.length === 0 || that.editor.indexes.indexOf(index+"")>-1){
-						that.ctx.fillText("a("+_quad.a[_mod.u]+", "+_quad.a[_mod.v]+"), "+start.join(", "),start[0],start[1]);
-						that.ctx.fillText("b("+_quad.b[_mod.u]+", "+_quad.b[_mod.v]+"), "+(start[0]+finish[0])+", "+start[1],start[0]+finish[0],start[1]);
-						that.ctx.fillText("c("+_quad.c[_mod.u]+", "+_quad.c[_mod.v]+"), "+end.join(", "),end[0],end[1]);
-						that.ctx.fillText("d("+_quad.d[_mod.u]+", "+_quad.d[_mod.v]+"), "+start[0]+", "+(start[1]+finish[1]),start[0],start[1]+finish[1]);
+				if(that.editor.indexes.length === 0 || that.editor.indexes.indexOf(index+"")>-1){
+						that.ctx.fillText("a("+(new QL.ext.Vector3).copy(_quad.a).toVector2(_mod).toArray().join(", ")+"), "+objStart2.toArray().join(", "),start.x,start.y);
+						that.ctx.fillText("b("+(new QL.ext.Vector3).copy(_quad.b).toVector2(_mod).toArray().join(", ")+"), "+objStart2.y,(objStart2.x+objSpan2.x),objStart2.y);
+						that.ctx.fillText("c("+(new QL.ext.Vector3).copy(_quad.c).toVector2(_mod).toArray().join(", ")+"), "+objStart2.clone().add(objSpan2).toArray().join(", "),objStart2.x+objSpan2.x,objStart2.y+objSpan2.y);
+						that.ctx.fillText("d("+(new QL.ext.Vector3).copy(_quad.d).toVector2(_mod).toArray().join(", ")+"), "+objStart2.x+", "+(objStart2.y+objSpan2.y),objStart2.x,objStart2.y+objSpan2.y);
 					}
 					_indexes.push(index);
-					_center = [
-						(start[0]+finish[0]/2),
-						(start[1]+finish[1]/2)
-					]
+					_center = objCenter2.clone();
 				}
 
 			}
@@ -371,7 +370,7 @@ QL.gui.View2D.prototype.drawBox = function(_obj, _lineDash, _strokeStyle, _showC
 	})
 	
 	if(_showCoords){
-		that.ctx.fillText(_indexes.join(", "),_center[0],_center[1]);
+		that.ctx.fillText(_indexes.join(", "),_center.x,_center.y);
 	}
 
 
