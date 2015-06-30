@@ -17,7 +17,7 @@
 
 $ql-font: "Play" Helvetica Arial sans-serif;
 $ql-toolbar-height: 35px;
-$ql-panel-width: 200px;
+$ql-panel-width: 220px;
 
 /* @mixin ql-gradient(){
 	background: rgba(128,128,128,1);
@@ -113,6 +113,23 @@ body {
 		bottom: 0px;
 		width: 0px;
 		padding: 10px 0px;
+		overflow-y: scroll;
+		overflow-x: none;
+		&::-webkit-scrollbar
+		{
+			width: 12px;  /* for vertical scrollbars */
+			height: 12px; /* for horizontal scrollbars */
+		}
+
+		&::-webkit-scrollbar-track
+		{
+			background: rgba(0, 0, 0, 0.1);
+		}
+
+		&::-webkit-scrollbar-thumb
+		{
+			background: rgba(0, 0, 0, 0.5);
+		}
 		.level-name {
 			padding: 0px 10px;
 			height: 25px;
@@ -122,7 +139,6 @@ body {
 			.title {
 				height: 25px;
 				line-height: 25px;
-				width: 100%;
 				font-size: 16px;
 				background: #888;
 				border-top: 1px solid #aaa;
@@ -148,6 +164,21 @@ body {
 						background: #777;
 					}
 				}
+			}
+			> a {
+				margin-left: 0px;
+				padding: 0px;
+				text-align: center;
+				height: 25px;
+				line-height: 25px;
+				font-size:14px;
+				background: #888;
+				display: block;
+				cursor: pointer;
+				&:hover {
+					background: #777;
+				}
+
 			}
 		}
 		&.opened {

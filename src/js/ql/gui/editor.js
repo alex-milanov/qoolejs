@@ -50,7 +50,7 @@ QL.gui.Editor.prototype.select = function(_objId){
 		this.scene.selected = false;
 	}
 
-	console.log(this.scene.selected);
+	//console.log(this.scene.selected);
 
 	var _editor = this;
 	this.scene.children.forEach(function(_obj){
@@ -114,7 +114,7 @@ QL.gui.Editor.prototype.init = function(){
 
 	_editor.updateToolbar();
 
-	$(".toolbar").on("click","a[class*='-toggle']",function(){
+	$("body").on("click","a[class*='-toggle']",function(){
 		$(this).toggleClass("toggled")
 		var $toggleRef = $($(this).data("toggle-ref")); 
 		var _toggleClass = $(this).data("toggle-class"); 
@@ -125,7 +125,15 @@ QL.gui.Editor.prototype.init = function(){
 		}
 	});
 
-	$(".toolbar").on("click","a[class*='-option']",function(_ev){
+	$("body").on("click","a[class*='-trigger']",function(){
+		var _triggerMethod = $(this).data("trigger-method");
+		if(typeof _editor[_triggerMethod] !== "undefined"){
+			_editor[_triggerMethod]();
+		}
+	})
+	
+
+	$("body").on("click","a[class*='-option']",function(_ev){
 		$("a[class*='-option']").removeClass("selected");
 		$(this).addClass("selected");
 
@@ -140,4 +148,22 @@ QL.gui.Editor.prototype.init = function(){
 		_editor.indexes = $(this).val().split(",");
 		console.log(_editor.indexes);
 	})
+}
+
+QL.gui.Editor.prototype.newMesh = function(){
+	var meshName = prompt("Name");
+	this.views["tr"].addEntities([
+		{ 
+			name: (meshName || "Block"),
+			type: "block",
+			start: [-20,-20,-20],
+			finish: [20,20,20],
+			color: 0x113311
+		},
+	]);
+	this.updateToolbar();
+}
+
+QL.gui.Editor.prototype.clearScene = function(){
+	this.scene.children = [];
 }

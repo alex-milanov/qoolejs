@@ -79,6 +79,38 @@ QL.ext.BoxGeometry = function ( width, height, depth, widthSegments, heightSegme
 
 }
 
-
 QL.ext.BoxGeometry.prototype = Object.create( THREE.BoxGeometry.prototype );
 QL.ext.BoxGeometry.prototype.constructor = THREE.BoxGeometry;
+
+QL.ext.BoxGeometry.prototype.scale = function(_mod, scale2){
+
+	var scaleVectors = [];
+	var scalePossible = true;
+	this.vertices.forEach(function(_v, index){
+		var scaleVector = scale2.clone();
+		var objVector = new QL.ext.Vector3().copy(_v).toVector2(_mod);
+		scaleVector.x *= (objVector.x > 0) ? 1 : - 1;
+		scaleVector.y *= (objVector.y > 0) ? 1 : - 1;
+		scaleVectors.push(scaleVector);
+
+		if(
+			Math.abs(objVector.x+scaleVector.x)<10
+			|| Math.abs(objVector.y+scaleVector.y)<10
+		) {
+			scalePossible = false;
+		}
+	})
+
+	var that = this;
+
+	if(scalePossible){
+		this.vertices.forEach(function(_v, index){
+			_v.add(scaleVectors[index].toVector3(_mod));
+			that.verticesNeedUpdate = true;
+		})
+	}
+
+	return scalePossible;
+}
+
+

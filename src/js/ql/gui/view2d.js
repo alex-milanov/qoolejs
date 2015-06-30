@@ -199,15 +199,17 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 
 	this.operation = "idle"
 	this.dragStartPos = [];
-	this.dragPos = [];
+	this.lastPos = [];
+	this.lastScale = [];
 	this.dragOffset = [];
 	// mouse move
 	$(this.canvas).mousedown(function(ev){
 		_view.operation = "dragstart";
-		_view.dragStartPos = _view.dragPos = [
+		_view.dragStartPos = _view.lastPos = [
 			ev.offsetX,
 			ev.offsetY
 		]
+		_view.lastScale = [0,0];
 		if(_view.scene.selected){
 			var pos = [
 				_view.scene.selected.position[_view.mod.u],
@@ -224,20 +226,45 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 		if(["dragstart","dragging"].indexOf(_view.operation)>-1){
 			_view.operation = "dragging";
 
-			_view.dragPos = [
+			if(!_view.scene.selected){
+				return;
+			}
+
+
+			var mousePos = [
 				ev.offsetX,
 				ev.offsetY
 			]
-			var dragVector = [
-				_view.dragPos[0]-_view.dragStartPos[0],
-				_view.dragPos[1]-_view.dragStartPos[1]
-			]
-			if(_view.scene.selected){
-				if(dragVector[0]/5 === parseInt(dragVector[0]/5))
-					_view.scene.selected.position[_view.mod.u] = (_view.mod.xD*dragVector[0])+_view.dragOffset[0];
-				if(dragVector[1]/5 === parseInt(dragVector[1]/5))
-					_view.scene.selected.position[_view.mod.v] = (_view.mod.yD*dragVector[1])+_view.dragOffset[1];
+
+			switch(_view.editor.params["obj-mode"]){
+				case "move":
+					var dragVector = [
+						mousePos[0]-_view.dragStartPos[0],
+						mousePos[1]-_view.dragStartPos[1]
+					]
+					
+					if(dragVector[0]/5 === parseInt(dragVector[0]/5))
+						_view.scene.selected.position[_view.mod.u] = (_view.mod.xD*dragVector[0])+_view.dragOffset[0];
+					if(dragVector[1]/5 === parseInt(dragVector[1]/5))
+						_view.scene.selected.position[_view.mod.v] = (_view.mod.yD*dragVector[1])+_view.dragOffset[1];
+					
+					break;
+				case "scale":
+					var scaleVector = [
+						parseInt((mousePos[0]-_view.dragStartPos[0])/5)*5,
+						parseInt((mousePos[1]-_view.dragStartPos[1])/5)*5,
+					]
+					if( _view.scene.selected.geometry.type === "BoxGeometry"
+						&& _view.scene.selected.geometry.scale(_view.mod, new QL.ext.Vector2(
+						scaleVector[0] - _view.lastScale[0],
+						-(scaleVector[1] - _view.lastScale[1])
+					))){
+						_view.lastScale = scaleVector;
+					}
+					break;
 			}
+
+			_view.lastPos = mousePos;
 			
 		}
 	})
@@ -355,7 +382,7 @@ QL.gui.View2D.prototype.drawBox = function(_obj, _lineDash, _strokeStyle, _showC
 					that.ctx.fillStyle="#999";
 
 				if(that.editor.indexes.length === 0 || that.editor.indexes.indexOf(index+"")>-1){
-						that.ctx.fillText("a("+(new QL.ext.Vector3).copy(_quad.a).toVector2(_mod).toArray().join(", ")+"), "+objStart2.toArray().join(", "),start.x,start.y);
+						that.ctx.fillText("a("+(new QL.ext.Vector3).copy(_quad.a).toVector2(_mod).toArray().join(", ")+"), "+objStart2.toArray().join(", "),objStart2.x,objStart2.y);
 						that.ctx.fillText("b("+(new QL.ext.Vector3).copy(_quad.b).toVector2(_mod).toArray().join(", ")+"), "+objStart2.y,(objStart2.x+objSpan2.x),objStart2.y);
 						that.ctx.fillText("c("+(new QL.ext.Vector3).copy(_quad.c).toVector2(_mod).toArray().join(", ")+"), "+objStart2.clone().add(objSpan2).toArray().join(", "),objStart2.x+objSpan2.x,objStart2.y+objSpan2.y);
 						that.ctx.fillText("d("+(new QL.ext.Vector3).copy(_quad.d).toVector2(_mod).toArray().join(", ")+"), "+objStart2.x+", "+(objStart2.y+objSpan2.y),objStart2.x,objStart2.y+objSpan2.y);

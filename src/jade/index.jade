@@ -45,6 +45,12 @@ html
 					.title Cameras
 				.section
 					.title Meshes
+					a.new-mesh-trigger(
+						data-trigger-method="newMesh"
+					) New Mesh
+					a.clear-scene-trigger(
+						data-trigger-method="clearScene"
+					) Clear Scene
 					ul.entities#mesh-entities
 						li
 							| Block 1
