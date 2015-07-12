@@ -16,10 +16,7 @@ var _views = {
 		"canvas": ".canvas-br",
 		"perspective": "side" // z, y
 	}
-}
-
-
-
+};
 
 var _entities = [
 	/*{
@@ -35,7 +32,7 @@ var _entities = [
 		finish: [150,50,100],
 		color: 0x113311
 	},*/
-	
+
 	{ // ground
 		name: "ground",
 		type: "block",
@@ -148,8 +145,7 @@ var _entities = [
 		finish: [95,100,-100],
 		color: 0xaaaa55
 	}
-	
-]
+];
 
 
 var editor = new QL.gui.Editor(_views,_entities);

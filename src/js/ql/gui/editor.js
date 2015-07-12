@@ -7,14 +7,11 @@ if(typeof QL.gui === "undefined"){ QL.gui = {}; }
 
 QL.gui.Editor = function(_views, _entities){
 
-	
-
 	this.params = {
 		"obj-mode": "move"
-	}
+	};
 
 	this.entities = _entities;
-
 
 	this.keyboard = new THREEx.KeyboardState();
 
@@ -36,10 +33,9 @@ QL.gui.Editor = function(_views, _entities){
 		}
 	}
 
+	this.views.tr.addEntities(_entities);
 
-	this.views["tr"].addEntities(_entities);
-
-}
+};
 
 
 QL.gui.Editor.prototype.select = function(_objId){
@@ -59,10 +55,10 @@ QL.gui.Editor.prototype.select = function(_objId){
 		} else {
 			_obj.selected = false;
 		}
-	})
+	});
 
 	_editor.updateToolbar();
-}
+};
 
 QL.gui.Editor.prototype.updateToolbar = function(){
 	var $meshEntities = $(".entities#mesh-entities");
@@ -76,7 +72,7 @@ QL.gui.Editor.prototype.updateToolbar = function(){
 		} else {
 			_name = _entity.type;
 			if(_entity.geometry && _entity.geometry.type){
-				_name += "[ "+_entity.geometry.type+" ]"
+				_name += "[ "+_entity.geometry.type+" ]";
 			}
 		}
 		_el.text(_name);
@@ -88,7 +84,7 @@ QL.gui.Editor.prototype.updateToolbar = function(){
 		if(_entity.type === "Mesh"){
 			_el.click(function(){
 				_editor.select(parseInt($(this).attr("data-obj-id")));
-			})
+			});
 		}
 
 		switch(_entity.type){
@@ -96,8 +92,8 @@ QL.gui.Editor.prototype.updateToolbar = function(){
 				$meshEntities.append(_el);
 				break;
 		}
-	})
-}
+	});
+};
 
 QL.gui.Editor.prototype.init = function(){
 
@@ -115,12 +111,12 @@ QL.gui.Editor.prototype.init = function(){
 	_editor.updateToolbar();
 
 	$("body").on("click","a[class*='-toggle']",function(){
-		$(this).toggleClass("toggled")
-		var $toggleRef = $($(this).data("toggle-ref")); 
-		var _toggleClass = $(this).data("toggle-class"); 
+		$(this).toggleClass("toggled");
+		var $toggleRef = $($(this).data("toggle-ref"));
+		var _toggleClass = $(this).data("toggle-class");
 		var _toggleParam = $(this).data("toggle-param");
-		$toggleRef.toggleClass(_toggleClass)
-		if(_toggleParam!=""){
+		$toggleRef.toggleClass(_toggleClass);
+		if(_toggleParam !== ""){
 			_editor.params[_toggleParam] = !_editor.params[_toggleParam];
 		}
 	});
@@ -130,14 +126,14 @@ QL.gui.Editor.prototype.init = function(){
 		if(typeof _editor[_triggerMethod] !== "undefined"){
 			_editor[_triggerMethod]();
 		}
-	})
-	
+	});
+
 
 	$("body").on("click","a[class*='-option']",function(_ev){
 		$("a[class*='-option']").removeClass("selected");
 		$(this).addClass("selected");
 
-		var _optionParam = $(this).data("option-param"); 
+		var _optionParam = $(this).data("option-param");
 		var _optionValue = $(this).data("option-value");
 
 		_editor.params[_optionParam] = _optionValue;
@@ -147,13 +143,13 @@ QL.gui.Editor.prototype.init = function(){
 	$(".toolbar .indexes").keyup(function(){
 		_editor.indexes = $(this).val().split(",");
 		console.log(_editor.indexes);
-	})
-}
+	});
+};
 
 QL.gui.Editor.prototype.newMesh = function(){
-	var meshName = prompt("Name");
-	this.views["tr"].addEntities([
-		{ 
+	var meshName = window.prompt("Name");
+	this.views.tr.addEntities([
+		{
 			name: (meshName || "Block"),
 			type: "block",
 			start: [-20,-20,-20],
@@ -162,8 +158,8 @@ QL.gui.Editor.prototype.newMesh = function(){
 		},
 	]);
 	this.updateToolbar();
-}
+};
 
 QL.gui.Editor.prototype.clearScene = function(){
 	this.scene.children = [];
-}
+};

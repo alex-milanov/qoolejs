@@ -1,0 +1,11 @@
+{
+  "node": true,
+  "globals": {
+    "$": true,
+    "jQuery": true,
+    "window": true,
+    "THREE": true,
+    "THREEx": true,
+    "requestAnimationFrame": true
+  }
+}

@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var concat = require('gulp-concat');
+var jshint = require('gulp-jshint');
 var sass = require('gulp-sass');
 var minifyCss = require('gulp-minify-css');
 var jade = require('gulp-jade');
@@ -26,7 +27,7 @@ var paths = {
 
 // additional, not recognized bower files
 bowerFiles
-	.push("./src/lib/threex.keyboardstate/threex.keyboardstate.js")
+	.push("./src/lib/threex.keyboardstate/threex.keyboardstate.js");
 
 gulp.task('sass', function(done) {
 	// www
@@ -41,7 +42,7 @@ gulp.task('sass', function(done) {
 		.pipe(rename({ extname: '.min.css' }))
 		.pipe(gulp.dest('./dist/css/'))
 //		.pipe( livereload())
-		.on('end',done)
+		.on('end',done);
 });
 
 
@@ -55,7 +56,7 @@ gulp.task('jade', function(done) {
 		}))
 		.pipe(gulp.dest('./dist/'))
 //		.pipe( livereload())
-		.on('end',done)
+		.on('end',done);
 });
 
 
@@ -74,17 +75,19 @@ gulp.task("bower-files", function(done){
 			// .pipe(filterForMobile)
 			// .pipe(gulp.dest("./mobile/www/lib"))
 //			.pipe( livereload())
-			.on('end',done)
-	})
+			.on('end',done);
+	});
 });
 
 gulp.task('js', function(done) {
 		//.pipe( uglify() )
 		//.pipe( concat('all.min.js'))
 	gulp.src('./src/js/**/*.js')
+//		.pipe(jshint())
+//		.pipe(jshint.reporter('jshint-stylish'))
 		.pipe( gulp.dest('./dist/js/'))
 //		.pipe( livereload())
-		.on('end',done)
+		.on('end',done);
 });
 
 
@@ -107,7 +110,7 @@ gulp.task('express', function() {
 
 gulp.task('livereload', function(){
 	livereload.listen({ basePath: './dist' });
-})
+});
 
 gulp.task('watch', function() {
 	gulp.watch(paths.sass, ['sass']);
@@ -115,7 +118,7 @@ gulp.task('watch', function() {
 	gulp.watch(paths.js, ['js']);
 });
 
-gulp.task('build', ['sass','jade','js','bower-files'])
+gulp.task('build', ['sass','jade','js','bower-files']);
 
 gulp.task('serve', ['express','livereload','watch']);
 
