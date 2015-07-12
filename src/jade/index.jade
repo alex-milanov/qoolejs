@@ -5,7 +5,7 @@ html
 		link(rel="stylesheet",href="lib/font-awesome.css")
 		link(rel="stylesheet",href="css/style.css")
 	body
-		.interface
+		.gui
 			.toolbar
 				.logo QooleJS
 				a.panel-toggle.fa.fa-bars.toggled(
@@ -39,25 +39,27 @@ html
 					) Full Screen
 			.left-panel.opened
 				.level-name Test Level
-				.section
-					.title Lights
-				.section
-					.title Cameras
-				.section
-					.title Meshes
-					a.new-mesh-trigger(
-						data-trigger-method="newMesh"
-					) New Mesh
-					a.clear-scene-trigger(
-						data-trigger-method="clearScene"
-					) Clear Scene
-					ul.entities#mesh-entities
-						li
-							| Block 1
-							a.entity-edit-trigger(
-								data-trigger-method="edit",
-								data-trigger-id="1"
-							)
+				.scene-panel
+					.section
+						.title Lights
+					.section
+						.title Cameras
+					.section
+						.title Meshes
+						a.new-mesh-trigger(
+							data-trigger-method="newMesh"
+						) New Mesh
+						a.clear-scene-trigger(
+							data-trigger-method="clearScene"
+						) Clear Scene
+						ul.entities#mesh-entities
+							li
+								| Block 1
+								a.entity-edit-trigger(
+									data-trigger-method="edit",
+									data-trigger-id="1"
+								)
+				.object-panel
 			.views
 				canvas.canvas.canvas-tl
 				canvas.canvas.canvas-tr

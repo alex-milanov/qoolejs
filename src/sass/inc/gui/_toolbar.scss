@@ -1,0 +1,71 @@
+.gui {
+	.toolbar {
+		background: #333;
+		top: 0px;
+		right: 0px;
+		left: 0px;
+		height: $ql-toolbar-height;
+		position: absolute;
+		> *, a {
+			display: inline-block;
+			height: $ql-toolbar-height;
+			line-height: $ql-toolbar-height;
+			margin: 0px;
+			padding: 0px;
+			color: #aaa;
+			position: absolute;
+			top: 0px;
+		}
+		.logo {
+			font-size: 24px;
+			font-family: $ql-font;
+			font-weight: bold;
+			left: 40px;
+		}
+		a {
+			min-width: 30px;
+			text-align: center;
+			cursor: pointer;
+			position: relative;
+			&:hover {
+				color: #333;
+				background: #999;
+			}
+			&.selected, &.toggled {
+				color: #333;
+				background: #777;
+			}
+		}
+		.debug-toggle {
+			padding: 0px 5px;
+		}
+		.indexes {
+			display: inline-block;
+			height: $ql-toolbar-height;
+			line-height: $ql-toolbar-height;
+			width: 100px;
+			padding: 0px 5px;
+			border: 0px;
+			background: #444;
+			font-size: 14px;
+			color: #aaa;
+			outline: none;
+			display: none;
+		}
+		.visible {
+			display: inline-block;
+		}
+		.panel-toggle {
+			left: 0px;
+		}
+		.left-bar {
+			left: $ql-panel-width;
+		}
+		.right-bar {
+			right: 0px;
+		}
+		.fullscreen-toggle {
+			width: 100px;
+		}
+	}
+}
