@@ -173,6 +173,7 @@ QL.gui.Editor.prototype.clearScene = function(){
 QL.gui.Editor.prototype.refreshObjectPane = function(){
 	if(this.scene.selected){
 		$(".object-pane").addClass("active");
+		console.log(this.scene.selected);
 		// object pane code here
 		$(".object-update-trigger").attr("data-trigger-id", this.scene.selected.id);
 		$("#object-pane-name").val(this.scene.selected.name)
