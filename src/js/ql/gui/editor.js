@@ -56,11 +56,12 @@ QL.gui.Editor.prototype.select = function(_objId){
 			_obj.selected = false;
 		}
 	});
-
-	_editor.updateToolbar();
+	
+	
+	_editor.refreshLeftPanel();
 };
 
-QL.gui.Editor.prototype.updateToolbar = function(){
+QL.gui.Editor.prototype.refreshLeftPanel = function(){
 	var $meshEntities = $(".entities#mesh-entities");
 	$meshEntities.html("");
 	var _editor = this;
@@ -93,6 +94,7 @@ QL.gui.Editor.prototype.updateToolbar = function(){
 				break;
 		}
 	});
+	this.refreshObjectPane();
 };
 
 QL.gui.Editor.prototype.init = function(){
@@ -108,7 +110,7 @@ QL.gui.Editor.prototype.init = function(){
 
 	animStep();
 
-	_editor.updateToolbar();
+	_editor.refreshLeftPanel();
 
 	$("body").on("click","a[class*='-toggle']",function(){
 		$(this).toggleClass("toggled");
@@ -124,6 +126,9 @@ QL.gui.Editor.prototype.init = function(){
 	$("body").on("click","a[class*='-trigger']",function(){
 		var _triggerMethod = $(this).data("trigger-method");
 		if(typeof _editor[_triggerMethod] !== "undefined"){
+			if($(this).data("trigger-id")){
+				_editor[_triggerMethod]($(this).data("trigger-id"));
+			}
 			_editor[_triggerMethod]();
 		}
 	});
@@ -157,9 +162,34 @@ QL.gui.Editor.prototype.newMesh = function(){
 			color: 0x113311
 		},
 	]);
-	this.updateToolbar();
+	this.refreshLeftPanel();
 };
 
 QL.gui.Editor.prototype.clearScene = function(){
 	this.scene.children = [];
+	this.refreshLeftPanel();
 };
+
+QL.gui.Editor.prototype.refreshObjectPane = function(){
+	if(this.scene.selected){
+		// object pane code here
+		$(".object-update-trigger").attr("data-trigger-id", this.scene.selected.id);
+		$("#object-pane-name").val(this.scene.selected.name)
+		$("#object-pane-pos-x").val(this.scene.selected.position.x)
+		$("#object-pane-pos-y").val(this.scene.selected.position.y)
+		$("#object-pane-pos-z").val(this.scene.selected.position.z)
+		$("#object-pane-color").val("")
+	}
+}
+
+QL.gui.Editor.prototype.objectUpdate = function(objId){
+	if(!objId){
+		return false;
+	}
+	var objRef = this.scene.getObjectById(objId);
+	objRef.name = $("#object-pane-name").val();
+	objRef.position.x = parseInt($("#object-pane-pos-x").val());
+	objRef.position.y = parseInt($("#object-pane-pos-y").val());
+	objRef.position.z = parseInt($("#object-pane-pos-z").val());
+	this.refreshLeftPanel();
+}

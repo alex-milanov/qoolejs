@@ -147,29 +147,6 @@ var _entities = [
 	}
 ];
 
-
 var editor = new QL.gui.Editor(_views,_entities);
 editor.init();
 
-/*
-var tlView = new QL.gui.View2D(_views.tl);
-var blView = new QL.gui.View2D(_views.bl);
-var brView = new QL.gui.View2D(_views.br);
-
-
-var trView = new QL.gui.View3D(_views.tr);
-trView.addEntities(_entities);
-
-function refresh2dViews(){
-	tlView.draw(_entities);
-	blView.draw(_entities);
-	brView.draw(_entities);
-}
-
-refresh2dViews();
-trView.animate();
-
-$(window).resize(function(){
-	refresh2dViews();
-});
-*/

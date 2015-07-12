@@ -38,18 +38,18 @@ html
 						data-toggle-class="fullscreen"
 					) Full Screen
 			.left-panel.opened
-				.level-name Test Level
-				.scene-panel
+				.scene-pane
+					.pane-title Scene: Test Level
 					.section
 						.title Lights
 					.section
 						.title Cameras
 					.section
 						.title Meshes
-						a.new-mesh-trigger(
+						a.btn.new-mesh-trigger(
 							data-trigger-method="newMesh"
 						) New Mesh
-						a.clear-scene-trigger(
+						a.btn.clear-scene-trigger(
 							data-trigger-method="clearScene"
 						) Clear Scene
 						ul.entities#mesh-entities
@@ -59,7 +59,24 @@ html
 									data-trigger-method="edit",
 									data-trigger-id="1"
 								)
-				.object-panel
+				.object-pane
+					.pane-title Object Pane
+					ul.props
+						li
+							label Name 
+							input#object-pane-name(type="text")
+						li
+							label Position 
+							input.p30#object-pane-pos-x(type="number")
+							input.p30#object-pane-pos-y(type="number")
+							input.p30#object-pane-pos-z(type="number")
+						li
+							label Color 
+							input#object-pane-color(type="text")
+					a.btn.object-update-trigger(
+						data-trigger-method="objectUpdate",
+						data-trigger-id=false
+					) Update
 			.views
 				canvas.canvas.canvas-tl
 				canvas.canvas.canvas-tr

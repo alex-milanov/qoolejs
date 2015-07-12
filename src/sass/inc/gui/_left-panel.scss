@@ -8,74 +8,7 @@
 		bottom: 0px;
 		width: 0px;
 		padding: 10px 0px;
-		overflow-y: scroll;
-		overflow-x: none;
-		&::-webkit-scrollbar
-		{
-			width: 12px;  /* for vertical scrollbars */
-			height: 12px; /* for horizontal scrollbars */
-		}
-
-		&::-webkit-scrollbar-track
-		{
-			background: rgba(0, 0, 0, 0.1);
-		}
-
-		&::-webkit-scrollbar-thumb
-		{
-			background: rgba(0, 0, 0, 0.5);
-		}
-		.level-name {
-			padding: 0px 10px;
-			height: 25px;
-			line-height: 25px;
-		}
-		.section {
-			.title {
-				height: 25px;
-				line-height: 25px;
-				font-size: 16px;
-				background: #888;
-				border-top: 1px solid #aaa;
-				border-bottom: 1px solid #777;
-				padding-left: 10px;
-			}
-			.entities {
-				border-top: 1px solid #aaa;
-				margin: 0px;
-				list-style-type: none;
-				padding: 0px;
-				li {
-					margin-left: 0px;
-					padding: 0px 25px;
-					height: 25px;
-					line-height: 25px;
-					font-size:12px;
-					cursor: pointer;
-					&:hover {
-						background: #888;
-					}
-					&.selected {
-						background: #777;
-					}
-				}
-			}
-			> a {
-				margin-left: 0px;
-				padding: 0px;
-				text-align: center;
-				height: 25px;
-				line-height: 25px;
-				font-size:14px;
-				background: #888;
-				display: block;
-				cursor: pointer;
-				&:hover {
-					background: #777;
-				}
-
-			}
-		}
+		
 		&.opened {
 			width: $ql-panel-width;
 			& + .views {
@@ -83,5 +16,134 @@
 				border-left-width:0px;
 			}
 		}
+		a.btn {
+			margin-left: 0px;
+			padding: 0px;
+			margin: 5px 0px;
+			text-align: center;
+			height: 25px;
+			line-height: 25px;
+			font-size:14px;
+			background: #888;
+			display: block;
+			cursor: pointer;
+			&:hover {
+				background: #777;
+			}
+
+		}
+		.pane-title {
+			padding: 0px 10px; 
+			height: 30px;
+			line-height: 30px;
+		}
+		.scene-pane {
+			position: absolute;
+			top: 0px;
+			width: 100%;
+			bottom: $ql-object-pane-height;
+			overflow-y: scroll;
+			overflow-x: none;
+			&::-webkit-scrollbar
+			{
+				width: 12px;  /* for vertical scrollbars */
+				height: 12px; /* for horizontal scrollbars */
+			}
+
+			&::-webkit-scrollbar-track
+			{
+				background: rgba(0, 0, 0, 0.1);
+			}
+
+			&::-webkit-scrollbar-thumb
+			{
+				background: rgba(0, 0, 0, 0.5);
+			}
+			.section {
+				.title {
+					height: 25px;
+					line-height: 25px;
+					font-size: 16px;
+					background: #888;
+					border-top: 1px solid #aaa;
+					border-bottom: 1px solid #777;
+					padding-left: 10px;
+				}
+				.entities {
+					margin: 0px;
+					padding: 0px;
+					list-style-type: none;
+					li {
+						margin-left: 0px;
+						padding: 0px 25px;
+						height: 25px;
+						line-height: 25px;
+						font-size:12px;
+						cursor: pointer;
+						&:hover {
+							background: #888;
+						}
+						&.selected {
+							background: #777;
+						}
+					}
+				}
+				
+			}
+		}
+		.object-pane {
+			background: #999;
+			color: #000;
+			position: absolute;
+			bottom: 0px;
+			width: 100%;
+			height: $ql-object-pane-height;
+			border-top: 2px solid #555;
+			.props {
+				margin: 0px;
+				padding: 0px;
+				list-style-type: none;
+				li {
+					margin-left: 0px;
+					padding: 0px;
+					height: 30px;
+					line-height: 30px;
+					font-size:14px;
+					cursor: pointer;
+					border-top: 1px solid #aaa;
+					&:hover {
+						background: #888;
+					}
+					&.selected {
+						background: #777;
+					}
+					label {
+						width: 20%;
+						display: inline-block;
+						margin: 0px;
+						padding: 0px 10px;
+					}
+					input {
+						width: 69%;
+						height: 30px;
+						line-height: 30px;
+						padding: 0px 3px;
+						border: 0px;
+						background: #777;
+						font-size: 14px;
+						color: #333;
+						outline: none;
+						display: inline-block;
+						margin: 0px;
+						padding: 0px;
+						&.p30 {
+							width: 21.5%;
+						}
+					}
+				}
+			}
+		}
+			
 	}
+	
 }
