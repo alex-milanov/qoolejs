@@ -41,7 +41,10 @@
 			position: absolute;
 			top: 0px;
 			width: 100%;
-			bottom: $ql-object-pane-height;
+			bottom: 0px;			
+			.object-pane.active ~ & {	
+				bottom: $ql-object-pane-height;
+			}
 			overflow-y: scroll;
 			overflow-x: none;
 			&::-webkit-scrollbar
@@ -99,6 +102,10 @@
 			width: 100%;
 			height: $ql-object-pane-height;
 			border-top: 2px solid #555;
+			display: none;
+			&.active {
+				display: block;
+			}
 			.props {
 				margin: 0px;
 				padding: 0px;

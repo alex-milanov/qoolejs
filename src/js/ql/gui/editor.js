@@ -172,6 +172,7 @@ QL.gui.Editor.prototype.clearScene = function(){
 
 QL.gui.Editor.prototype.refreshObjectPane = function(){
 	if(this.scene.selected){
+		$(".object-pane").addClass("active");
 		// object pane code here
 		$(".object-update-trigger").attr("data-trigger-id", this.scene.selected.id);
 		$("#object-pane-name").val(this.scene.selected.name)
@@ -179,6 +180,8 @@ QL.gui.Editor.prototype.refreshObjectPane = function(){
 		$("#object-pane-pos-y").val(this.scene.selected.position.y)
 		$("#object-pane-pos-z").val(this.scene.selected.position.z)
 		$("#object-pane-color").val("")
+	} else {
+		$(".object-pane").removeClass("active");
 	}
 }
 
