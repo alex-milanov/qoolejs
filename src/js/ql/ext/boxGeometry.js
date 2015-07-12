@@ -5,7 +5,7 @@ if(typeof QL.ext === "undefined"){ QL.ext = {}; }
 
 QL.ext.BoxGeometry = function ( width, height, depth, widthSegments, heightSegments, depthSegments ) {
 
-	THREE.BoxGeometry.call( this, width, height, depth, widthSegments, heightSegments, depthSegments );	
+	THREE.BoxGeometry.call( this, width, height, depth, widthSegments, heightSegments, depthSegments );
 
 	this.buildQuads = function(){
 
@@ -73,11 +73,11 @@ QL.ext.BoxGeometry = function ( width, height, depth, widthSegments, heightSegme
 			this.vertices[3]
 		));
 
-	}
+	};
 
 	this.buildQuads();
 
-}
+};
 
 QL.ext.BoxGeometry.prototype = Object.create( THREE.BoxGeometry.prototype );
 QL.ext.BoxGeometry.prototype.constructor = THREE.BoxGeometry;
@@ -94,12 +94,12 @@ QL.ext.BoxGeometry.prototype.scale = function(_mod, scale2){
 		scaleVectors.push(scaleVector);
 
 		if(
-			Math.abs(objVector.x+scaleVector.x)<10
-			|| Math.abs(objVector.y+scaleVector.y)<10
+			Math.abs(objVector.x+scaleVector.x)<10 ||
+			Math.abs(objVector.y+scaleVector.y)<10
 		) {
 			scalePossible = false;
 		}
-	})
+	});
 
 	var that = this;
 
@@ -107,10 +107,8 @@ QL.ext.BoxGeometry.prototype.scale = function(_mod, scale2){
 		this.vertices.forEach(function(_v, index){
 			_v.add(scaleVectors[index].toVector3(_mod));
 			that.verticesNeedUpdate = true;
-		})
+		});
 	}
 
 	return scalePossible;
-}
-
-
+};

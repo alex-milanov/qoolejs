@@ -83,8 +83,8 @@ gulp.task('js', function(done) {
 		//.pipe( uglify() )
 		//.pipe( concat('all.min.js'))
 	gulp.src('./src/js/**/*.js')
-//		.pipe(jshint())
-//		.pipe(jshint.reporter('jshint-stylish'))
+		.pipe(jshint())
+		.pipe(jshint.reporter('jshint-stylish'))
 		.pipe( gulp.dest('./dist/js/'))
 //		.pipe( livereload())
 		.on('end',done);

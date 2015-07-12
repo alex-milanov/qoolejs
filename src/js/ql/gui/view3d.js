@@ -7,14 +7,14 @@ QL.gui.View3D = function(_conf, _scene){
 	this.canvas = $(_conf.canvas)[0];
 	//this.ctx = this.canvas.getContext("2d");
 	this.perspective = _conf.perspective;
-	
+
 	this.canvas.width = $(this.canvas).width();
 	this.canvas.height = $(this.canvas).height();
 	this.center = [
 		this.canvas.width/2,
 		this.canvas.height/2
-	]
-	
+	];
+
 	if(typeof _scene === "undefined"){
 		this.scene = new THREE.Scene();
 	} else {
@@ -33,7 +33,7 @@ QL.gui.View3D = function(_conf, _scene){
 	this.camera = new THREE.PerspectiveCamera( 75, this.canvas.width / this.canvas.height, 1, 10000 );
 	this.camera.position.z = 300;
 	this.camera.position.y = 50;
-	
+
 
 	this.scene.add(this.camera);
 
@@ -76,7 +76,7 @@ QL.gui.View3D = function(_conf, _scene){
 	this.renderer.gammaOutput = true;
 
 	this.renderer.shadowMapEnabled = true;
-}
+};
 
 QL.gui.View3D.prototype.addBlock = function(_entity){
 
@@ -88,10 +88,10 @@ QL.gui.View3D.prototype.addBlock = function(_entity){
 		x: (_entity.start[0]+width/2),
 		y: (_entity.start[1]+height/2),
 		z: (_entity.start[2]+depth/2)
-	}
+	};
 
 	var geometry = new QL.ext.BoxGeometry( width, height, depth );
-	var color = _entity.color || 0x777777
+	var color = _entity.color || 0x777777;
 	var material = new THREE.MeshBasicMaterial( { color: color, wireframe: false } );
 	var mesh = new THREE.Mesh( geometry, material );
 	mesh.position.set( pos.x, pos.y, pos.z );
@@ -103,7 +103,7 @@ QL.gui.View3D.prototype.addBlock = function(_entity){
 	}
 
 	this.scene.add( mesh );
-} 
+};
 
 QL.gui.View3D.prototype.addEntities = function(_entities){
 
@@ -117,11 +117,11 @@ QL.gui.View3D.prototype.addEntities = function(_entities){
 				that.addBlock(_entity);
 				break;
 		}
-	})
-}
+	});
+};
 
 QL.gui.View3D.prototype.refresh = function(){
-	
+
 
 	$(this.canvas).attr("style","");
 	this.canvas.width = $(this.canvas).width();
@@ -130,17 +130,17 @@ QL.gui.View3D.prototype.refresh = function(){
 	this.renderer.setSize(this.canvas.width, this.canvas.height );
 
 	this.camera.aspect = this.canvas.width / this.canvas.height;
-	this.camera.updateProjectionMatrix()
-	
+	this.camera.updateProjectionMatrix();
+
 
 	this.center = [
 		this.canvas.width/2,
 		this.canvas.height/2
-	]
+	];
 
 
 	this.renderer.render( this.scene, this.camera );
-	
+
 
 	// draw text
 	/*
@@ -148,5 +148,5 @@ QL.gui.View3D.prototype.refresh = function(){
 	this.ctx.fillStyle="#999";
 	this.ctx.fillText(this.perspective,15,25);
 	*/
-	
-}
+
+};

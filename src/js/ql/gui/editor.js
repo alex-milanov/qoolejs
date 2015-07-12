@@ -56,8 +56,8 @@ QL.gui.Editor.prototype.select = function(_objId){
 			_obj.selected = false;
 		}
 	});
-	
-	
+
+
 	_editor.refreshLeftPanel();
 };
 
@@ -176,15 +176,15 @@ QL.gui.Editor.prototype.refreshObjectPane = function(){
 		console.log(this.scene.selected);
 		// object pane code here
 		$(".object-update-trigger").attr("data-trigger-id", this.scene.selected.id);
-		$("#object-pane-name").val(this.scene.selected.name)
-		$("#object-pane-pos-x").val(this.scene.selected.position.x)
-		$("#object-pane-pos-y").val(this.scene.selected.position.y)
-		$("#object-pane-pos-z").val(this.scene.selected.position.z)
-		$("#object-pane-color").val("")
+		$("#object-pane-name").val(this.scene.selected.name);
+		$("#object-pane-pos-x").val(this.scene.selected.position.x);
+		$("#object-pane-pos-y").val(this.scene.selected.position.y);
+		$("#object-pane-pos-z").val(this.scene.selected.position.z);
+		$("#object-pane-color").val("");
 	} else {
 		$(".object-pane").removeClass("active");
 	}
-}
+};
 
 QL.gui.Editor.prototype.objectUpdate = function(objId){
 	if(!objId){
@@ -196,4 +196,4 @@ QL.gui.Editor.prototype.objectUpdate = function(objId){
 	objRef.position.y = parseInt($("#object-pane-pos-y").val());
 	objRef.position.z = parseInt($("#object-pane-pos-z").val());
 	this.refreshLeftPanel();
-}
+};
