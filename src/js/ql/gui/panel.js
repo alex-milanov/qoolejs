@@ -12,7 +12,7 @@ QL.gui.Panel.prototype = Object.create( QL.gui.Element );
 QL.gui.Panel.prototype.constructor = QL.gui.Panel;
 
 QL.gui.Panel.prototype.init = function(){
-	QL.gui.Element.prototype.init.call(this)
+	QL.gui.Element.prototype.init.call(this);
 };
 
 QL.gui.Panel.prototype.refresh = function(){

@@ -94,8 +94,8 @@ QL.ext.BoxGeometry.prototype.scale = function(_mod, scale2){
 		scaleVectors.push(scaleVector);
 
 		if(
-			Math.abs(objVector.x+scaleVector.x)<10 ||
-			Math.abs(objVector.y+scaleVector.y)<10
+			Math.abs(objVector.x+scaleVector.x)<5 ||
+			Math.abs(objVector.y+scaleVector.y)<5
 		) {
 			scalePossible = false;
 		}

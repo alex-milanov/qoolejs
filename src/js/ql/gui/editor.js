@@ -6,7 +6,7 @@ if(typeof QL.gui === "undefined"){ QL.gui = {}; }
 
 QL.gui.Editor = function(_views, _entities){
 
-	QL.gui.Element.call( 'body' )
+	QL.gui.Element.call( 'body' );
 
 	this.params = {
 		"obj-mode": "move"
@@ -58,8 +58,8 @@ QL.gui.Editor.prototype.init = function(){
 
 	animStep();
 
-	this.panel.init()
-	this.toolbar.init()
+	this.panel.init();
+	this.toolbar.init();
 
 	this.panel.refresh();
 	
@@ -89,18 +89,36 @@ QL.gui.Editor.prototype.select = function(_objId){
 
 
 QL.gui.Editor.prototype.newMesh = function(){
-	var meshName = window.prompt("Name");
+	var meshName = "Block "+this.scene.children.length;
 	this.views.tr.addEntities([
 		{
-			name: (meshName || "Block"),
+			name: (meshName),
 			type: "block",
 			start: [-20,-20,-20],
 			finish: [20,20,20],
 			color: 0x113311
 		},
 	]);
+	this.select(this.scene.getObjectByName(meshName).id);
 	this.panel.refresh();
 };
+
+QL.gui.Editor.prototype.duplicate = function(){
+
+	if(!this.scene.selected){
+		return false;
+	}
+
+	var mesh = this.scene.selected.clone();
+	mesh.name = "Block "+this.scene.children.length;
+ 
+	mesh.position.set(0,0,0);
+
+	this.scene.add(mesh);
+	this.select(this.scene.getObjectByName(mesh.name).id);
+	this.panel.refresh();
+};
+
 
 QL.gui.Editor.prototype.clearScene = function(){
 	this.scene.children = [];
