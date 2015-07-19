@@ -205,7 +205,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 			ev.offsetX,
 			ev.offsetY
 		];
-		_view.lastScale = [0,0];
+		_view.lastChange = [0,0];
 		if(_view.scene.selected){
 			var pos = [
 				_view.scene.selected.position[_view.mod.u],
@@ -226,41 +226,46 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 				return;
 			}
 
-
 			var mousePos = [
 				ev.offsetX,
 				ev.offsetY
 			];
 
+			var changeVector = [
+				parseInt((mousePos[0]-_view.dragStartPos[0])/5)*5,
+				parseInt((mousePos[1]-_view.dragStartPos[1])/5)*5,
+			];
+
+			var objectChanged = false;
+
 			switch(_view.editor.params["obj-mode"]){
+				
 				case "move":
 					var dragVector = [
 						mousePos[0]-_view.dragStartPos[0],
 						mousePos[1]-_view.dragStartPos[1]
 					];
 
-					if(dragVector[0]/5 === parseInt(dragVector[0]/5))
-						_view.scene.selected.position[_view.mod.u] = (_view.mod.xD*dragVector[0])+_view.dragOffset[0];
-					if(dragVector[1]/5 === parseInt(dragVector[1]/5))
-						_view.scene.selected.position[_view.mod.v] = (_view.mod.yD*dragVector[1])+_view.dragOffset[1];
+					_view.scene.selected.position[_view.mod.u] = (_view.mod.xD*changeVector[0])+_view.dragOffset[0];
+					_view.scene.selected.position[_view.mod.v] = (_view.mod.yD*changeVector[1])+_view.dragOffset[1];
+					objectChanged = true;
 
 					break;
 				case "scale":
-					var scaleVector = [
-						parseInt((mousePos[0]-_view.dragStartPos[0])/5)*5,
-						parseInt((mousePos[1]-_view.dragStartPos[1])/5)*5,
-					];
+					
 					if( _view.scene.selected.geometry.type === "BoxGeometry" &&
 						_view.scene.selected.geometry.scale(_view.mod, new QL.ext.Vector2(
-						scaleVector[0] - _view.lastScale[0],
-						-(scaleVector[1] - _view.lastScale[1])
+						changeVector[0] - _view.lastChange[0],
+						-(changeVector[1] - _view.lastChange[1])
 					))){
-						_view.lastScale = scaleVector;
+						objectChanged = true;
 					}
 					break;
 			}
 
-			_view.lastPos = mousePos;
+			if(objectChanged){
+				_view.lastChange = changeVector;
+			}
 
 		}
 	});
