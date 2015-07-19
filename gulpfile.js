@@ -67,7 +67,6 @@ gulp.task("bower-files", function(done){
 	del([
 		'./dist/lib/**/*'
 	], function(){
-		console.log(bowerFiles);
 		gulp.src(bowerFiles)
 			// .pipe(filterForWww)
 			.pipe(gulp.dest("./dist/lib"))

@@ -167,7 +167,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 		);
 
 		var oldId = false;
-		if(typeof _view.scene.selected !== "undefined" && _view.scene.selected !== false){
+		if(_view.scene.selected){
 			oldId = _view.scene.selected.id;
 		}
 
