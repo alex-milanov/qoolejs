@@ -93,7 +93,7 @@ QL.gui.View3D.prototype.addBlock = function(_entity){
 	var geometry = new QL.ext.BoxGeometry( width, height, depth );
 	var color = _entity.color || 0x777777;
 	var material = new THREE.MeshBasicMaterial( { color: color, wireframe: false } );
-	var mesh = new THREE.Mesh( geometry, material );
+	var mesh = new QL.ext.Mesh( geometry, material );
 	mesh.position.set( pos.x, pos.y, pos.z );
 	mesh.receiveShadow = true;
 	mesh.castShadow = true;

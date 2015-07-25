@@ -112,3 +112,16 @@ QL.ext.BoxGeometry.prototype.scale = function(_mod, scale2){
 
 	return scalePossible;
 };
+
+
+QL.ext.BoxGeometry.prototype.clone = function(){
+
+	var params = this.parameters;
+
+	var geometry = new QL.ext.BoxGeometry(
+		params.width, params.height, params.depth, 
+		params.widthSegments, params.heightSegments, params.depthSegments
+	);
+
+	return geometry;
+}
