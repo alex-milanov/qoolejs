@@ -103,8 +103,8 @@ gulp.task('express', function() {
 	app.use(require('connect-livereload')({
 		port: 35729
 	}));
-	app.listen(1337);
-	gutil.log('Listening on port: 1337');
+	app.listen(8080);
+	gutil.log('Listening on port: 8080');
 });
 
 gulp.task('livereload', function(){
