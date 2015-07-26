@@ -84,22 +84,33 @@ QL.ext.BoxGeometry.prototype.constructor = THREE.BoxGeometry;
 
 QL.ext.BoxGeometry.prototype.scale = function(_mod, scale2){
 
-	var scaleVectors = [];
+	var params = this.parameters;
+
+	var modHelper = ['width','height','depth'];
+
 	var scalePossible = true;
+
+	if((params[modHelper[_mod.x]]+_mod.xD*scale2.x*2) < 10
+		|| (params[modHelper[_mod.y]]+_mod.yD*scale2.y*2) < 10){
+		scalePossible = false;
+	}
+
+	var scaleVectors = [];
+	
 	this.vertices.forEach(function(_v, index){
 		var scaleVector = scale2.clone();
 		var objVector = new QL.ext.Vector3().copy(_v).toVector2(_mod);
 		scaleVector.x *= (objVector.x > 0) ? 1 : - 1;
 		scaleVector.y *= (objVector.y > 0) ? 1 : - 1;
 		scaleVectors.push(scaleVector);
-
-		if(
-			Math.abs(objVector.x+scaleVector.x)<5 ||
-			Math.abs(objVector.y+scaleVector.y)<5
-		) {
-			scalePossible = false;
-		}
+		
 	});
+
+	if(scalePossible){
+		params[modHelper[_mod.x]] += _mod.xD*(scale2.x)*2;
+		params[modHelper[_mod.y]] += _mod.yD*(scale2.y)*2;
+		this.parameters = params;
+	}
 
 	var that = this;
 
@@ -114,9 +125,10 @@ QL.ext.BoxGeometry.prototype.scale = function(_mod, scale2){
 };
 
 
-QL.ext.BoxGeometry.prototype.clone = function(){
+QL.ext.BoxGeometry.prototype.clone = function(params){
 
-	var params = this.parameters;
+	if(!params)
+		params = this.parameters;
 
 	var geometry = new QL.ext.BoxGeometry(
 		params.width, params.height, params.depth, 
