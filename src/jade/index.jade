@@ -26,9 +26,9 @@ html
 						data-option-param="obj-mode",
 						data-option-value="rotate"
 					) R
-					a.duplicate-trigger(
-						data-trigger-method="duplicate"
-					) Duplicate
+					a.clone-trigger(
+						data-trigger-method="cloneMesh"
+					) Clone
 				.right-bar
 					a.debug-toggle(
 						data-toggle-ref=".indexes",
@@ -57,7 +57,7 @@ html
 								label Color 
 								input#object-pane-color(type="text")
 						a.btn.object-update-trigger(
-							data-trigger-method="objectUpdate",
+							data-trigger-method="updateMesh",
 							data-trigger-id=false
 						) Update
 				.scene-pane

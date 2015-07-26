@@ -128,24 +128,27 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 		case "top":
 			this.mod.x = 0;
 			this.mod.y = 2;
+			this.mod.z = 1;
 			this.mod.u = "x";
 			this.mod.v = "z";
-			this.mod.z = "y";
+			this.mod.w = "y";
 			this.mod.yD = 1;
 			break;
 		case "front":
 			this.mod.x = 0;
 			this.mod.y = 1;
+			this.mod.z = 2;
 			this.mod.u = "x";
 			this.mod.v = "y";
-			this.mod.z = "z";
+			this.mod.w = "z";
 			break;
 		case "side":
 			this.mod.x = 2;
 			this.mod.y = 1;
+			this.mod.z = 0;
 			this.mod.u = "z";
 			this.mod.v = "y";
-			this.mod.z = "x";
+			this.mod.w = "x";
 			this.mod.xD = -1;
 			break;
 	}
@@ -179,7 +182,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 				hits++;
 
 				var hitObj = _view.scene.getObjectById(hitArea.objId);
-				if(!selectedObj || hitObj.position[_view.mod.z] > selectedObj.position[_view.mod.z]){
+				if(!selectedObj || hitObj.position[_view.mod.w] > selectedObj.position[_view.mod.w]){
 
 					if(hitArea.objId === oldId)
 						return true;
@@ -264,6 +267,12 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 			}
 
 			if(objectChanged){
+				var action = {
+					type: _view.editor.params["obj-mode"],
+					changeVector: changeVector,
+					mod: _view.mod
+				}
+				_view.editor.trackAction(action);
 				_view.lastChange = changeVector;
 			}
 

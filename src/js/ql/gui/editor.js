@@ -12,6 +12,8 @@ QL.gui.Editor = function(_views, _entities){
 		"obj-mode": "move"
 	};
 
+	this.actions = []; 
+
 	this.entities = _entities;
 
 	this.keyboard = new THREEx.KeyboardState();
@@ -65,6 +67,10 @@ QL.gui.Editor.prototype.init = function(){
 	
 };
 
+QL.gui.Editor.prototype.trackAction = function(action){
+	this.actions.push(action);
+}
+
 QL.gui.Editor.prototype.select = function(_objId){
 
 	if(!this.scene.selected || this.scene.selected.id !== _objId){
@@ -103,19 +109,34 @@ QL.gui.Editor.prototype.newMesh = function(){
 	this.panel.refresh();
 };
 
-QL.gui.Editor.prototype.duplicate = function(){
+QL.gui.Editor.prototype.cloneMesh = function(){
 
 	if(!this.scene.selected){
 		return false;
 	}
 
+	var lastAction = this.actions[this.actions.length-1];
+
 	var mesh = this.scene.selected.clone();
 	mesh.name = "Block "+this.scene.children.length;
  
 	mesh.position.set(0,0,0);
+	mesh.position[lastAction.mod.w] = this.scene.selected.position[lastAction.mod.w];
 
 	this.scene.add(mesh);
 	this.select(this.scene.getObjectByName(mesh.name).id);
+	this.panel.refresh();
+};
+
+QL.gui.Editor.prototype.updateMesh = function(objId){
+	if(!objId){
+		return false;
+	}
+	var objRef = this.scene.getObjectById(objId);
+	objRef.name = $("#object-pane-name").val();
+	objRef.position.x = parseInt($("#object-pane-pos-x").val());
+	objRef.position.y = parseInt($("#object-pane-pos-y").val());
+	objRef.position.z = parseInt($("#object-pane-pos-z").val());
 	this.panel.refresh();
 };
 
@@ -142,14 +163,4 @@ QL.gui.Editor.prototype.refreshObjectPane = function(){
 	}
 };
 
-QL.gui.Editor.prototype.objectUpdate = function(objId){
-	if(!objId){
-		return false;
-	}
-	var objRef = this.scene.getObjectById(objId);
-	objRef.name = $("#object-pane-name").val();
-	objRef.position.x = parseInt($("#object-pane-pos-x").val());
-	objRef.position.y = parseInt($("#object-pane-pos-y").val());
-	objRef.position.z = parseInt($("#object-pane-pos-z").val());
-	this.panel.refresh();
-};
+

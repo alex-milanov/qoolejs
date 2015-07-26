@@ -90,10 +90,13 @@ QL.ext.BoxGeometry.prototype.scale = function(_mod, scale2){
 
 	var scalePossible = true;
 
-	if((params[modHelper[_mod.x]]+_mod.xD*scale2.x*2) < 10
-		|| (params[modHelper[_mod.y]]+_mod.yD*scale2.y*2) < 10){
+	
+	if((params[modHelper[_mod.x]] + scale2.x*2) < 10
+		|| (params[modHelper[_mod.y]] + scale2.y*2) < 10){
 		scalePossible = false;
 	}
+
+	//console.log(params[modHelper[_mod.y]],modHelper[_mod.y],(_mod.yD*scale2.y*2),scalePossible)
 
 	var scaleVectors = [];
 	
@@ -103,12 +106,19 @@ QL.ext.BoxGeometry.prototype.scale = function(_mod, scale2){
 		scaleVector.x *= (objVector.x > 0) ? 1 : - 1;
 		scaleVector.y *= (objVector.y > 0) ? 1 : - 1;
 		scaleVectors.push(scaleVector);
-		
+		/*
+		if(
+			Math.abs(objVector.x+scaleVector.x)<5 ||
+			Math.abs(objVector.y+scaleVector.y)<5
+		) {
+			scalePossible = false;
+		}
+		*/
 	});
 
 	if(scalePossible){
-		params[modHelper[_mod.x]] += _mod.xD*(scale2.x)*2;
-		params[modHelper[_mod.y]] += _mod.yD*(scale2.y)*2;
+		params[modHelper[_mod.x]] += (scale2.x)*2;
+		params[modHelper[_mod.y]] += (scale2.y)*2;
 		this.parameters = params;
 	}
 
