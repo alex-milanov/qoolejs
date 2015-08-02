@@ -162,7 +162,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 
 	// mouse manipulations
 	// select
-	$(this.canvas).click(function(ev){
+	var handleSelect = function(ev){
 
 		var hitPos = new QL.ext.Vector2(
 			ev.offsetX,
@@ -194,15 +194,17 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 		_view.editor.select(selectedObj.id);
 
 
-	});
+	};
 
 	this.operation = "idle";
+	this.interacting = false;
 	this.dragStartPos = [];
 	this.lastPos = [];
 	this.lastScale = [];
 	this.dragOffset = [];
 	// mouse move
 	$(this.canvas).mousedown(function(ev){
+		_view.interacting = false;
 		_view.operation = "dragstart";
 		_view.dragStartPos = _view.lastPos = [
 			ev.offsetX,
@@ -222,6 +224,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 	});
 
 	$(this.canvas).mousemove(function(ev){
+		_view.interacting = true;
 		if(["dragstart","dragging"].indexOf(_view.operation)>-1){
 			_view.operation = "dragging";
 
@@ -284,6 +287,11 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 		_view.dragStartPos = [];
 		_view.dragPos = [];
 		_view.dragOffset = [];
+		if(_view.interacting === false || _view.lastChange == [0,0]){
+			handleSelect(ev)
+		}
+		_view.interacting = false;
+
 	});
 
 };
