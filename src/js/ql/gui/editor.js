@@ -16,7 +16,7 @@ QL.gui.Editor = function(_views, _entities){
 
 	this.entities = _entities;
 
-	this.keyboard = new THREEx.KeyboardState();
+	this.keyboard = {};
 
 	// init scene
 	this.scene = new THREE.Scene();
@@ -36,6 +36,8 @@ QL.gui.Editor = function(_views, _entities){
 		}
 	}
 
+	this.activeView = this.views['tl'];
+
 	this.panel = new QL.gui.Panel(".left-panel", this);
 	this.toolbar = new QL.gui.Toolbar(".toolbar", this);
 
@@ -50,12 +52,49 @@ QL.gui.Editor.prototype.constructor = QL.gui.Editor;
 QL.gui.Editor.prototype.init = function(){
 
 	var _editor = this;
+	_editor.keyboard = new THREEx.KeyboardState();
 
 	function animStep(){
 		requestAnimationFrame( animStep );
 		for(var key in _editor.views){
 			_editor.views[key].refresh(_editor.entities);
 		}
+
+		// keyboard interactions
+		// mode change
+		if(_editor.keyboard.pressed("M")){
+			_editor.changeMode("move");
+		} else if (_editor.keyboard.pressed("R")){
+			_editor.changeMode("rotate");
+		} else if (_editor.keyboard.pressed("S")){
+			_editor.changeMode("scale");
+		}
+
+		// object creation
+		if(_editor.keyboard.pressed("N")){
+			_editor.newMesh();
+		}
+		if(_editor.keyboard.pressed("C")){
+			_editor.cloneMesh();
+		}
+		if(_editor.keyboard.pressed("L")){
+			_editor.clearScene();
+		}
+
+		// initial object interaction
+		if(_editor.keyboard.pressed("up")){
+			_editor.scene.selected.position[_editor.activeView.mod.v] -= _editor.activeView.mod.yD*5;
+		}
+		if(_editor.keyboard.pressed("down")){
+			_editor.scene.selected.position[_editor.activeView.mod.v] += _editor.activeView.mod.yD*5;
+		}
+		if(_editor.keyboard.pressed("left")){
+			_editor.scene.selected.position[_editor.activeView.mod.u] -= _editor.activeView.mod.xD*5;
+		}
+		if(_editor.keyboard.pressed("right")){
+			_editor.scene.selected.position[_editor.activeView.mod.u] += _editor.activeView.mod.xD*5;
+		}
+
 	}
 
 	animStep();
@@ -64,8 +103,17 @@ QL.gui.Editor.prototype.init = function(){
 	this.toolbar.init();
 
 	this.panel.refresh();
+
 	
 };
+
+QL.gui.Editor.prototype.changeMode = function(mode){
+	if(this.params['obj-mode'] !== mode){
+		this.params['obj-mode'] = mode;
+		$("a.obj-mode-option[data-option-param='obj-mode']").removeClass("selected");
+		$("a.obj-mode-option[data-option-param='obj-mode'][data-option-value='"+mode+"']").addClass("selected");
+	}
+}
 
 QL.gui.Editor.prototype.trackAction = function(action){
 	this.actions.push(action);
@@ -121,7 +169,7 @@ QL.gui.Editor.prototype.cloneMesh = function(){
 	mesh.name = "Block "+this.scene.children.length;
  
 	mesh.position.set(0,0,0);
-	mesh.position[lastAction.mod.w] = this.scene.selected.position[lastAction.mod.w];
+	mesh.position[this.activeView.mod.w] = this.scene.selected.position[this.activeView.mod.w];
 
 	this.scene.add(mesh);
 	this.select(this.scene.getObjectByName(mesh.name).id);

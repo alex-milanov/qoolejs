@@ -291,6 +291,8 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 			handleSelect(ev)
 		}
 		_view.interacting = false;
+		_editor.activeView = _view;
+
 
 	});
 
