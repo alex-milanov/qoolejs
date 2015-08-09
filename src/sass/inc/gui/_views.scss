@@ -5,32 +5,41 @@
 		bottom: 0px;
 		right: 0px;
 		left: 0px;
-		border: 0px solid #777;
 		.canvas {
 			width: 50%;
 			height: 50%;
-			border:0px solid #777;
+			border:1px solid rgba(128,128,128,0);
+			box-sizing: border-box;
+			&.selected {
+				border-color: #579!important;
+				border-size: 1px;
+				box-sizing: border-box;
+			}
 			background: #000;
 			position: absolute;
 			&.canvas-tl {
 				top: 0px;
 				left: 0px;
-				border-width: 0px 2px 2px 0px;
+				border-left-color: #555;
+				border-bottom-color: #555;
 			}
 			&.canvas-tr {
 				top: 0px;
 				right: 0px;
-				border-width: 0px 0px 2px 2px;
+				box-sizing: inherit;
+				border: 0px;
 			}
 			&.canvas-bl {
 				bottom: 0px;
 				left: 0px;
-				border-width: 2px 2px 0px 0px;
+				border-right-color: #555;
+				border-top-color: #555;
 			}
 			&.canvas-br {
 				bottom: 0px;
 				right: 0px;
-				border-width: 2px 0px 0px 2px;
+				border-left-color: #555;
+				border-top-color: #555;
 			}
 			&.fullscreen {
 				top: 0px;

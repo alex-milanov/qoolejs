@@ -22,26 +22,26 @@ QL.gui.Editor = function(_views, _entities){
 	this.scene = new THREE.Scene();
 
 	// init views
-	this.views = {};
+	this.views = [];
 	for(var key in _views){
 		var viewConf = _views[key];
 
 		switch(viewConf.perspective){
 			case "3d":
-				this.views[key] = new QL.gui.View3D(viewConf, this.scene, this);
+				this.views.push(new QL.gui.View3D(viewConf, this.scene, this));
 				break;
 			default:
-				this.views[key] = new QL.gui.View2D(viewConf, this.scene, this);
+				this.views.push(new QL.gui.View2D(viewConf, this.scene, this));
 				break;
 		}
 	}
 
-	this.activeView = this.views['tl'];
+	this.selectView(this.views[0]);
 
 	this.panel = new QL.gui.Panel(".left-panel", this);
 	this.toolbar = new QL.gui.Toolbar(".toolbar", this);
 
-	this.views.tr.addEntities(_entities);
+	this.views[1].addEntities(_entities);
 
 };
 
@@ -116,14 +116,24 @@ QL.gui.Editor.prototype.init = function(){
 
 			// select prev
 			if(keyCode == 33 && event.shiftKey == true){
-				_editor.selectNext(-1);
-				keyCombo = "Shift + PgUp";
+				if(event.altKey == true){
+					_editor.selectNextView(-1);
+					keyCombo = "Shift + ALt + PgUp";
+				} else {
+					_editor.selectNext(-1);
+					keyCombo = "Shift + PgUp";
+				}
 			}
 
 			// select next on tab
 			if(keyCode == 34 && event.shiftKey == true){
-				_editor.selectNext(1);
-				keyCombo = "Shift + PgDwn";
+				if(event.altKey == true){
+					_editor.selectNextView(1);
+					keyCombo = "Shift + ALt + PgDwn";
+				} else {
+					_editor.selectNext(1);
+					keyCombo = "Shift + PgDwn";
+				}
 			}
 
 			// mode change
@@ -180,6 +190,28 @@ QL.gui.Editor.prototype.trackAction = function(action){
 	this.actions.push(action);
 }
 
+QL.gui.Editor.prototype.selectView = function(view){
+	this.activeView = view;
+	$(this._dom).find(".views .canvas").removeClass("selected");
+	$(this.activeView.canvas).addClass("selected");
+}
+
+QL.gui.Editor.prototype.selectNextView = function(direction){
+	
+	var index = this.views.indexOf(this.activeView);
+
+	index += direction;
+
+	if(direction == 1 && index == this.views.length){
+		index = 0;
+	} else if (direction == -1 && index == -1){
+		index = this.views.length - 1;
+	}
+
+	this.selectView(this.views[index]);
+}
+
+
 QL.gui.Editor.prototype.select = function(_objId){
 
 	if(!this.scene.selected || this.scene.selected.id !== _objId){
@@ -187,17 +219,6 @@ QL.gui.Editor.prototype.select = function(_objId){
 	} else {
 		this.scene.selected = false;
 	}
-
-/*
-	var _editor = this;
-	this.scene.children.forEach(function(_obj){
-		if(_editor.scene.selected !== false && _obj.type=="Mesh" && _obj.id == _objId) {
-			_obj.selected = true;
-		} else {
-			_obj.selected = false;
-		}
-	});
-*/
 
 	this.panel.refresh();
 };
@@ -240,7 +261,7 @@ QL.gui.Editor.prototype.selectNext = function(direction){
 
 QL.gui.Editor.prototype.newMesh = function(){
 	var meshName = "Block "+this.scene.children.length;
-	this.views.tr.addEntities([
+	this.views[1].addEntities([
 		{
 			name: (meshName),
 			type: "block",
