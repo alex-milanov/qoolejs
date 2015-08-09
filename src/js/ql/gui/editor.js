@@ -66,31 +66,7 @@ QL.gui.Editor.prototype.init = function(){
 
 		// keyboard interactions
 		if($(_editor._dom).find(':focus').length === 0) {
-			// mode change
-			if(_editor.keyboard.pressed("M")){
-				_editor.changeMode("move");
-				keyCombo = 'M';
-			} else if (_editor.keyboard.pressed("R")){
-				_editor.changeMode("rotate");
-				keyCombo = 'R';
-			} else if (_editor.keyboard.pressed("S")){
-				_editor.changeMode("scale");
-				keyCombo = 'S';
-			}
-
-			// object creation
-			if(_editor.keyboard.pressed("N")){
-				_editor.newMesh();
-				keyCombo = 'N';
-			}
-			if(_editor.keyboard.pressed("C")){
-				_editor.cloneMesh();
-				keyCombo = 'C';
-			}
-			if(_editor.keyboard.pressed("L")){
-				_editor.clearScene();
-				keyCombo = 'L';
-			}
+			
 
 			// initial object interaction
 			if(_editor.keyboard.pressed("up") 
@@ -116,13 +92,6 @@ QL.gui.Editor.prototype.init = function(){
 				}
 				keyCombo = keys.join(" + ");
 			}
-			
-		}
-		// desselect and blur on esc
-		if(_editor.keyboard.pressed("escape")){
-			_editor.scene.selected = false;
-			$(_editor._dom).find(":focus").blur();
-			keyCombo = "ESC"
 		}
 
 		if(keyCombo !== '' && $(".debug-keys").text() !== keyCombo){
@@ -130,6 +99,64 @@ QL.gui.Editor.prototype.init = function(){
 		}
 
 	}
+
+	// keyboard triggers
+	$(this._dom)[0].addEventListener("keyup", function(event){
+		if($(_editor._dom).find(':focus').length === 0) {
+
+			var keyCode = event.keyCode;
+			var keyCombo = "";
+
+			// desselect and blur on esc
+			if(keyCode == 27){
+				_editor.scene.selected = false;
+				$(_editor._dom).find(":focus").blur();
+				keyCombo = "ESC";
+			}
+
+			// select prev
+			if(keyCode == 33 && event.shiftKey == true){
+				_editor.selectNext(-1);
+				keyCombo = "Shift + PgUp";
+			}
+
+			// select next on tab
+			if(keyCode == 34 && event.shiftKey == true){
+				_editor.selectNext(1);
+				keyCombo = "Shift + PgDwn";
+			}
+
+			// mode change
+			if(keyCode == "M".charCodeAt(0)){
+				_editor.changeMode("move");
+				keyCombo = "M";
+			} else if (keyCode == "R".charCodeAt(0)){
+				_editor.changeMode("rotate");
+				keyCombo = "R";
+			} else if (keyCode == "S".charCodeAt(0)){
+				_editor.changeMode("scale");
+				keyCombo = "S";
+			}
+
+			// object creation
+			if(keyCode == "N".charCodeAt(0)){
+				_editor.newMesh();
+				keyCombo = "N";
+			}
+			if(keyCode == "C".charCodeAt(0)){
+				_editor.cloneMesh();
+				keyCombo = "C";
+			}
+			if(keyCode == "L".charCodeAt(0)){
+				_editor.clearScene();
+				keyCombo = "L";
+			}
+
+			if(keyCombo !== '' && $(".debug-keys").text() !== keyCombo){
+				$(".debug-keys").text(keyCombo);
+			}
+		}
+	}, false);
 
 	animStep();
 
@@ -161,6 +188,7 @@ QL.gui.Editor.prototype.select = function(_objId){
 		this.scene.selected = false;
 	}
 
+/*
 	var _editor = this;
 	this.scene.children.forEach(function(_obj){
 		if(_editor.scene.selected !== false && _obj.type=="Mesh" && _obj.id == _objId) {
@@ -169,11 +197,45 @@ QL.gui.Editor.prototype.select = function(_objId){
 			_obj.selected = false;
 		}
 	});
-
+*/
 
 	this.panel.refresh();
 };
 
+QL.gui.Editor.prototype.selectNext = function(direction){
+	if(this.scene.children.length == 0){
+		return false;
+	}
+
+	if(!direction)
+		direction = 1;
+
+	var index = this.scene.children.indexOf(this.scene.selected);
+
+	var indexToBeSelected = index + direction;
+	
+	var nextToBeSelected = false;
+	var iterations = 0;
+	while(!(nextToBeSelected && nextToBeSelected.id && nextToBeSelected.type == "Mesh") && (iterations < this.scene.children.length)){
+		
+		nextToBeSelected = this.scene.children[indexToBeSelected];
+
+		if((direction == 1 && indexToBeSelected < this.scene.children.length - 1) || 
+			(direction == -1 && indexToBeSelected > 0)){
+			indexToBeSelected+= direction;
+		} else if (direction == 1 ) {
+			indexToBeSelected = 0;
+		} else {
+			indexToBeSelected = this.scene.children.length - 1;
+		}
+		iterations++;
+	}
+
+	if(nextToBeSelected && nextToBeSelected.id && nextToBeSelected.type == "Mesh")
+		this.scene.selected = nextToBeSelected;
+
+	this.panel.refresh();
+}
 
 
 QL.gui.Editor.prototype.newMesh = function(){
