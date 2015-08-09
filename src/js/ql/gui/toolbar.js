@@ -16,9 +16,9 @@ QL.gui.Toolbar.prototype.init = function(){
 	QL.gui.Element.prototype.init.call(this);
 	
 	var context = this._context;
-	context.indexes = [];
+	context.indexes = [-1];
 
-	$(this._dom).find(".indexes").keyup(function(){
+	$(this._dom).find(".indexes").change(function(){
 		context.indexes = $(this).val().split(",");
 	});
 };

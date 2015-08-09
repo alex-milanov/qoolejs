@@ -62,46 +62,71 @@ QL.gui.Editor.prototype.init = function(){
 			_editor.views[key].refresh(_editor.entities);
 		}
 
+		var keyCombo = '';
+
 		// keyboard interactions
 		if($(_editor._dom).find(':focus').length === 0) {
 			// mode change
 			if(_editor.keyboard.pressed("M")){
 				_editor.changeMode("move");
+				keyCombo = 'M';
 			} else if (_editor.keyboard.pressed("R")){
 				_editor.changeMode("rotate");
+				keyCombo = 'R';
 			} else if (_editor.keyboard.pressed("S")){
 				_editor.changeMode("scale");
+				keyCombo = 'S';
 			}
 
 			// object creation
 			if(_editor.keyboard.pressed("N")){
 				_editor.newMesh();
+				keyCombo = 'N';
 			}
 			if(_editor.keyboard.pressed("C")){
 				_editor.cloneMesh();
+				keyCombo = 'C';
 			}
 			if(_editor.keyboard.pressed("L")){
 				_editor.clearScene();
+				keyCombo = 'L';
 			}
 
 			// initial object interaction
-			if(_editor.keyboard.pressed("up")){
-				_editor.scene.selected.position[_editor.activeView.mod.v] -= _editor.activeView.mod.yD*5;
+			if(_editor.keyboard.pressed("up") 
+				|| _editor.keyboard.pressed("down") 
+				|| _editor.keyboard.pressed("left") 
+				|| _editor.keyboard.pressed("right")){
+				var keys = [];
+				if(_editor.keyboard.pressed("up")){
+					_editor.scene.selected.position[_editor.activeView.mod.v] -= _editor.activeView.mod.yD*5;
+					keys.push("up");
+				}
+				if(_editor.keyboard.pressed("down")){
+					_editor.scene.selected.position[_editor.activeView.mod.v] += _editor.activeView.mod.yD*5;
+					keys.push("down");
+				}
+				if(_editor.keyboard.pressed("left")){
+					_editor.scene.selected.position[_editor.activeView.mod.u] -= _editor.activeView.mod.xD*5;
+					keys.push("left");
+				}
+				if(_editor.keyboard.pressed("right")){
+					_editor.scene.selected.position[_editor.activeView.mod.u] += _editor.activeView.mod.xD*5;
+					keys.push("right");
+				}
+				keyCombo = keys.join(" + ");
 			}
-			if(_editor.keyboard.pressed("down")){
-				_editor.scene.selected.position[_editor.activeView.mod.v] += _editor.activeView.mod.yD*5;
-			}
-			if(_editor.keyboard.pressed("left")){
-				_editor.scene.selected.position[_editor.activeView.mod.u] -= _editor.activeView.mod.xD*5;
-			}
-			if(_editor.keyboard.pressed("right")){
-				_editor.scene.selected.position[_editor.activeView.mod.u] += _editor.activeView.mod.xD*5;
-			}
+			
 		}
 		// desselect and blur on esc
 		if(_editor.keyboard.pressed("escape")){
 			_editor.scene.selected = false;
 			$(_editor._dom).find(":focus").blur();
+			keyCombo = "ESC"
+		}
+
+		if(keyCombo !== '' && $(".debug-keys").text() !== keyCombo){
+			$(".debug-keys").text(keyCombo);
 		}
 
 	}

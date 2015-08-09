@@ -31,11 +31,13 @@ html
 					) Clone
 				.right-bar
 					a.debug-toggle(
-						data-toggle-ref=".indexes",
+						data-toggle-ref=".debug-info",
 						data-toggle-class="visible",
 						data-toggle-param="debug"
 					) Debug
-					input.indexes(placeholder="Indexes")
+					span.debug-info
+						.debug-keys Keys
+						input.indexes(type="number",placeholder="Indexes",value="-1")
 					a.fullscreen-toggle(
 						data-toggle-ref=".canvas-tr",
 						data-toggle-class="fullscreen"

@@ -39,18 +39,33 @@
 		.debug-toggle {
 			padding: 0px 5px;
 		}
-		.indexes {
+		.debug-info {
 			display: inline-block;
-			height: $ql-toolbar-height;
-			line-height: $ql-toolbar-height;
-			width: 100px;
-			padding: 0px 5px;
-			border: 0px;
-			background: #444;
-			font-size: 14px;
-			color: #aaa;
-			outline: none;
+			margin: 0px;
+			padding: 0px;
 			display: none;
+			.debug-keys {
+				display: inline-block;
+				height: $ql-toolbar-height;
+				line-height: $ql-toolbar-height;
+				width: 120px;
+				margin: 0px;
+				padding: 0px 10px;
+			}
+			.indexes {
+				display: inline-block;
+				height: $ql-toolbar-height;
+				line-height: $ql-toolbar-height;
+				width: 50px;
+				padding: 0px 5px;
+				border: 0px;
+				background: #444;
+				font-size: 14px;
+				color: #aaa;
+				outline: none;
+				margin: 0px;
+				padding: 0px;
+			}
 		}
 		.visible {
 			display: inline-block;
