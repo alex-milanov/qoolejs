@@ -19,7 +19,7 @@ QL.gui.Editor = function(_views, _entities){
 	this.keyboard = {};
 
 	// init scene
-	this.scene = new THREE.Scene();
+	this.scene = new QL.ext.Scene();
 
 	// init views
 	this.views = [];
@@ -41,7 +41,7 @@ QL.gui.Editor = function(_views, _entities){
 	this.panel = new QL.gui.Panel(".left-panel", this);
 	this.toolbar = new QL.gui.Toolbar(".toolbar", this);
 
-	this.views[1].addEntities(_entities);
+	this.scene.addEntities(_entities);
 
 };
 
@@ -213,83 +213,22 @@ QL.gui.Editor.prototype.selectNextView = function(direction){
 
 
 QL.gui.Editor.prototype.select = function(_objId){
-
-	if(!this.scene.selected || this.scene.selected.id !== _objId){
-		this.scene.selected = this.scene.getObjectById(_objId);
-	} else {
-		this.scene.selected = false;
-	}
-
+	this.scene.select(_objId);
 	this.panel.refresh();
 };
 
 QL.gui.Editor.prototype.selectNext = function(direction){
-	if(this.scene.children.length == 0){
-		return false;
-	}
-
-	if(!direction)
-		direction = 1;
-
-	var index = this.scene.children.indexOf(this.scene.selected);
-
-	var indexToBeSelected = index + direction;
-	
-	var nextToBeSelected = false;
-	var iterations = 0;
-	while(!(nextToBeSelected && nextToBeSelected.id && nextToBeSelected.type == "Mesh") && (iterations < this.scene.children.length)){
-		
-		nextToBeSelected = this.scene.children[indexToBeSelected];
-
-		if((direction == 1 && indexToBeSelected < this.scene.children.length - 1) || 
-			(direction == -1 && indexToBeSelected > 0)){
-			indexToBeSelected+= direction;
-		} else if (direction == 1 ) {
-			indexToBeSelected = 0;
-		} else {
-			indexToBeSelected = this.scene.children.length - 1;
-		}
-		iterations++;
-	}
-
-	if(nextToBeSelected && nextToBeSelected.id && nextToBeSelected.type == "Mesh")
-		this.scene.selected = nextToBeSelected;
-
+	this.scene.selectNext(direction);
 	this.panel.refresh();
 }
 
-
 QL.gui.Editor.prototype.newMesh = function(){
-	var meshName = "Block "+this.scene.children.length;
-	this.views[1].addEntities([
-		{
-			name: (meshName),
-			type: "block",
-			start: [-20,-20,-20],
-			finish: [20,20,20],
-			color: 0x113311
-		},
-	]);
-	this.select(this.scene.getObjectByName(meshName).id);
+	this.scene.newMesh();
 	this.panel.refresh();
 };
 
 QL.gui.Editor.prototype.cloneMesh = function(){
-
-	if(!this.scene.selected){
-		return false;
-	}
-
-	var lastAction = this.actions[this.actions.length-1];
-
-	var mesh = this.scene.selected.clone();
-	mesh.name = "Block "+this.scene.children.length;
- 
-	mesh.position.set(0,0,0);
-	mesh.position[this.activeView.mod.w] = this.scene.selected.position[this.activeView.mod.w];
-
-	this.scene.add(mesh);
-	this.select(this.scene.getObjectByName(mesh.name).id);
+	this.scene.cloneMesh(this.activeView.mod);
 	this.panel.refresh();
 };
 
@@ -307,8 +246,7 @@ QL.gui.Editor.prototype.updateMesh = function(objId){
 
 
 QL.gui.Editor.prototype.clearScene = function(){
-	this.scene.children = [];
-	this.scene.selected = null;
+	this.scene.clear();
 	this.panel.refresh();
 };
 
