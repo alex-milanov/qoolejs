@@ -292,6 +292,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 		}
 		_view.interacting = false;
 		_editor.selectView(_view);
+		_editor.refreshObjectPane();
 
 
 	});

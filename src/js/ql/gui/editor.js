@@ -106,6 +106,8 @@ QL.gui.Editor.prototype.init = function(){
 						break;
 				}
 
+				_editor.refreshObjectPane();
+
 				keyCombo = keys.join(" + ");
 			}
 		}
@@ -118,17 +120,25 @@ QL.gui.Editor.prototype.init = function(){
 
 	// keyboard triggers
 	$(this._dom)[0].addEventListener("keyup", function(event){
-		if($(_editor._dom).find(':focus').length === 0) {
+		var keyCode = event.keyCode;
+		var keyCombo = "";
 
-			var keyCode = event.keyCode;
-			var keyCombo = "";
+		// desselect and blur on esc
+		if(keyCode == 27){
+			_editor.scene.selected = false;
+			$(_editor._dom).find(":focus").blur();
+			_editor.refreshObjectPane();
+			keyCombo = "ESC";
+		}
 
-			// desselect and blur on esc
-			if(keyCode == 27){
-				_editor.scene.selected = false;
-				$(_editor._dom).find(":focus").blur();
-				keyCombo = "ESC";
+		if($(_editor._dom).find(':focus').length === 0) {	
+
+			// focus on object pane
+			if(keyCode == "E".charCodeAt(0)){
+				$("#object-pane-name").focus();
+				keyCombo = "E";
 			}
+			
 
 			// select prev
 			if(keyCode == 33 && event.shiftKey == true){
@@ -178,9 +188,10 @@ QL.gui.Editor.prototype.init = function(){
 				keyCombo = "L";
 			}
 
-			if(keyCombo !== '' && $(".debug-keys").text() !== keyCombo){
-				$(".debug-keys").text(keyCombo);
-			}
+		}
+
+		if(keyCombo !== '' && $(".debug-keys").text() !== keyCombo){
+			$(".debug-keys").text(keyCombo);
 		}
 	}, false);
 
@@ -252,11 +263,12 @@ QL.gui.Editor.prototype.updateMesh = function(objId){
 	if(!objId){
 		return false;
 	}
-	var objRef = this.scene.getObjectById(objId);
+	var objRef = this.scene.selected;
 	objRef.name = $("#object-pane-name").val();
 	objRef.position.x = parseInt($("#object-pane-pos-x").val());
 	objRef.position.y = parseInt($("#object-pane-pos-y").val());
 	objRef.position.z = parseInt($("#object-pane-pos-z").val());
+	objRef.material.color.setStyle($("#object-pane-color").val());
 	this.panel.refresh();
 };
 
@@ -276,7 +288,7 @@ QL.gui.Editor.prototype.refreshObjectPane = function(){
 		$("#object-pane-pos-x").val(this.scene.selected.position.x);
 		$("#object-pane-pos-y").val(this.scene.selected.position.y);
 		$("#object-pane-pos-z").val(this.scene.selected.position.z);
-		$("#object-pane-color").val("");
+		$("#object-pane-color").val(this.scene.selected.material.color.getStyle());
 	} else {
 		$(".object-pane").removeClass("active");
 	}

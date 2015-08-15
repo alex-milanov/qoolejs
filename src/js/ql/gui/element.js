@@ -15,7 +15,7 @@ QL.gui.Element.prototype.init = function(){
 
 	var context = this._context;
 
-	$(this._dom).on("click","a[class*='-toggle']",function(){
+	$(this._dom).on("click","[class*='-toggle']",function(){
 		$(this).toggleClass("toggled");
 		var $toggleRef = $($(this).data("toggle-ref"));
 		var _toggleClass = $(this).data("toggle-class");
@@ -26,7 +26,7 @@ QL.gui.Element.prototype.init = function(){
 		}
 	});
 
-	$(this._dom).on("click","a[class*='-trigger']",function(){
+	$(this._dom).on("click","[class*='-trigger']",function(){
 		var _triggerMethod = $(this).data("trigger-method");
 		if(typeof context[_triggerMethod] !== "undefined"){
 			if($(this).data("trigger-id")){
@@ -37,7 +37,7 @@ QL.gui.Element.prototype.init = function(){
 	});
 
 
-	$(this._dom).on("click","a[class*='-option']",function(_ev){
+	$(this._dom).on("click","[class*='-option']",function(_ev){
 		$("a[class*='-option']").removeClass("selected");
 		$(this).addClass("selected");
 

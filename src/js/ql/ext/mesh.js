@@ -14,9 +14,10 @@ QL.ext.Mesh.prototype.constructor = THREE.Mesh;
 
 QL.ext.Mesh.prototype.clone = function ( object, recursive ) {
 
-	var geometry = this.geometry.clone()
+	var geometry = this.geometry.clone();
+	var material = this.material.clone();
 
-	if ( object === undefined ) object = new QL.ext.Mesh( geometry, this.material );
+	if ( object === undefined ) object = new QL.ext.Mesh( geometry, material );
 
 	THREE.Object3D.prototype.clone.call( this, object, recursive );
 

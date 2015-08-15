@@ -16,11 +16,15 @@
 				border-left-width:0px;
 			}
 		}
-		a.btn {
+		.btn {
+			-webkit-appearance: initial;
+			border-image: none;
+			border: 0px;
 			padding: 0px;
 			margin: 5px;
 			text-align: center;
 			height: 25px;
+			width: 100%;
 			line-height: 25px;
 			font-size:14px;
 			background: #888;
