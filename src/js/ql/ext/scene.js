@@ -80,9 +80,7 @@ QL.ext.Scene.prototype.cloneMesh = function(_mod){
 	if(!this.selected){
 		return false;
 	}
-
-	var lastAction = this.actions[this.actions.length-1];
-
+	
 	var mesh = this.selected.clone();
 	mesh.name = "Block "+this.children.length;
  

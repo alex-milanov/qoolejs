@@ -68,6 +68,8 @@ QL.gui.Editor.prototype.init = function(){
 		if($(_editor._dom).find(':focus').length === 0) {
 			
 
+			var interactionVector = [0,0];
+
 			// initial object interaction
 			if(_editor.keyboard.pressed("up") 
 				|| _editor.keyboard.pressed("down") 
@@ -75,21 +77,35 @@ QL.gui.Editor.prototype.init = function(){
 				|| _editor.keyboard.pressed("right")){
 				var keys = [];
 				if(_editor.keyboard.pressed("up")){
-					_editor.scene.selected.position[_editor.activeView.mod.v] -= _editor.activeView.mod.yD*5;
+					interactionVector[1] -= 5;
 					keys.push("up");
 				}
 				if(_editor.keyboard.pressed("down")){
-					_editor.scene.selected.position[_editor.activeView.mod.v] += _editor.activeView.mod.yD*5;
+					interactionVector[1] += 5;
 					keys.push("down");
 				}
 				if(_editor.keyboard.pressed("left")){
-					_editor.scene.selected.position[_editor.activeView.mod.u] -= _editor.activeView.mod.xD*5;
+					interactionVector[0] -= 5;
 					keys.push("left");
 				}
 				if(_editor.keyboard.pressed("right")){
-					_editor.scene.selected.position[_editor.activeView.mod.u] += _editor.activeView.mod.xD*5;
+					interactionVector[0] += 5;
 					keys.push("right");
 				}
+
+				switch(_editor.params['obj-mode']){
+					case "move":
+						_editor.scene.selected.position[_editor.activeView.mod.u] += interactionVector[0]*_editor.activeView.mod.xD;
+						_editor.scene.selected.position[_editor.activeView.mod.v] += interactionVector[1]*_editor.activeView.mod.yD;
+						break;
+					case "scale":
+						_editor.scene.selected.geometry.scale(
+							_editor.activeView.mod, 
+							new QL.ext.Vector2(interactionVector[0], -interactionVector[1])
+						)
+						break;
+				}
+
 				keyCombo = keys.join(" + ");
 			}
 		}
