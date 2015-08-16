@@ -70,6 +70,8 @@ QL.gui.Editor.prototype.init = function(){
 
 			var interactionVector = [0,0];
 
+			var force = _editor.keyboard.pressed("shift") ? 20 : 5;
+
 			// initial object interaction
 			if(_editor.keyboard.pressed("up") 
 				|| _editor.keyboard.pressed("down") 
@@ -77,19 +79,19 @@ QL.gui.Editor.prototype.init = function(){
 				|| _editor.keyboard.pressed("right")){
 				var keys = [];
 				if(_editor.keyboard.pressed("up")){
-					interactionVector[1] -= 5;
+					interactionVector[1] -= force;
 					keys.push("up");
 				}
 				if(_editor.keyboard.pressed("down")){
-					interactionVector[1] += 5;
+					interactionVector[1] += force;
 					keys.push("down");
 				}
 				if(_editor.keyboard.pressed("left")){
-					interactionVector[0] -= 5;
+					interactionVector[0] -= force;
 					keys.push("left");
 				}
 				if(_editor.keyboard.pressed("right")){
-					interactionVector[0] += 5;
+					interactionVector[0] += force;
 					keys.push("right");
 				}
 
@@ -125,9 +127,12 @@ QL.gui.Editor.prototype.init = function(){
 
 		// desselect and blur on esc
 		if(keyCode == 27){
-			_editor.scene.selected = false;
-			$(_editor._dom).find(":focus").blur();
-			_editor.refreshObjectPane();
+			if($(_editor._dom).find(':focus').length > 0){
+				$(_editor._dom).find(":focus").blur();
+			} else {
+				_editor.scene.selected = false;
+				_editor.refreshObjectPane();
+			}
 			keyCombo = "ESC";
 		}
 
