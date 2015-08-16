@@ -153,7 +153,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 			break;
 	}
 
-	this.hitAreas = [];
+	this.hitFaces = [];
 
 	this.scene = _scene;
 	this.editor = _editor;
@@ -176,15 +176,14 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 
 		var selectedObj = false;
 		var hits = 0;
-		_view.hitAreas.forEach(function(hitArea){
-			if((hitArea.start.x <= hitPos.x && hitPos.x <= hitArea.end.x) &&
-				(hitArea.start.y <= hitPos.y && hitPos.y <= hitArea.end.y)) {
+		_view.hitFaces.forEach(function(hitFace){
+			if(hitFace.triangle.containsPoint(hitPos.toVector3(_view.mod))) {
 				hits++;
 
-				var hitObj = _view.scene.getObjectById(hitArea.objId);
+				var hitObj = _view.scene.getObjectById(hitFace.objId);
 				if(!selectedObj || hitObj.position[_view.mod.w] > selectedObj.position[_view.mod.w]){
 
-					if(hitArea.objId === oldId)
+					if(hitFace.objId === oldId)
 						return true;
 					selectedObj = hitObj;
 				}
@@ -319,25 +318,6 @@ QL.gui.View2D.prototype.drawCube = function(_obj){
 
 };
 
-QL.gui.View2D.prototype.drawBlock = function(_obj){
-
-	var start = [
-		this.center[0]+this.mod.xD*(_obj.start[this.mod.x]),
-		this.center[1]+this.mod.yD*(_obj.start[this.mod.y])
-	];
-
-	var finish = [
-		this.mod.xD*(_obj.finish[this.mod.x]-_obj.start[this.mod.x]),
-		this.mod.yD*(_obj.finish[this.mod.y]-_obj.start[this.mod.y])
-	];
-
-	this.ctx.beginPath();
-	this.ctx.rect(start[0],start[1],finish[0],finish[1]);
-	this.ctx.strokeStyle = '#777';
-	this.ctx.setLineDash([0]);
-	this.ctx.stroke();
-};
-
 QL.gui.View2D.prototype.drawBox = function(_obj, _lineDash, _strokeStyle, _showCoords){
 
 	var _mod = this.mod;
@@ -361,30 +341,41 @@ QL.gui.View2D.prototype.drawBox = function(_obj, _lineDash, _strokeStyle, _showC
 			var objPos3 = new QL.ext.Vector3();
 			objPos3.copy(_obj.position);
 
-			var objStart3 = new QL.ext.Vector3();
-			objStart3.addVectors(objPos3,_quad.a);
+			
 
-			var objStart2 = objStart3.toVector2(_mod);
-			objStart2.add(center2);
+			var objCenter2 = objPos3.clone().toVector2(_mod).add(center2);
 
-			var objSpan3 = new QL.ext.Vector3();
-			objSpan3.subVectors(_quad.c, _quad.a);
-			var objSpan2 = objSpan3.toVector2(_mod);
+			// if(objSpan2.x !== 0 && objSpan2.y !== 0){
+				
+				//that.ctx.rect(objStart2.x,objStart2.y,objSpan2.x,objSpan2.y);
+				var quad2d = {
+					a: new QL.ext.Vector3().copy(_quad.a).applyEuler(_obj.rotation).add(objPos3).toVector2(_mod).add(center2),
+					b: new QL.ext.Vector3().copy(_quad.b).applyEuler(_obj.rotation).add(objPos3).toVector2(_mod).add(center2),
+					c: new QL.ext.Vector3().copy(_quad.c).applyEuler(_obj.rotation).add(objPos3).toVector2(_mod).add(center2),
+					d: new QL.ext.Vector3().copy(_quad.d).applyEuler(_obj.rotation).add(objPos3).toVector2(_mod).add(center2)
+				};
 
-			var objCenter2 = objStart2.clone().add(objSpan2.clone().divideScalar(2));
-
-			if(objSpan2.x !== 0 && objSpan2.y !== 0){
 				that.ctx.beginPath();
-				that.ctx.rect(objStart2.x,objStart2.y,objSpan2.x,objSpan2.y);
+				that.ctx.moveTo(quad2d.a.x,quad2d.a.y);
+				that.ctx.lineTo(quad2d.b.x,quad2d.b.y);
+				that.ctx.lineTo(quad2d.c.x,quad2d.c.y);
+				that.ctx.lineTo(quad2d.d.x,quad2d.d.y);
+				that.ctx.lineTo(quad2d.a.x,quad2d.a.y);
+				that.ctx.closePath();
 
-				that.hitAreas.push({
-					start: new QL.ext.Vector2(
-						((objSpan2.x > 0) ? objStart2.x : objStart2.x+objSpan2.x),
-						((objSpan2.y > 0) ? objStart2.y : objStart2.y+objSpan2.y)
+				that.hitFaces.push({
+					triangle: new THREE.Triangle(
+						quad2d.a.toVector3(_mod),
+						quad2d.b.toVector3(_mod),
+						quad2d.c.toVector3(_mod)
 					),
-					end:  new QL.ext.Vector2(
-						((objSpan2.x < 0) ? objStart2.x : objStart2.x+objSpan2.x),
-						((objSpan2.y < 0) ? objStart2.y : objStart2.y+objSpan2.y)
+					objId: _obj.id
+				});
+				that.hitFaces.push({
+					triangle: new THREE.Triangle(
+						quad2d.b.toVector3(_mod),
+						quad2d.c.toVector3(_mod),
+						quad2d.d.toVector3(_mod)
 					),
 					objId: _obj.id
 				});
@@ -403,16 +394,16 @@ QL.gui.View2D.prototype.drawBox = function(_obj, _lineDash, _strokeStyle, _showC
 					that.ctx.fillStyle="#999";
 
 				if(that.editor.indexes.length === 0 || that.editor.indexes.indexOf(index+"")>-1){
-						that.ctx.fillText("a("+(new QL.ext.Vector3()).copy(_quad.a).toVector2(_mod).toArray().join(", ")+"), "+objStart2.toArray().join(", "),objStart2.x,objStart2.y);
-						that.ctx.fillText("b("+(new QL.ext.Vector3()).copy(_quad.b).toVector2(_mod).toArray().join(", ")+"), "+objStart2.y,(objStart2.x+objSpan2.x),objStart2.y);
-						that.ctx.fillText("c("+(new QL.ext.Vector3()).copy(_quad.c).toVector2(_mod).toArray().join(", ")+"), "+objStart2.clone().add(objSpan2).toArray().join(", "),objStart2.x+objSpan2.x,objStart2.y+objSpan2.y);
-						that.ctx.fillText("d("+(new QL.ext.Vector3()).copy(_quad.d).toVector2(_mod).toArray().join(", ")+"), "+objStart2.x+", "+(objStart2.y+objSpan2.y),objStart2.x,objStart2.y+objSpan2.y);
+						that.ctx.fillText("a("+(new QL.ext.Vector3()).copy(_quad.a).toVector2(_mod).toArray().join(", ")+"), "+quad2d.a.toArray().join(", "),quad2d.a.x,quad2d.a.y);
+						that.ctx.fillText("b("+(new QL.ext.Vector3()).copy(_quad.b).toVector2(_mod).toArray().join(", ")+"), "+quad2d.b.toArray().join(", "),quad2d.b.x,quad2d.b.y);
+						that.ctx.fillText("c("+(new QL.ext.Vector3()).copy(_quad.c).toVector2(_mod).toArray().join(", ")+"), "+quad2d.c.toArray().join(", "),quad2d.c.x,quad2d.c.y);
+						that.ctx.fillText("d("+(new QL.ext.Vector3()).copy(_quad.d).toVector2(_mod).toArray().join(", ")+"), "+quad2d.d.toArray().join(", "),quad2d.d.x,quad2d.d.y);
 					}
 					_indexes.push(index);
 					_center = objCenter2.clone();
 				}
 
-			}
+			//}
 		//}
 
 	});
@@ -442,7 +433,7 @@ QL.gui.View2D.prototype.refresh = function(_entities){
 		this.ctx.canvas.height/2
 	];
 
-	this.hitAreas = [];
+	this.hitFaces = [];
 
 	var that = this;
 
