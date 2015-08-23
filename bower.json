@@ -18,6 +18,7 @@
     "threex.keyboardstate": "*",
     "lodash": "~3.9.3",
     "three.js": "~0.71.0",
-    "font-awesome": "~4.3.0"
+    "font-awesome": "~4.3.0",
+    "jquery-mousewheel": "~3.1.13"
   }
 }

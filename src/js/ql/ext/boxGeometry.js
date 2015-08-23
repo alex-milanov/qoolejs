@@ -93,8 +93,8 @@ QL.ext.BoxGeometry.prototype.scale = function(_mod, scale2){
 	// quick fix for y
 	scale2.y *= -1;
 	
-	if((params[modHelper[_mod.x]] + scale2.x*2) < 10
-		|| (params[modHelper[_mod.y]] + scale2.y*2) < 10){
+	if((params[modHelper[_mod.x]] + scale2.x*2) < 5
+		|| (params[modHelper[_mod.y]] + scale2.y*2) < 5){
 		scalePossible = false;
 	}
 
