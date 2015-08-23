@@ -31,11 +31,11 @@ QL.gui.Element.prototype.init = function(){
 		if(typeof context[_triggerMethod] !== "undefined"){
 			if($(this).data("trigger-id")){
 				context[_triggerMethod]($(this).data("trigger-id"));
+			} else {
+				context[_triggerMethod]();
 			}
-			context[_triggerMethod]();
 		}
 	});
-
 
 	$(this._dom).on("click","[class*='-option']",function(_ev){
 		$("a[class*='-option']").removeClass("selected");

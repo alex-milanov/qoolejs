@@ -103,7 +103,7 @@ QL.gui.Editor.prototype.init = function(){
 					case "scale":
 						_editor.scene.selected.geometry.scale(
 							_editor.activeView.mod, 
-							new QL.ext.Vector2(interactionVector[0], -interactionVector[1])
+							new QL.ext.Vector2(interactionVector[0], interactionVector[1])
 						)
 						break;
 				}

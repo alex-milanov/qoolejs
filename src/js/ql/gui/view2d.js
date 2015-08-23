@@ -197,29 +197,18 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 
 	this.operation = "idle";
 	this.interacting = false;
-	this.dragStartPos = [];
-	this.lastPos = [];
-	this.lastScale = [];
-	this.dragOffset = [];
+	this.dragStartPos = new QL.ext.Vector2(0,0);
+	this.lastChange = new QL.ext.Vector2(0,0);
 	// mouse move
 	$(this.canvas).mousedown(function(ev){
 		_view.interacting = false;
 		_view.operation = "dragstart";
-		_view.dragStartPos = _view.lastPos = [
+		_view.dragStartPos.set(
 			ev.offsetX,
 			ev.offsetY
-		];
-		_view.lastChange = [0,0];
-		if(_view.scene.selected){
-			var pos = [
-				_view.scene.selected.position[_view.mod.u],
-				_view.scene.selected.position[_view.mod.v]
-			];
-			_view.dragOffset = [
-				pos[0],
-				pos[1]
-			];
-		}
+		);
+
+		_view.lastChange.set(0,0);
 	});
 
 	$(this.canvas).mousemove(function(ev){
@@ -231,38 +220,30 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 				return;
 			}
 
-			var mousePos = [
+			var mousePos = new QL.ext.Vector2(
 				ev.offsetX,
 				ev.offsetY
-			];
+			);
 
-			var changeVector = [
-				parseInt((mousePos[0]-_view.dragStartPos[0])/5)*5,
-				parseInt((mousePos[1]-_view.dragStartPos[1])/5)*5,
-			];
+			var changeVector = mousePos.clone().sub(_view.dragStartPos);
+			changeVector.x = parseInt(changeVector.x/5)*5
+			changeVector.y = parseInt(changeVector.y/5)*5
 
 			var objectChanged = false;
 
 			switch(_view.editor.params["obj-mode"]){
 				
 				case "move":
-					var dragVector = [
-						mousePos[0]-_view.dragStartPos[0],
-						mousePos[1]-_view.dragStartPos[1]
-					];
+					_view.scene.selected.position.add(changeVector.clone().sub(_view.lastChange).toVector3(_view.mod))
 
-					_view.scene.selected.position[_view.mod.u] = (_view.mod.xD*changeVector[0])+_view.dragOffset[0];
-					_view.scene.selected.position[_view.mod.v] = (_view.mod.yD*changeVector[1])+_view.dragOffset[1];
 					objectChanged = true;
 
 					break;
 				case "scale":
 					
 					if( _view.scene.selected.geometry.type === "BoxGeometry" &&
-						_view.scene.selected.geometry.scale(_view.mod, new QL.ext.Vector2(
-						changeVector[0] - _view.lastChange[0],
-						-(changeVector[1] - _view.lastChange[1])
-					))){
+						_view.scene.selected.geometry.scale(_view.mod, changeVector.clone().sub(_view.lastChange))
+					){
 						objectChanged = true;
 					}
 					break;
@@ -271,11 +252,11 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 			if(objectChanged){
 				var action = {
 					type: _view.editor.params["obj-mode"],
-					changeVector: changeVector,
+					changeVector: changeVector.clone(),
 					mod: _view.mod
 				}
 				_view.editor.trackAction(action);
-				_view.lastChange = changeVector;
+				_view.lastChange = changeVector.clone();
 			}
 
 		}
@@ -283,10 +264,8 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 
 	$(this.canvas).mouseup(function(ev){
 		_view.operation="idle";
-		_view.dragStartPos = [];
-		_view.dragPos = [];
-		_view.dragOffset = [];
-		if(_view.interacting === false || _view.lastChange == [0,0]){
+		_view.dragStartPos.set(0,0);
+		if(_view.interacting === false || _view.lastChange.toArray() == [0,0]){
 			handleSelect(ev)
 		}
 		_view.interacting = false;
