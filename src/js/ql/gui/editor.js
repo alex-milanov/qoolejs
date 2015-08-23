@@ -70,7 +70,7 @@ QL.gui.Editor.prototype.init = function(){
 
 			var interactionVector = [0,0];
 
-			var force = _editor.keyboard.pressed("shift") ? 20 : 5;
+			var force = _editor.keyboard.pressed("shift") ? 10 : 2.5;
 
 			// initial object interaction
 			if(_editor.keyboard.pressed("up") 
