@@ -66,7 +66,6 @@ QL.gui.Editor.prototype.init = function(){
 
 		// keyboard interactions
 		if($(_editor._dom).find(':focus').length === 0) {
-			
 
 			var interactionVector = [0,0];
 
@@ -140,10 +139,20 @@ QL.gui.Editor.prototype.init = function(){
 
 			// focus on object pane
 			if(keyCode == "E".charCodeAt(0)){
-				$("#object-pane-name").focus();
+				$(_editor._dom).find("#object-pane-name").focus();
 				keyCombo = "E";
 			}
 			
+			if(keyCode == "T".charCodeAt(0)){
+				_editor.activeView.zoom = 100;
+				_editor.activeView.offset.set(0, 0);
+				keyCombo = "T";
+			}
+
+			if(keyCode == "F".charCodeAt(0)){
+				$(_editor._dom).find(".fullscreen-toggle").click();
+				keyCombo = "F";
+			}
 
 			// select prev
 			if(keyCode == 33 && event.shiftKey == true){

@@ -58,55 +58,6 @@ function drawSquare(ctx, _obj){
 	ctx.stroke();
 }
 
-function drawHorizontalLines(ctx){
-	drawLine(ctx, [
-		0, ctx.canvas.height/2
-	],[
-		ctx.canvas.width, ctx.canvas.height/2
-	],[0],'#96DC96');
-
-	var step = 10;
-
-	for(var yPos = step; ctx.canvas.height/2 - yPos > 0; yPos+=step){
-		drawLine(ctx, [
-			0, ctx.canvas.height/2-yPos
-		],[
-			ctx.canvas.width, ctx.canvas.height/2 - yPos
-		],[0],'#333');
-		drawLine(ctx, [
-			0, ctx.canvas.height/2 + yPos
-		],[
-			ctx.canvas.width, ctx.canvas.height/2 + yPos
-		],[0],'#333');
-	}
-
-}
-
-function drawVerticalLines(ctx){
-	drawLine(ctx, [
-		ctx.canvas.width/2, 0
-	],[
-		ctx.canvas.width/2, ctx.canvas.height
-	],[0],'#96DC96');
-
-	var step = 10;
-
-	for(var xPos = step; ctx.canvas.width/2 - xPos > 0; xPos+=step){
-
-		drawLine(ctx, [
-			ctx.canvas.width/2 - xPos, 0
-		],[
-			ctx.canvas.width/2 - xPos, ctx.canvas.height
-		],[0],'#333');
-
-		drawLine(ctx, [
-			ctx.canvas.width/2 + xPos, 0
-		],[
-			ctx.canvas.width/2 + xPos, ctx.canvas.height
-		],[0],'#333');
-	}
-
-}
 
 QL.gui.View2D = function(_conf, _scene, _editor){
 	this.canvas = $(_conf.canvas)[0];
@@ -356,7 +307,7 @@ QL.gui.View2D.prototype.drawBox = function(_obj, _lineDash, _strokeStyle, _showC
 			objId: _obj.id
 		});
 
-		that.ctx.strokeStyle = _strokeStyle || '#555';
+		that.ctx.strokeStyle = _strokeStyle || '#777';
 		var baseColor = new THREE.Color(0x555555);
 		/*if(_obj.selected){
 			that.ctx.strokeStyle = "#DC3333";
@@ -389,12 +340,81 @@ QL.gui.View2D.prototype.drawBox = function(_obj, _lineDash, _strokeStyle, _showC
 
 };
 
+
+QL.gui.View2D.prototype.drawGrid = function(){
+
+	var ctx = this.ctx;
+	var center = new QL.ext.Vector2(ctx.canvas.width/2,ctx.canvas.height/2);
+	var sizeVector = new QL.ext.Vector2(ctx.canvas.width,ctx.canvas.height);
+
+	center.add(this.offset)
+
+	drawLine(ctx, [
+		0, center.y
+	],[
+		sizeVector.x, center.y
+	],[0],'#96DC96');
+
+	drawLine(ctx, [
+		center.x, 0
+	],[
+		center.x, sizeVector.y
+	],[0],'#96DC96');
+
+	var step = 10;
+
+	step *=this.zoom/100;
+
+	var defaultLineColor = '#333';
+	var segmentColor = '#555';
+
+	for(var yPos = step; center.y - yPos > 0; yPos+=step){
+		var lineColor = (parseInt(yPos/step/5) === yPos/step/5) ? segmentColor : defaultLineColor;
+		console.log()
+		drawLine(ctx, [
+			0, center.y-yPos
+		],[
+			sizeVector.x, center.y - yPos
+		],[0],lineColor);
+	}
+
+	for(var yPos = step; center.y + yPos < sizeVector.y; yPos+=step){
+		var lineColor = (parseInt(yPos/step/5) === yPos/step/5) ? segmentColor : defaultLineColor;
+		drawLine(ctx, [
+			0, center.y + yPos
+		],[
+			sizeVector.x, center.y + yPos
+		],[0],lineColor);
+	}
+
+	for(var xPos = step; center.x - xPos > 0; xPos+=step){
+		var lineColor = (parseInt(xPos/step/5) === xPos/step/5) ? segmentColor : defaultLineColor;
+		drawLine(ctx, [
+			center.x- xPos, 0
+		],[
+			center.x - xPos, sizeVector.y
+		],[0],lineColor);
+	}
+
+	for(var xPos = step; center.x + xPos < sizeVector.x; xPos+=step){
+		var lineColor = (parseInt(xPos/step/5) === xPos/step/5) ? segmentColor : defaultLineColor;
+		drawLine(ctx, [
+			center.x + xPos, 0
+		],[
+			center.x + xPos, sizeVector.y
+		],[0],lineColor);
+	}
+}
+
+
 QL.gui.View2D.prototype.refresh = function(_entities){
 	this.canvas.width = $(this.canvas.parentNode).width()/2;
 	this.canvas.height = $(this.canvas.parentNode).height()/2;
 	// draw lines in the middle
-	drawHorizontalLines(this.ctx);
-	drawVerticalLines(this.ctx);
+	// drawHorizontalLines(this.ctx);
+	// drawVerticalLines(this.ctx);
+	this.drawGrid();
+
 
 	// draw text
 	this.ctx.font="16px Arial";
