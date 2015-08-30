@@ -4,8 +4,8 @@ if(typeof QL === "undefined"){ var QL = {}; }
 if(typeof QL.gui === "undefined"){ QL.gui = {}; }
 
 QL.gui.View3D = function(_conf, _scene){
-	this.canvas = $(_conf.canvas)[0];
-	//this.ctx = this.canvas.getContext("2d");
+	this._dom = $(_conf.dom)[0];
+	this.canvas = $(this._dom).find(".layer-3d")[0];
 	this.perspective = _conf.perspective;
 
 	this.canvas.width = $(this.canvas).width();
@@ -124,8 +124,8 @@ QL.gui.View3D.prototype.refresh = function(){
 
 
 	$(this.canvas).attr("style","");
-	this.canvas.width = $(this.canvas).width();
-	this.canvas.height = $(this.canvas).height();
+	this.canvas.width = $(this._dom).width();
+	this.canvas.height = $(this._dom).height();
 
 	this.renderer.setSize(this.canvas.width, this.canvas.height );
 

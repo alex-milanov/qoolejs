@@ -233,8 +233,8 @@ QL.gui.Editor.prototype.trackAction = function(action){
 
 QL.gui.Editor.prototype.selectView = function(view){
 	this.activeView = view;
-	$(this._dom).find(".views .canvas").removeClass("selected");
-	$(this.activeView.canvas).addClass("selected");
+	$(this._dom).find(".views .view").removeClass("selected");
+	$(this.activeView._dom).addClass("selected");
 }
 
 QL.gui.Editor.prototype.selectNextView = function(direction){

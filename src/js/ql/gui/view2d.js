@@ -13,61 +13,25 @@ function drawLine(ctx, start, finish, dash, stroke){
 	ctx.stroke();
 }
 
-function drawRect(ctx, _obj){
-	var center = [
-		ctx.canvas.width/2,
-		ctx.canvas.height/2
-	];
-
-	var start = [
-		center[0]+_obj.start[0],
-		center[1]+_obj.start[1]
-	];
-
-	var finish = [
-		_obj.finish[0]-_obj.start[0],
-		_obj.finish[1]-_obj.start[1]
-	];
-
-	ctx.beginPath();
-	ctx.rect(start[0],start[1],finish[0],finish[1]);
-	ctx.strokeStyle = '#777';
-	ctx.setLineDash([0]);
-	ctx.stroke();
-}
-
-function drawSquare(ctx, _obj){
-	var center = [
-		ctx.canvas.width/2,
-		ctx.canvas.height/2
-	];
-
-	var start = [
-		center[0]+_obj.position[0]-_obj.size/2,
-		center[1]+_obj.position[1]-_obj.size/2,
-	];
-
-	var finish = [
-		center[0]+_obj.position[0]+_obj.size/2-start[0],
-		center[1]+_obj.position[1]+_obj.size/2-start[1],
-	];
-	ctx.beginPath();
-	ctx.rect(start[0], start[1], finish[0], finish[1]);
-	ctx.strokeStyle = '#777';
-	ctx.setLineDash([0]);
-	ctx.stroke();
-}
-
-
 QL.gui.View2D = function(_conf, _scene, _editor){
-	this.canvas = $(_conf.canvas)[0];
-	this.ctx = this.canvas.getContext("2d");
+	this._dom = $(_conf.dom)[0];
+	//this.ctx = this.canvas.getContext("2d");
+
+	this._layers = {
+		grid: $(this._dom).find('.grid-layer')[0].getContext("2d"),
+		scene: $(this._dom).find('.grid-layer')[0].getContext("2d"),
+		selection: $(this._dom).find('.selection-layer')[0].getContext("2d"),
+		indicators: $(this._dom).find('.indicators-layer')[0].getContext("2d")
+	};
+
+	this._needsRefresh = [];
+
 	this.perspective = _conf.perspective;
 
-	this.center = [
-		this.ctx.canvas.width/2,
-		this.ctx.canvas.height/2
-	];
+	this.center = new QL.ext.Vector2(
+		this._dom.width/2,
+		this._dom.height/2
+	);
 
 	this.zoom = 100;
 	this.offset = new QL.ext.Vector2(0,0);
@@ -157,7 +121,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 	}
 
 	// mouse move
-	$(this.canvas).mousedown(function(ev){
+	$(this._dom).mousedown(function(ev){
 
 		_view.interaction.status = "mousedown";
 		_view.interaction.start.set(ev.offsetX, ev.offsetY);
@@ -165,7 +129,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 
 	});
 
-	$(this.canvas).mousemove(function(ev){
+	$(this._dom).mousemove(function(ev){
 		
 		if(["mousedown","mousemove"].indexOf(_view.interaction.status)>-1){
 			_view.interaction.status = "mousemove";
@@ -222,7 +186,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 		}
 	});
 
-	$(this.canvas).mouseup(function(ev){
+	$(this._dom).mouseup(function(ev){
 		if(ev.which == 1 && 
 			(_view.interaction.status === "mousedown" || _view.interaction.last.toArray() == [0,0])
 		){
@@ -238,7 +202,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 
 	});
 
-	$(this.canvas).on('mousewheel', function(event) {
+	$(this._dom).on('mousewheel', function(event) {
 		//console.log(event.originalEvent.deltaX, event.originalEvent.deltaY, event.originalEvent.deltaFactor);
 		if(event.originalEvent.deltaY < 0 && _view.zoom < 400){
 			_view.zoom += 12.5;
@@ -251,7 +215,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 };
 
 
-QL.gui.View2D.prototype.drawBox = function(_obj, _lineDash, _strokeStyle, _showCoords){
+QL.gui.View2D.prototype.drawBox = function(ctx, _obj, _lineDash, _strokeStyle, _showCoords){
 
 	var _mod = this.mod;
 	var that = this;
@@ -261,15 +225,10 @@ QL.gui.View2D.prototype.drawBox = function(_obj, _lineDash, _strokeStyle, _showC
 
 	_obj.geometry.quads.forEach(function(_quad, index){
 
-		var center2 = new QL.ext.Vector2(
-			that.center[0],
-			that.center[1]
-		).add(that.offset);
+		var center2 = that.center.clone().add(that.offset);
 
 		var objPos3 = new QL.ext.Vector3();
 		objPos3.copy(_obj.position);
-
-		
 
 		var objCenter2 = objPos3.clone().toVector2(_mod).add(center2);
 
@@ -282,13 +241,13 @@ QL.gui.View2D.prototype.drawBox = function(_obj, _lineDash, _strokeStyle, _showC
 			d: new QL.ext.Vector3().copy(_quad.d).applyEuler(_obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(that.zoom/100).add(center2)
 		};
 
-		that.ctx.beginPath();
-		that.ctx.moveTo(quad2d.a.x,quad2d.a.y);
-		that.ctx.lineTo(quad2d.b.x,quad2d.b.y);
-		that.ctx.lineTo(quad2d.c.x,quad2d.c.y);
-		that.ctx.lineTo(quad2d.d.x,quad2d.d.y);
-		that.ctx.lineTo(quad2d.a.x,quad2d.a.y);
-		that.ctx.closePath();
+		ctx.beginPath();
+		ctx.moveTo(quad2d.a.x,quad2d.a.y);
+		ctx.lineTo(quad2d.b.x,quad2d.b.y);
+		ctx.lineTo(quad2d.c.x,quad2d.c.y);
+		ctx.lineTo(quad2d.d.x,quad2d.d.y);
+		ctx.lineTo(quad2d.a.x,quad2d.a.y);
+		ctx.closePath();
 
 		that.hitFaces.push({
 			triangle: new THREE.Triangle(
@@ -307,24 +266,24 @@ QL.gui.View2D.prototype.drawBox = function(_obj, _lineDash, _strokeStyle, _showC
 			objId: _obj.id
 		});
 
-		that.ctx.strokeStyle = _strokeStyle || '#777';
+		ctx.strokeStyle = _strokeStyle || '#777';
 		var baseColor = new THREE.Color(0x555555);
 		/*if(_obj.selected){
-			that.ctx.strokeStyle = "#DC3333";
+			ctx.strokeStyle = "#DC3333";
 		}*/
 
-		that.ctx.setLineDash(_lineDash || [0]);
-		that.ctx.stroke();
+		ctx.setLineDash(_lineDash || [0]);
+		ctx.stroke();
 
 		if(_showCoords){
-			that.ctx.font="12px Arial";
-			that.ctx.fillStyle="#999";
+			ctx.font="12px Arial";
+			ctx.fillStyle="#999";
 
 		if(that.editor.indexes.length === 0 || that.editor.indexes.indexOf(index+"")>-1){
-				that.ctx.fillText("a("+(new QL.ext.Vector3()).copy(_quad.a).toVector2(_mod).toArray().join(", ")+"), "+quad2d.a.toArray().join(", "),quad2d.a.x,quad2d.a.y);
-				that.ctx.fillText("b("+(new QL.ext.Vector3()).copy(_quad.b).toVector2(_mod).toArray().join(", ")+"), "+quad2d.b.toArray().join(", "),quad2d.b.x,quad2d.b.y);
-				that.ctx.fillText("c("+(new QL.ext.Vector3()).copy(_quad.c).toVector2(_mod).toArray().join(", ")+"), "+quad2d.c.toArray().join(", "),quad2d.c.x,quad2d.c.y);
-				that.ctx.fillText("d("+(new QL.ext.Vector3()).copy(_quad.d).toVector2(_mod).toArray().join(", ")+"), "+quad2d.d.toArray().join(", "),quad2d.d.x,quad2d.d.y);
+				ctx.fillText("a("+(new QL.ext.Vector3()).copy(_quad.a).toVector2(_mod).toArray().join(", ")+"), "+quad2d.a.toArray().join(", "),quad2d.a.x,quad2d.a.y);
+				ctx.fillText("b("+(new QL.ext.Vector3()).copy(_quad.b).toVector2(_mod).toArray().join(", ")+"), "+quad2d.b.toArray().join(", "),quad2d.b.x,quad2d.b.y);
+				ctx.fillText("c("+(new QL.ext.Vector3()).copy(_quad.c).toVector2(_mod).toArray().join(", ")+"), "+quad2d.c.toArray().join(", "),quad2d.c.x,quad2d.c.y);
+				ctx.fillText("d("+(new QL.ext.Vector3()).copy(_quad.d).toVector2(_mod).toArray().join(", ")+"), "+quad2d.d.toArray().join(", "),quad2d.d.x,quad2d.d.y);
 			}
 			_indexes.push(index);
 			_center = objCenter2.clone();
@@ -334,7 +293,7 @@ QL.gui.View2D.prototype.drawBox = function(_obj, _lineDash, _strokeStyle, _showC
 	});
 
 	if(_showCoords){
-		that.ctx.fillText(_indexes.join(", "),_center.x,_center.y);
+		ctx.fillText(_indexes.join(", "),_center.x,_center.y);
 	}
 
 
@@ -343,7 +302,8 @@ QL.gui.View2D.prototype.drawBox = function(_obj, _lineDash, _strokeStyle, _showC
 
 QL.gui.View2D.prototype.drawGrid = function(){
 
-	var ctx = this.ctx;
+	var ctx = this._layers.grid;
+
 	var center = new QL.ext.Vector2(ctx.canvas.width/2,ctx.canvas.height/2);
 	var sizeVector = new QL.ext.Vector2(ctx.canvas.width,ctx.canvas.height);
 
@@ -408,28 +368,30 @@ QL.gui.View2D.prototype.drawGrid = function(){
 
 
 QL.gui.View2D.prototype.refresh = function(_entities){
-	this.canvas.width = $(this.canvas.parentNode).width()/2;
-	this.canvas.height = $(this.canvas.parentNode).height()/2;
-	// draw lines in the middle
-	// drawHorizontalLines(this.ctx);
-	// drawVerticalLines(this.ctx);
-	this.drawGrid();
 
+	// update layers width/height
+	for( var layer in this._layers){
+		this._layers[layer].canvas.width = $(this._layers[layer].canvas.parentNode).width();
+		this._layers[layer].canvas.height = $(this._layers[layer].canvas.parentNode).height();
+	}
+
+	// refresh grid
+	this.drawGrid(this._layers.grid);
 
 	// draw text
-	this.ctx.font="16px Arial";
-	this.ctx.fillStyle="#999";
-	this.ctx.fillText(this.perspective,15,25);
-	this.ctx.font="14px Arial";
-	this.ctx.fillText(this.zoom,this.ctx.canvas.width - 65,25);
-	this.ctx.font="12px Arial";
-	this.ctx.fillText(this.offset.toArray().join(", "),this.ctx.canvas.width - 65, this.ctx.canvas.height - 15);
+	var ctx = this._layers.indicators;
+	ctx.font="16px Arial";
+	ctx.fillStyle="#999";
+	ctx.fillText(this.perspective,15,25);
+	ctx.font="14px Arial";
+	ctx.fillText(this.zoom,ctx.canvas.width - 65,25);
+	ctx.font="12px Arial";
+	ctx.fillText(this.offset.toArray().join(", "),ctx.canvas.width - 65, ctx.canvas.height - 15);
 
-
-	this.center = [
-		this.ctx.canvas.width/2,
-		this.ctx.canvas.height/2
-	];
+	this.center.set(
+		$(this._dom).width()/2,
+		$(this._dom).height()/2
+	);
 
 	this.hitFaces = [];
 
@@ -439,7 +401,7 @@ QL.gui.View2D.prototype.refresh = function(_entities){
 		if(_obj.type === "Mesh"){
 			switch(_obj.geometry.type){
 				case "BoxGeometry":
-					that.drawBox(_obj);
+					that.drawBox(that._layers.scene,_obj);
 				break;
 			}
 		}
@@ -447,10 +409,9 @@ QL.gui.View2D.prototype.refresh = function(_entities){
 
 	// draw the selected again
 	if(this.scene.selected){
-
-		this.drawBox(this.scene.selected,[0],"#DC3333",this.editor.params.debug);
+		this.drawBox(that._layers.selection, this.scene.selected,[0],"#DC3333",this.editor.params.debug);
 		if(this.editor.params["obj-mode"] == "scale"){
-			this.drawBox(this.scene.selected,[5,10],"#DCDC33");
+			this.drawBox(that._layers.selection, this.scene.selected,[5,10],"#DCDC33");
 		}
 	}
 };

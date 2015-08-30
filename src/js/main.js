@@ -1,19 +1,19 @@
 
 var _views = {
 	"tl": {
-		"canvas": ".canvas-tl",
+		"dom": "#view-tl",
 		"perspective": "top" // x, z
 	},
 	"tr": {
-		"canvas": ".canvas-tr",
+		"dom": "#view-tr",
 		"perspective": "3d"
 	},
 	"bl": {
-		"canvas": ".canvas-bl",
+		"dom": "#view-bl",
 		"perspective": "front" // x, y
 	},
 	"br": {
-		"canvas": ".canvas-br",
+		"dom": "#view-br",
 		"perspective": "side" // z, y
 	}
 };

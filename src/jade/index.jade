@@ -28,7 +28,7 @@ html
 					) R
 					a.clone-trigger(
 						data-trigger-method="cloneMesh"
-					) Clone
+					) [C]lone
 				.right-bar
 					a.debug-toggle(
 						data-toggle-ref=".debug-info",
@@ -44,7 +44,7 @@ html
 					) [F]ull Screen
 			.left-panel.opened
 				.object-pane
-					.pane-title Object Pane
+					.pane-title Object [E]dit
 					.pane-body
 						ul.props
 							li
@@ -73,10 +73,10 @@ html
 							.title Meshes
 							a.btn.new-mesh-trigger(
 								data-trigger-method="newMesh"
-							) New Mesh
+							) [N]ew Mesh
 							a.btn.clear-scene-trigger(
 								data-trigger-method="clearScene"
-							) Clear Scene
+							) C[L]ear Scene
 							ul.entities#mesh-entities
 								li
 									| Block 1
@@ -85,11 +85,23 @@ html
 										data-trigger-id="1"
 								)
 			.views
-				canvas.canvas.canvas-tl
-				canvas.canvas.canvas-tr
-				canvas.canvas.canvas-bl
-				canvas.canvas.canvas-br
-
+				.view#view-tl
+					canvas.grid-layer
+					canvas.scene-layer
+					canvas.selection-layer
+					canvas.indicators-layer
+				.view#view-tr
+					canvas.layer-3d
+				.view#view-bl
+					canvas.grid-layer
+					canvas.scene-layer
+					canvas.selection-layer
+					canvas.indicators-layer
+				.view#view-br
+					canvas.grid-layer
+					canvas.scene-layer
+					canvas.selection-layer
+					canvas.indicators-layer
 		//- lib
 		script(src="lib/jquery.js")
 		script(src="lib/jquery-mousewheel.js")
