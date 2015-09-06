@@ -139,7 +139,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 			var changeVector = mousePos.clone().sub(_view.interaction.start).divideScalar(_view.zoom/100);
 			changeVector.x = parseInt(changeVector.x/2.5)*2.5
 			changeVector.y = parseInt(changeVector.y/2.5)*2.5
-
+			console.log(ev, ev.which);
 			switch(ev.which) {
 
 				case 1:

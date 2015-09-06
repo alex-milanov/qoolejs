@@ -14,11 +14,23 @@
     "tests"
   ],
   "dependencies": {
-    "jquery": "~2.1.4",
-    "threex.keyboardstate": "*",
-    "lodash": "~3.9.3",
-    "three.js": "~0.71.0",
     "font-awesome": "~4.3.0",
-    "jquery-mousewheel": "~3.1.13"
+    "jquery": "~2.1.4",
+    "jquery-mousewheel": "~3.1.13",
+    "lodash": "~3.9.3",
+    "perfect-scrollbar": "~0.6.5",
+    "three.js": "~0.71.0",
+    "threex.keyboardstate": "*"
+  },
+  "overrides": {
+    "threex.keyboardstate": {
+      "main": "threex.keyboardstate.js"
+    },
+    "font-awesome": {
+      "main": [
+        "css/**/*.css",
+        "fonts/**/*"
+      ]
+    }
   }
 }

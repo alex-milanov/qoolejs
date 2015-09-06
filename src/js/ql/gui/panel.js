@@ -13,6 +13,7 @@ QL.gui.Panel.prototype.constructor = QL.gui.Panel;
 
 QL.gui.Panel.prototype.init = function(){
 	QL.gui.Element.prototype.init.call(this);
+	$(this._dom).find(".pane-body").perfectScrollbar();
 };
 
 QL.gui.Panel.prototype.refresh = function(){
@@ -53,4 +54,6 @@ QL.gui.Panel.prototype.refresh = function(){
 		}
 	});
 	context.refreshObjectPane();
+
+	$(this._dom).find(".pane-body").perfectScrollbar('update');
 };

@@ -24,7 +24,6 @@
 			margin: 5px;
 			text-align: center;
 			height: 25px;
-			width: 100%;
 			line-height: 25px;
 			font-size:14px;
 			background: #888;
@@ -59,10 +58,11 @@
 				position: absolute;
 				overflow-y: scroll;
 				overflow-x: none;
+				/*
 				&::-webkit-scrollbar
 				{
-					width: 6px;  /* for vertical scrollbars */
-					height: 6px; /* for horizontal scrollbars */
+					width: 6px;  // for vertical scrollbars
+					height: 6px; // for horizontal scrollbars 
 				}
 
 				&::-webkit-scrollbar-track
@@ -74,6 +74,7 @@
 				{
 					background: rgba(0, 0, 0, 0.5);
 				}
+				*/
 				-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 				-moz-box-sizing: border-box;    /* Firefox, other Gecko */
 				box-sizing: border-box;
