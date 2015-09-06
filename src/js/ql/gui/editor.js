@@ -67,7 +67,7 @@ QL.gui.Editor.prototype.init = function(){
 		// keyboard interactions
 		if($(_editor._dom).find(':focus').length === 0) {
 
-			var interactionVector = [0,0];
+			var interactionVector = new QL.ext.Vector3(0,0,0);
 
 			var force = _editor.keyboard.pressed("shift") ? 10 : 2.5;
 
@@ -75,36 +75,70 @@ QL.gui.Editor.prototype.init = function(){
 			if(_editor.keyboard.pressed("up") 
 				|| _editor.keyboard.pressed("down") 
 				|| _editor.keyboard.pressed("left") 
-				|| _editor.keyboard.pressed("right")){
+				|| _editor.keyboard.pressed("right")
+				|| _editor.keyboard.pressed("pageup")
+				|| _editor.keyboard.pressed("pagedown")){
 				var keys = [];
 				if(_editor.keyboard.pressed("up")){
-					interactionVector[1] -= force;
+					interactionVector.y -= force;
 					keys.push("up");
 				}
 				if(_editor.keyboard.pressed("down")){
-					interactionVector[1] += force;
+					interactionVector.y += force;
 					keys.push("down");
 				}
 				if(_editor.keyboard.pressed("left")){
-					interactionVector[0] -= force;
+					interactionVector.x -= force;
 					keys.push("left");
 				}
 				if(_editor.keyboard.pressed("right")){
-					interactionVector[0] += force;
+					interactionVector.x += force;
 					keys.push("right");
 				}
+				if(_editor.keyboard.pressed("pagedown")){
+					interactionVector.z -= force;
+					keys.push("pagedown");
+				}
+				if(_editor.keyboard.pressed("pageup")){
+					interactionVector.z += force;
+					keys.push("pageup");
+				}
 
-				switch(_editor.params['obj-mode']){
-					case "move":
-						_editor.scene.selected.position[_editor.activeView.mod.u] += interactionVector[0]*_editor.activeView.mod.xD;
-						_editor.scene.selected.position[_editor.activeView.mod.v] += interactionVector[1]*_editor.activeView.mod.yD;
-						break;
-					case "scale":
-						_editor.scene.selected.geometry.scale(
-							_editor.activeView.mod, 
-							new QL.ext.Vector2(interactionVector[0], interactionVector[1])
-						)
-						break;
+
+				if(_editor.scene.selected) {
+					switch(_editor.params['obj-mode']){
+						case "move":
+							if(_editor.activeView.perspective!=="3d"){
+								_editor.scene.selected.position[_editor.activeView.mod.u] += interactionVector.x*_editor.activeView.mod.xD;
+								_editor.scene.selected.position[_editor.activeView.mod.v] += interactionVector.y*_editor.activeView.mod.yD;
+								_editor.scene.selected.position[_editor.activeView.mod.w] += interactionVector.z*_editor.activeView.mod.zD;
+							} else {
+								interactionVector.y = -interactionVector.y;
+								interactionVector.z = -interactionVector.z;
+								_editor.scene.selected.position.add(interactionVector);
+							}
+							break;
+						case "scale":
+							if(_editor.activeView.perspective!=="3d"){
+								_editor.scene.selected.geometry.scale(
+									_editor.activeView.mod, 
+									new QL.ext.Vector2(interactionVector.x, interactionVector.y)
+								)
+							} else {
+								// TODO: scale based on front mod
+							}
+							break;
+					}
+				} else {
+					if(_editor.activeView.perspective!=="3d"){
+						_editor.activeView.offset.x += interactionVector.x;
+						_editor.activeView.offset.y += interactionVector.y;
+						_editor.activeView.zoom += interactionVector.z;
+					} else {
+						interactionVector.y = -interactionVector.y;
+						interactionVector.z = -interactionVector.z;
+						_editor.activeView.camera.position.add(interactionVector);
+					}
 				}
 
 				_editor.refreshObjectPane();
@@ -135,7 +169,7 @@ QL.gui.Editor.prototype.init = function(){
 			keyCombo = "ESC";
 		}
 
-		if($(_editor._dom).find(':focus').length === 0) {	
+		if($(_editor._dom).find(':focus').length === 0) {
 
 			// focus on object pane
 			if(keyCode == "E".charCodeAt(0)){
@@ -155,24 +189,24 @@ QL.gui.Editor.prototype.init = function(){
 			}
 
 			// select prev
-			if(keyCode == 33 && event.shiftKey == true){
-				if(event.altKey == true){
+			if(keyCode == 219){
+				if(event.shiftKey == true){
 					_editor.selectNextView(-1);
-					keyCombo = "Shift + ALt + PgUp";
+					keyCombo = "Shift + [";
 				} else {
 					_editor.selectNext(-1);
-					keyCombo = "Shift + PgUp";
+					keyCombo = "[";
 				}
 			}
 
 			// select next on tab
-			if(keyCode == 34 && event.shiftKey == true){
-				if(event.altKey == true){
+			if(keyCode ==  221){
+				if(event.shiftKey == true){
 					_editor.selectNextView(1);
-					keyCombo = "Shift + ALt + PgDwn";
+					keyCombo = "Shift + ]";
 				} else {
 					_editor.selectNext(1);
-					keyCombo = "Shift + PgDwn";
+					keyCombo = "]";
 				}
 			}
 

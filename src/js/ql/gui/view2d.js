@@ -39,6 +39,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 	this.mod = {
 		x: 0, xD: 1,
 		y: 1, yD: -1,
+		zD: 1,
 		u: "x",
 		v: "y"
 	};
