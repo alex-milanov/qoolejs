@@ -8,7 +8,7 @@ function drawLine(ctx, start, finish, dash, stroke){
 	ctx.beginPath();
 	ctx.moveTo(start[0],start[1]);
 	ctx.lineTo(finish[0],finish[1]);
-	ctx.setLineDash(dash);
+	//ctx.setLineDash(dash);
 	ctx.strokeStyle = stroke;
 	ctx.stroke();
 }
@@ -272,7 +272,7 @@ QL.gui.View2D.prototype.drawBox = function(ctx, _obj, _lineDash, _strokeStyle, _
 			ctx.strokeStyle = "#DC3333";
 		}*/
 
-		ctx.setLineDash(_lineDash || [0]);
+		//ctx.setLineDash(_lineDash || [0]);
 		ctx.stroke();
 
 		if(_showCoords){
@@ -330,7 +330,6 @@ QL.gui.View2D.prototype.drawGrid = function(){
 
 	for(var yPos = step; center.y - yPos > 0; yPos+=step){
 		var lineColor = (parseInt(yPos/step/5) === yPos/step/5) ? segmentColor : defaultLineColor;
-		console.log()
 		drawLine(ctx, [
 			0, center.y-yPos
 		],[
