@@ -409,9 +409,18 @@ QL.gui.View2D.prototype.refresh = function(_entities){
 
 	// draw the selected again
 	if(this.scene.selected){
-		this.drawBox(that._layers.selection, this.scene.selected,[0],"#DC3333",this.editor.params.debug);
-		if(this.editor.params["obj-mode"] == "scale"){
-			this.drawBox(that._layers.selection, this.scene.selected,[5,10],"#DCDC33");
+		var boxColor = "#DC3333";
+		switch(this.editor.params["obj-mode"]){
+			case "move":
+				boxColor = "#DC3333";
+				break;
+			case "scale":
+				boxColor = "#DCDC33";
+				break;
+			case "rotate":
+				boxColor = "#33DC33";
+				break;
 		}
+		this.drawBox(that._layers.selection, this.scene.selected,[0],boxColor,this.editor.params.debug);
 	}
 };

@@ -126,6 +126,12 @@ QL.gui.Editor.prototype.init = function(){
 								)
 							} else {
 								// TODO: scale based on front mod
+							}break;
+						case "rotate":
+							if(_editor.activeView.perspective!=="3d"){
+								_editor.scene.selected.rotation[_editor.activeView.mod.u] += QL.etc.Math.radians(interactionVector.y*_editor.activeView.mod.xD);
+								_editor.scene.selected.rotation[_editor.activeView.mod.v] -= QL.etc.Math.radians(interactionVector.x*_editor.activeView.mod.yD);
+								_editor.scene.selected.rotation[_editor.activeView.mod.w] += QL.etc.Math.radians(interactionVector.z*_editor.activeView.mod.zD);
 							}
 							break;
 					}
