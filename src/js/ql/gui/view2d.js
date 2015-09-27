@@ -140,7 +140,6 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 			var changeVector = mousePos.clone().sub(_view.interaction.start).divideScalar(_view.zoom/100);
 			changeVector.x = parseInt(changeVector.x/2.5)*2.5
 			changeVector.y = parseInt(changeVector.y/2.5)*2.5
-			console.log(ev, ev.which);
 			switch(ev.which) {
 
 				case 1:
@@ -149,23 +148,34 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 
 					var objectChanged = false;
 
+					var interactionVector = changeVector.clone().sub(_view.interaction.last).toVector3(_view.mod);
+
 					switch(_view.editor.params["obj-mode"]){
-						
 						case "move":
-							_view.scene.selected.position.add(changeVector.clone().sub(_view.interaction.last).toVector3(_view.mod))
-
-							objectChanged = true;
-
+							QL.ext.interactor.move(_view.scene.selected, interactionVector);
 							break;
 						case "scale":
+							interactionVector.z = -interactionVector.z;
+							QL.ext.interactor.scale(_view.scene.selected, interactionVector.divideScalar(10));
+							break;
+						case "rotate":
+
+							var oldRotation = _view.scene.selected.rotation.clone();
+
+							var mousePos3 = mousePos.clone().divideScalar(_view.zoom/100).sub(_view.center).toVector3(_view.mod);
+							mousePos3[_view.mod.w] = _view.scene.selected.position[_view.mod.w];
+							//console.log(mousePos3);
+							_view.scene.selected.lookAt(mousePos3);
 							
-							if( _view.scene.selected.geometry.type === "BoxGeometry" &&
-								_view.scene.selected.geometry.scale(_view.mod, changeVector.clone().sub(_view.interaction.last))
-							){
-								objectChanged = true;
-							}
+							/*
+							var rotationVector = new QL.ext.Vector3();
+							rotationVector[_view.mod.w] = interactionVector[_view.mod.u];
+							QL.ext.interactor.rotate(_view.scene.selected, rotationVector);
+							*/
 							break;
 					}
+
+					objectChanged = true;
 
 					if(objectChanged){
 						var action = {
@@ -224,6 +234,8 @@ QL.gui.View2D.prototype.drawBox = function(ctx, _obj, _lineDash, _strokeStyle, _
 	var _center = [];
 	var _indexes = [];
 
+	var scaleVector = new QL.ext.Vector3().copy(_obj.scale);
+
 	_obj.geometry.quads.forEach(function(_quad, index){
 
 		var center2 = that.center.clone().add(that.offset);
@@ -233,13 +245,14 @@ QL.gui.View2D.prototype.drawBox = function(ctx, _obj, _lineDash, _strokeStyle, _
 
 		var objCenter2 = objPos3.clone().toVector2(_mod).add(center2);
 
+		//var scaleVector2 = scaleVector.toVector2(_mod);
 		// TODO: Impl a check whether a face should be displayed or not
 				
 		var quad2d = {
-			a: new QL.ext.Vector3().copy(_quad.a).applyEuler(_obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(that.zoom/100).add(center2),
-			b: new QL.ext.Vector3().copy(_quad.b).applyEuler(_obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(that.zoom/100).add(center2),
-			c: new QL.ext.Vector3().copy(_quad.c).applyEuler(_obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(that.zoom/100).add(center2),
-			d: new QL.ext.Vector3().copy(_quad.d).applyEuler(_obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(that.zoom/100).add(center2)
+			a: new QL.ext.Vector3().copy(_quad.a).multiply(scaleVector).applyEuler(_obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(that.zoom/100).add(center2),
+			b: new QL.ext.Vector3().copy(_quad.b).multiply(scaleVector).applyEuler(_obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(that.zoom/100).add(center2),
+			c: new QL.ext.Vector3().copy(_quad.c).multiply(scaleVector).applyEuler(_obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(that.zoom/100).add(center2),
+			d: new QL.ext.Vector3().copy(_quad.d).multiply(scaleVector).applyEuler(_obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(that.zoom/100).add(center2)
 		};
 
 		ctx.beginPath();

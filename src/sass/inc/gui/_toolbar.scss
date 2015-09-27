@@ -36,6 +36,15 @@
 				background: #777;
 			}
 		}
+		
+		.debug-keys {
+			display: inline-block;
+			height: $ql-toolbar-height;
+			line-height: $ql-toolbar-height;
+			width: 120px;
+			margin: 0px;
+			padding: 0px 10px;
+		}
 		.debug-toggle {
 			padding: 0px 5px;
 		}
@@ -44,14 +53,6 @@
 			margin: 0px;
 			padding: 0px;
 			display: none;
-			.debug-keys {
-				display: inline-block;
-				height: $ql-toolbar-height;
-				line-height: $ql-toolbar-height;
-				width: 120px;
-				margin: 0px;
-				padding: 0px 10px;
-			}
 			.indexes {
 				display: inline-block;
 				height: $ql-toolbar-height;

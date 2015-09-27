@@ -80,69 +80,54 @@ QL.gui.Editor.prototype.init = function(){
 				|| _editor.keyboard.pressed("pagedown")){
 				var keys = [];
 				if(_editor.keyboard.pressed("up")){
-					interactionVector.y -= force;
-					keys.push("up");
+					interactionVector.z -= force;
+					keys.push("Up");
 				}
 				if(_editor.keyboard.pressed("down")){
-					interactionVector.y += force;
-					keys.push("down");
+					interactionVector.z += force;
+					keys.push("Down");
 				}
 				if(_editor.keyboard.pressed("left")){
 					interactionVector.x -= force;
-					keys.push("left");
+					keys.push("Left");
 				}
 				if(_editor.keyboard.pressed("right")){
 					interactionVector.x += force;
-					keys.push("right");
-				}
-				if(_editor.keyboard.pressed("pagedown")){
-					interactionVector.z -= force;
-					keys.push("pagedown");
+					keys.push("Right");
 				}
 				if(_editor.keyboard.pressed("pageup")){
-					interactionVector.z += force;
-					keys.push("pageup");
+					interactionVector.y += force;
+					keys.push("PgUp");
+				}
+				if(_editor.keyboard.pressed("pagedown")){
+					interactionVector.y -= force;
+					keys.push("PgDown");
 				}
 
 
 				if(_editor.scene.selected) {
 					switch(_editor.params['obj-mode']){
 						case "move":
-							if(_editor.activeView.perspective!=="3d"){
-								_editor.scene.selected.position[_editor.activeView.mod.u] += interactionVector.x*_editor.activeView.mod.xD;
-								_editor.scene.selected.position[_editor.activeView.mod.v] += interactionVector.y*_editor.activeView.mod.yD;
-								_editor.scene.selected.position[_editor.activeView.mod.w] += interactionVector.z*_editor.activeView.mod.zD;
-							} else {
-								interactionVector.y = -interactionVector.y;
-								interactionVector.z = -interactionVector.z;
-								_editor.scene.selected.position.add(interactionVector);
-							}
+							QL.ext.interactor.move(_editor.scene.selected, interactionVector);
 							break;
 						case "scale":
-							if(_editor.activeView.perspective!=="3d"){
-								_editor.scene.selected.geometry.scale(
-									_editor.activeView.mod, 
-									new QL.ext.Vector2(interactionVector.x, interactionVector.y)
-								)
-							} else {
-								// TODO: scale based on front mod
-							}break;
+							interactionVector.z = -interactionVector.z;
+							QL.ext.interactor.scale(_editor.scene.selected, interactionVector.divideScalar(force*4));
+							break;
 						case "rotate":
-							if(_editor.activeView.perspective!=="3d"){
-								_editor.scene.selected.rotation[_editor.activeView.mod.u] += QL.etc.Math.radians(interactionVector.y*_editor.activeView.mod.xD);
-								_editor.scene.selected.rotation[_editor.activeView.mod.v] -= QL.etc.Math.radians(interactionVector.x*_editor.activeView.mod.yD);
-								_editor.scene.selected.rotation[_editor.activeView.mod.w] += QL.etc.Math.radians(interactionVector.z*_editor.activeView.mod.zD);
-							}
+							var rotationVector = new QL.ext.Vector3();
+							rotationVector.z = -interactionVector.x;
+							rotationVector.x = interactionVector.z;
+							rotationVector.y = -interactionVector.y;
+							QL.ext.interactor.rotate(_editor.scene.selected, rotationVector);
 							break;
 					}
 				} else {
 					if(_editor.activeView.perspective!=="3d"){
-						_editor.activeView.offset.x += interactionVector.x;
-						_editor.activeView.offset.y += interactionVector.y;
-						_editor.activeView.zoom += interactionVector.z;
+						_editor.activeView.offset.x -= interactionVector.x;
+						_editor.activeView.offset.y -= interactionVector.z;
+						_editor.activeView.zoom += interactionVector.y;
 					} else {
-						interactionVector.y = -interactionVector.y;
-						interactionVector.z = -interactionVector.z;
 						_editor.activeView.camera.position.add(interactionVector);
 					}
 				}
@@ -154,7 +139,7 @@ QL.gui.Editor.prototype.init = function(){
 		}
 
 		if(keyCombo !== '' && $(".debug-keys").text() !== keyCombo){
-			$(".debug-keys").text(keyCombo);
+			$(".debug-keys").text(" "+keyCombo);
 		}
 
 	}
@@ -245,7 +230,7 @@ QL.gui.Editor.prototype.init = function(){
 		}
 
 		if(keyCombo !== '' && $(".debug-keys").text() !== keyCombo){
-			$(".debug-keys").text(keyCombo);
+			$(".debug-keys").text(" "+keyCombo);
 		}
 	}, false);
 

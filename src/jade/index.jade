@@ -31,13 +31,13 @@ html
 						data-trigger-method="cloneMesh"
 					) [C]lone
 				.right-bar
+					.debug-keys.fa.fa-keyboard-o
 					a.debug-toggle(
 						data-toggle-ref=".debug-info",
 						data-toggle-class="visible",
 						data-toggle-param="debug"
 					) Debug
 					span.debug-info
-						.debug-keys Keys
 						input.indexes(type="number",placeholder="Indexes",value="-1")
 					a.fullscreen-toggle(
 						data-toggle-ref=".views",
@@ -120,6 +120,7 @@ html
 		script(src="js/ql/ext/boxGeometry.js")
 		script(src="js/ql/ext/mesh.js")
 		script(src="js/ql/ext/scene.js")
+		script(src="js/ql/ext/interactor.js")
 		script(src="js/ql/gui/element.js")
 		script(src="js/ql/gui/panel.js")
 		script(src="js/ql/gui/toolbar.js")
