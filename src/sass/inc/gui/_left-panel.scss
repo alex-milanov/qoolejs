@@ -1,7 +1,7 @@
 .gui {
 	.left-panel {
-		background: #999;
-		color: #000;
+		background: $ql-panel-background-color;
+		color: $ql-panel-text-color;
 		position: absolute;
 		top: $ql-toolbar-height;
 		left: 0px;
@@ -26,11 +26,11 @@
 			height: 25px;
 			line-height: 25px;
 			font-size:14px;
-			background: #888;
+			background: $ql-panel-object-1-color;
 			display: block;
 			cursor: pointer;
 			&:hover {
-				background: #777;
+				background: $ql-panel-object-2-color;
 			}
 
 		}
@@ -45,7 +45,7 @@
 				line-height: 30px;
 				position: absolute;
 				top: 0px;
-				background: #777;
+				background: $ql-panel-object-1-color;
 				color: #000;
 				-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 				-moz-box-sizing: border-box;    /* Firefox, other Gecko */
@@ -58,23 +58,6 @@
 				position: absolute;
 				overflow-y: scroll;
 				overflow-x: none;
-				/*
-				&::-webkit-scrollbar
-				{
-					width: 6px;  // for vertical scrollbars
-					height: 6px; // for horizontal scrollbars 
-				}
-
-				&::-webkit-scrollbar-track
-				{
-					background: rgba(0, 0, 0, 0.1);
-				}
-
-				&::-webkit-scrollbar-thumb
-				{
-					background: rgba(0, 0, 0, 0.5);
-				}
-				*/
 				-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 				-moz-box-sizing: border-box;    /* Firefox, other Gecko */
 				box-sizing: border-box;
@@ -91,7 +74,7 @@
 					height: 25px;
 					line-height: 25px;
 					font-size: 16px;
-					background: #888;
+					background: $ql-panel-object-1-color;
 					padding-left: 10px;
 					margin: 5px 0px;
 				}
@@ -107,10 +90,10 @@
 						font-size:12px;
 						cursor: pointer;
 						&:hover {
-							background: #888;
+							background: $ql-panel-object-1-color;
 						}
 						&.selected {
-							background: #777;
+							background: $ql-panel-object-2-color;
 						}
 					}
 				}
@@ -118,8 +101,8 @@
 			}
 		}
 		.object-pane {
-			background: #999;
-			color: #000;
+			background: $ql-panel-background-color;
+			color: $ql-panel-text-color;
 			bottom: 0px;
 			width: 100%;
 			height: $ql-object-pane-height;
@@ -142,10 +125,10 @@
 					cursor: pointer;
 					font-size: 0px;
 					&:hover {
-						background: #888;
+						background: $ql-panel-object-1-color;
 					}
 					&.selected {
-						background: #777;
+						background: $ql-panel-object-2-color;
 					}
 					> * {
 						font-size:14px;
@@ -166,7 +149,7 @@
 					}
 					input {
 						width: 69%;
-						background: #777;
+						background: $ql-panel-object-2-color;
 						color: #333;
 						&.p30 {
 							width: 23%;

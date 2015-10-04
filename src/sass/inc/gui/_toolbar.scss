@@ -12,7 +12,7 @@
 			line-height: $ql-toolbar-height;
 			margin: 0px;
 			padding: 0px;
-			color: #aaa;
+			color: #ccc;
 			position: absolute;
 			top: 0px;
 		}
@@ -29,11 +29,11 @@
 			position: relative;
 			&:hover {
 				color: #333;
-				background: #999;
+				background: $ql-panel-object-2-color;
 			}
 			&.selected, &.toggled {
 				color: #333;
-				background: #777;
+				background: $ql-panel-object-1-color;
 			}
 		}
 		
