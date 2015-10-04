@@ -57,6 +57,16 @@ html
 								input.p30#object-pane-pos-y(type="number")
 								input.p30#object-pane-pos-z(type="number")
 							li
+								label Scale 
+								input.p30#object-pane-scale-x(type="number",step="0.125")
+								input.p30#object-pane-scale-y(type="number",step="0.125")
+								input.p30#object-pane-scale-z(type="number",step="0.125")
+							li
+								label Rotation 
+								input.p30#object-pane-rotation-x(type="number",step="1")
+								input.p30#object-pane-rotation-y(type="number",step="1")
+								input.p30#object-pane-rotation-z(type="number",step="1")
+							li
 								label Color 
 								input#object-pane-color(type="text")
 						button.btn.object-update-trigger(

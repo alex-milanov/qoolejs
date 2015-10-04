@@ -304,9 +304,18 @@ QL.gui.Editor.prototype.updateMesh = function(objId){
 	}
 	var objRef = this.scene.selected;
 	objRef.name = $("#object-pane-name").val();
-	objRef.position.x = parseInt($("#object-pane-pos-x").val());
-	objRef.position.y = parseInt($("#object-pane-pos-y").val());
-	objRef.position.z = parseInt($("#object-pane-pos-z").val());
+	objRef.position.x = parseFloat($("#object-pane-pos-x").val());
+	objRef.position.y = parseFloat($("#object-pane-pos-y").val());
+	objRef.position.z = parseFloat($("#object-pane-pos-z").val());
+	// scale
+	objRef.scale.x = parseFloat($("#object-pane-scale-x").val());
+	objRef.scale.y = parseFloat($("#object-pane-scale-y").val());
+	objRef.scale.z = parseFloat($("#object-pane-scale-z").val());
+	// rotation
+	objRef.rotation.x = QL.etc.Math.radians(parseInt($("#object-pane-rotation-x").val()));
+	objRef.rotation.y = QL.etc.Math.radians(parseInt($("#object-pane-rotation-y").val()));
+	objRef.rotation.z = QL.etc.Math.radians(parseInt($("#object-pane-rotation-z").val()));
+
 	objRef.material.color.setStyle($("#object-pane-color").val());
 	this.panel.refresh();
 };
@@ -327,6 +336,14 @@ QL.gui.Editor.prototype.refreshObjectPane = function(){
 		$("#object-pane-pos-x").val(this.scene.selected.position.x);
 		$("#object-pane-pos-y").val(this.scene.selected.position.y);
 		$("#object-pane-pos-z").val(this.scene.selected.position.z);
+		// scale
+		$("#object-pane-scale-x").val(this.scene.selected.scale.x);
+		$("#object-pane-scale-y").val(this.scene.selected.scale.y);
+		$("#object-pane-scale-z").val(this.scene.selected.scale.z);
+		// rotation
+		$("#object-pane-rotation-x").val(parseInt(QL.etc.Math.degrees(this.scene.selected.rotation.x)));
+		$("#object-pane-rotation-y").val(parseInt(QL.etc.Math.degrees(this.scene.selected.rotation.y)));
+		$("#object-pane-rotation-z").val(parseInt(QL.etc.Math.degrees(this.scene.selected.rotation.z)));
 		$("#object-pane-color").val(this.scene.selected.material.color.getStyle());
 	} else {
 		$(".object-pane").removeClass("active");
