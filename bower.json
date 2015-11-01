@@ -1,5 +1,5 @@
 {
-  "name": "qoole-gui-tests",
+  "name": "qoolejs",
   "version": "0.1.0",
   "authors": [
     "Alex Milanov <alex@i4web.biz>"
@@ -19,10 +19,13 @@
     "jquery-mousewheel": "~3.1.13",
     "lodash": "~3.9.3",
     "perfect-scrollbar": "~0.6.5",
-    "three.js": "~0.71.0",
+    "three.js": "~0.72.0",
     "threex.keyboardstate": "*"
   },
   "overrides": {
+    "three.js": {
+      "main": "*.js"
+    },
     "threex.keyboardstate": {
       "main": "threex.keyboardstate.js"
     },

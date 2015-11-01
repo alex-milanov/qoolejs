@@ -3,10 +3,10 @@
 if(typeof QL === "undefined"){ var QL = {}; }
 if(typeof QL.gui === "undefined"){ QL.gui = {}; }
 
-QL.gui.View3D = function(_conf, _scene){
-	this._dom = $(_conf.dom)[0];
-	this.canvas = $(this._dom).find(".layer-3d")[0];
-	this.perspective = _conf.perspective;
+QL.gui.View3D = function(conf, scene){
+	this.dom = $(conf.dom)[0];
+	this.canvas = $(this.dom).find(".layer-3d")[0];
+	this.perspective = conf.perspective;
 
 	this.canvas.width = $(this.canvas).width();
 	this.canvas.height = $(this.canvas).height();
@@ -15,10 +15,10 @@ QL.gui.View3D = function(_conf, _scene){
 		this.canvas.height/2
 	];
 
-	if(typeof _scene === "undefined"){
+	if(typeof scene === "undefined"){
 		this.scene = new THREE.Scene();
 	} else {
-		this.scene = _scene;
+		this.scene = scene;
 	}
 
 	this.renderer = new THREE.WebGLRenderer({
@@ -75,46 +75,47 @@ QL.gui.View3D = function(_conf, _scene){
 	this.renderer.gammaInput = true;
 	this.renderer.gammaOutput = true;
 
-	this.renderer.shadowMapEnabled = true;
+	//this.renderer.shadowMap.cullFace = THREE.CullFaceBack;
+	//this.renderer.shadowMap.enabled = true;
 };
 
-QL.gui.View3D.prototype.addBlock = function(_entity){
+QL.gui.View3D.prototype.addBlock = function(entity){
 
-	var width = _entity.finish[0]-_entity.start[0];
-	var height = _entity.finish[1]-_entity.start[1];
-	var depth = _entity.finish[2]-_entity.start[2];
+	var width = entity.finish[0]-entity.start[0];
+	var height = entity.finish[1]-entity.start[1];
+	var depth = entity.finish[2]-entity.start[2];
 
 	var pos = {
-		x: (_entity.start[0]+width/2),
-		y: (_entity.start[1]+height/2),
-		z: (_entity.start[2]+depth/2)
+		x: (entity.start[0]+width/2),
+		y: (entity.start[1]+height/2),
+		z: (entity.start[2]+depth/2)
 	};
 
 	var geometry = new QL.ext.BoxGeometry( width, height, depth );
-	var color = _entity.color || 0x777777;
+	var color = entity.color || 0x777777;
 	var material = new THREE.MeshBasicMaterial( { color: color, wireframe: false } );
 	var mesh = new QL.ext.Mesh( geometry, material );
 	mesh.position.set( pos.x, pos.y, pos.z );
 	mesh.receiveShadow = true;
 	mesh.castShadow = true;
 
-	if(_entity.name){
-		mesh.name = _entity.name;
+	if(entity.name){
+		mesh.name = entity.name;
 	}
 
 	this.scene.add( mesh );
 };
 
-QL.gui.View3D.prototype.addEntities = function(_entities){
+QL.gui.View3D.prototype.addEntities = function(entities){
 
 	var that = this;
-	_entities.forEach(function(_entity){
-		switch(_entity.type){
+	entities.forEach(function(entity){
+		switch(entity.type){
 			case "cube":
-				that.addCube(_entity);
+				that.addCube(entity);
 				break;
 			case "block":
-				that.addBlock(_entity);
+				that.addBlock(entity);
 				break;
 		}
 	});
@@ -124,8 +125,8 @@ QL.gui.View3D.prototype.refresh = function(){
 
 
 	$(this.canvas).attr("style","");
-	this.canvas.width = $(this._dom).width();
-	this.canvas.height = $(this._dom).height();
+	this.canvas.width = $(this.dom).width();
+	this.canvas.height = $(this.dom).height();
 
 	this.renderer.setSize(this.canvas.width, this.canvas.height );
 

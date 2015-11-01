@@ -74,6 +74,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 	}
 
 	this.hitFaces = [];
+	this.selected = false;
 
 	this.scene = _scene;
 	this.editor = _editor;
@@ -89,29 +90,25 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 			ev.offsetY
 		);
 
-		var oldId = false;
-		if(_view.scene.selected){
-			oldId = _view.scene.selected.id;
-		}
+		var old = _.clone(_view.selected);
 
-		var selectedObj = false;
+		var selected = false;
 		var hits = 0;
 		_view.hitFaces.forEach(function(hitFace){
 			if(hitFace.triangle.containsPoint(hitPos.toVector3(_view.mod))) {
 				hits++;
 
-				var hitObj = _view.scene.getObjectById(hitFace.objId);
-				if(!selectedObj || hitObj.position[_view.mod.w] > selectedObj.position[_view.mod.w]){
+				if(selected === false || hitFace.position[_view.mod.w] > selected.position[_view.mod.w]){
 
-					if(hitFace.objId === oldId)
+					if(hitFace.objId === old.objId)
 						return true;
-					selectedObj = hitObj;
+
+					selected = _.clone(hitFace);
 				}
 			}
 		});
 
-		_view.editor.select(selectedObj.id);
-
+		_view.editor.select(selected.objId);
 
 	};
 
@@ -143,7 +140,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 			switch(ev.which) {
 
 				case 1:
-					if(!_view.scene.selected)
+					if(_view.selected === false)
 						return;
 
 					var objectChanged = false;
@@ -152,11 +149,14 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 
 					switch(_view.editor.params["obj-mode"]){
 						case "move":
-							QL.ext.interactor.move(_view.scene.selected, interactionVector);
+
+							//QL.ext.interactor.move(_view.scene.selected, interactionVector);
+							_view.editor.interact("move",interactionVector);
 							break;
 						case "scale":
 							interactionVector.z = -interactionVector.z;
-							QL.ext.interactor.scale(_view.scene.selected, interactionVector.divideScalar(10));
+							//QL.ext.interactor.scale(_view.scene.selected, interactionVector.divideScalar(10));
+							_view.editor.interact("scale",interactionVector.divideScalar(10));
 							break;
 						case "rotate":
 
@@ -165,27 +165,12 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 							var mousePos3 = mousePos.clone().divideScalar(_view.zoom/100).sub(_view.center).toVector3(_view.mod);
 							mousePos3[_view.mod.w] = _view.scene.selected.position[_view.mod.w];
 							//console.log(mousePos3);
-							_view.scene.selected.lookAt(mousePos3);
+							//QL.ext.interactor.lookAt(_view.scene.selected, mousePos3);
+							_view.editor.interact("lookAt",mousePos3);
 							
-							/*
-							var rotationVector = new QL.ext.Vector3();
-							rotationVector[_view.mod.w] = interactionVector[_view.mod.u];
-							QL.ext.interactor.rotate(_view.scene.selected, rotationVector);
-							*/
 							break;
 					}
-
-					objectChanged = true;
-
-					if(objectChanged){
-						var action = {
-							type: _view.editor.params["obj-mode"],
-							changeVector: changeVector.clone(),
-							mod: _view.mod
-						}
-						_view.editor.trackAction(action);
-						_view.interaction.last = changeVector.clone();
-					}
+					_view.interaction.last = changeVector.clone();
 					break;
 				case 2:
 					_view.offset.sub(changeVector.clone().sub(_view.interaction.last))
@@ -269,6 +254,7 @@ QL.gui.View2D.prototype.drawBox = function(ctx, _obj, _lineDash, _strokeStyle, _
 				quad2d.b.toVector3(_mod),
 				quad2d.c.toVector3(_mod)
 			),
+			position: _obj.position.clone(),
 			objId: _obj.id
 		});
 		that.hitFaces.push({
@@ -277,6 +263,7 @@ QL.gui.View2D.prototype.drawBox = function(ctx, _obj, _lineDash, _strokeStyle, _
 				quad2d.c.toVector3(_mod),
 				quad2d.d.toVector3(_mod)
 			),
+			position: _obj.position.clone(),
 			objId: _obj.id
 		});
 
@@ -380,7 +367,7 @@ QL.gui.View2D.prototype.drawGrid = function(){
 }
 
 
-QL.gui.View2D.prototype.refresh = function(_entities){
+QL.gui.View2D.prototype.refresh = function(scene){
 
 	// update layers width/height
 	for( var layer in this._layers){
@@ -410,7 +397,7 @@ QL.gui.View2D.prototype.refresh = function(_entities){
 
 	var that = this;
 
-	this.scene.children.forEach(function(_obj){
+	scene.children.forEach(function(_obj){
 		if(_obj.type === "Mesh"){
 			switch(_obj.geometry.type){
 				case "BoxGeometry":
@@ -421,7 +408,7 @@ QL.gui.View2D.prototype.refresh = function(_entities){
 	});
 
 	// draw the selected again
-	if(this.scene.selected){
+	if(scene.selected){
 		var boxColor = "#DC3333";
 		switch(this.editor.params["obj-mode"]){
 			case "move":
@@ -434,6 +421,12 @@ QL.gui.View2D.prototype.refresh = function(_entities){
 				boxColor = "#33DC33";
 				break;
 		}
-		this.drawBox(that._layers.selection, this.scene.selected,[0],boxColor,this.editor.params.debug);
+		this.drawBox(that._layers.selection, scene.selected,[0],boxColor,this.editor.params.debug);
+		this.selected = {
+			objId: scene.selected.id,
+			position: scene.selected.position.clone()
+		}
+	} else {
+		this.selected = false;
 	}
 };

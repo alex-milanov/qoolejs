@@ -12,7 +12,7 @@ QL.gui.Editor = function(_views, _entities){
 		"obj-mode": "move"
 	};
 
-	this.actions = []; 
+	this.history = new QL.etc.History();
 
 	this.entities = _entities;
 
@@ -59,7 +59,7 @@ QL.gui.Editor.prototype.init = function(){
 
 		// refresh sub views
 		for(var key in _editor.views){
-			_editor.views[key].refresh(_editor.entities);
+			_editor.views[key].refresh(_editor.scene);
 		}
 
 		var keyCombo = '';
@@ -252,8 +252,39 @@ QL.gui.Editor.prototype.changeMode = function(mode){
 	}
 }
 
-QL.gui.Editor.prototype.trackAction = function(action){
-	this.actions.push(action);
+QL.gui.Editor.prototype.interact = function(action, v3){
+	
+	var preMatrix = new THREE.Matrix4();
+	var selected = this.scene.selected;
+	preMatrix.copy( selected.matrix );
+
+	// apply action
+	QL.ext.interactor[action](selected, v3);
+
+	var editor = this;
+
+	//-> setTimeOut
+	
+	if ( preMatrix.equals( selected.matrix ) === false ) {
+
+		( function ( matrix1, matrix2 ) {
+
+			editor.history.add(
+				function () {
+					matrix1.decompose( selected.position, selected.quaternion, selected.scale );
+					//signals.objectChanged.dispatch( object );
+				},
+				function () {
+					matrix2.decompose( selected.position, selected.quaternion, selected.scale );
+					//signals.objectChanged.dispatch( object );
+				},
+				action + " " + selected.id + " ["+v3.toArray().join(", ")+"]" // title
+			);
+
+		} )( preMatrix.clone(), selected.matrix.clone() );
+
+	}
+	
 }
 
 QL.gui.Editor.prototype.selectView = function(view){
