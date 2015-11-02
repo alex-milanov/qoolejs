@@ -18,11 +18,23 @@ QL.etc.History.prototype = {
 			this.events.splice(this.index,this.events.length-this.index);
 		}
 
-		this.events.push({
-			undo: undo,
-			redo: redo,
-			title: title
-		})
+		var time = new Date().getTime();
+
+		var lastEvent = (this.index > 0) ? this.events[this.index-1] : false;
+
+		// if the event has the same title as last and less than 3s have passed join them
+		if(lastEvent && title == lastEvent.title && (time - lastEvent.time) < 3000){
+			this.index --;
+			this.events[this.index].time = time;
+			this.events[this.index].redo = redo;
+		} else {
+			this.events.push({
+				undo: undo,
+				redo: redo,
+				title: title,
+				time: time
+			})
+		}
 	},
 
 	undo: function () {

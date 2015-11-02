@@ -108,20 +108,22 @@ QL.gui.Editor.prototype.init = function(){
 				if(_editor.scene.selected) {
 					switch(_editor.params['obj-mode']){
 						case "move":
-							QL.ext.interactor.move(_editor.scene.selected, interactionVector);
+							//QL.ext.interactor.move(_editor.scene.selected, interactionVector);
+							//_editor.interact("move", interactionVector);
 							break;
 						case "scale":
 							interactionVector.z = -interactionVector.z;
-							QL.ext.interactor.scale(_editor.scene.selected, interactionVector.divideScalar(force*4));
+							interactionVector.divideScalar(force*4);
 							break;
 						case "rotate":
 							var rotationVector = new QL.ext.Vector3();
 							rotationVector.z = -interactionVector.x;
 							rotationVector.x = interactionVector.z;
 							rotationVector.y = -interactionVector.y;
-							QL.ext.interactor.rotate(_editor.scene.selected, rotationVector);
+							interactionVector.copy(rotationVector);
 							break;
 					}
+					_editor.interact(_editor.params['obj-mode'], interactionVector);
 				} else {
 					if(_editor.activeView.perspective!=="3d"){
 						_editor.activeView.offset.x -= interactionVector.x;
@@ -161,6 +163,16 @@ QL.gui.Editor.prototype.init = function(){
 		}
 
 		if($(_editor._dom).find(':focus').length === 0) {
+
+			// undo/redo
+			if(event.ctrlKey && keyCode == "Z".charCodeAt(0)){
+				_editor.history.undo();
+				keyCombo = "Ctrl+Z";
+			}
+			if(event.ctrlKey && keyCode == "Y".charCodeAt(0)){
+				_editor.history.redo();
+				keyCombo = "Ctrl+Y";
+			}
 
 			// focus on object pane
 			if(keyCode == "E".charCodeAt(0)){
@@ -241,7 +253,6 @@ QL.gui.Editor.prototype.init = function(){
 
 	this.panel.refresh();
 
-	
 };
 
 QL.gui.Editor.prototype.changeMode = function(mode){
@@ -256,6 +267,7 @@ QL.gui.Editor.prototype.interact = function(action, v3){
 	
 	var preMatrix = new THREE.Matrix4();
 	var selected = this.scene.selected;
+
 	preMatrix.copy( selected.matrix );
 
 	// apply action
@@ -278,7 +290,7 @@ QL.gui.Editor.prototype.interact = function(action, v3){
 					matrix2.decompose( selected.position, selected.quaternion, selected.scale );
 					//signals.objectChanged.dispatch( object );
 				},
-				action + " " + selected.id + " ["+v3.toArray().join(", ")+"]" // title
+				action + " " + selected.id // title
 			);
 
 		} )( preMatrix.clone(), selected.matrix.clone() );
@@ -320,41 +332,139 @@ QL.gui.Editor.prototype.selectNext = function(direction){
 }
 
 QL.gui.Editor.prototype.newMesh = function(){
-	this.scene.newMesh();
+	var mesh = this.scene.newMesh();
 	this.panel.refresh();
+
+	var action = "new mesh" + mesh.id;
+
+	editor.history.add(
+		function () {
+			editor.scene.remove(mesh);
+			editor.scene.selected = null;
+			editor.panel.refresh();
+			//signals.objectChanged.dispatch( object );
+		},
+		function () {
+			editor.scene.add(mesh);
+			editor.scene.selected = null;
+			editor.panel.refresh();
+			//signals.objectChanged.dispatch( object );
+		},
+		action
+	);
 };
 
 QL.gui.Editor.prototype.cloneMesh = function(){
-	this.scene.cloneMesh(this.activeView.mod);
+	var mesh = this.scene.cloneMesh(this.activeView.mod);
 	this.panel.refresh();
+
+	var action = "clone mesh" + mesh.id;
+
+	editor.history.add(
+		function () {
+			editor.scene.remove(mesh);
+			editor.scene.selected = null;
+			editor.panel.refresh();
+			//signals.objectChanged.dispatch( object );
+		},
+		function () {
+			editor.scene.add(mesh);
+			editor.scene.selected = null;
+			editor.panel.refresh();
+			//signals.objectChanged.dispatch( object );
+		},
+		action
+	);
 };
 
 QL.gui.Editor.prototype.updateMesh = function(objId){
 	if(!objId){
 		return false;
 	}
-	var objRef = this.scene.selected;
-	objRef.name = $("#object-pane-name").val();
-	objRef.position.x = parseFloat($("#object-pane-pos-x").val());
-	objRef.position.y = parseFloat($("#object-pane-pos-y").val());
-	objRef.position.z = parseFloat($("#object-pane-pos-z").val());
-	// scale
-	objRef.scale.x = parseFloat($("#object-pane-scale-x").val());
-	objRef.scale.y = parseFloat($("#object-pane-scale-y").val());
-	objRef.scale.z = parseFloat($("#object-pane-scale-z").val());
-	// rotation
-	objRef.rotation.x = QL.etc.Math.radians(parseInt($("#object-pane-rotation-x").val()));
-	objRef.rotation.y = QL.etc.Math.radians(parseInt($("#object-pane-rotation-y").val()));
-	objRef.rotation.z = QL.etc.Math.radians(parseInt($("#object-pane-rotation-z").val()));
+	var selected = this.scene.selected;
 
-	objRef.material.color.setStyle($("#object-pane-color").val());
+	var oldObjState = {
+		name: selected.name,
+		matrix: selected.matrix.clone(),
+		material: selected.material.clone()
+	};
+
+	selected.name = $("#object-pane-name").val();
+	selected.position.x = parseFloat($("#object-pane-pos-x").val());
+	selected.position.y = parseFloat($("#object-pane-pos-y").val());
+	selected.position.z = parseFloat($("#object-pane-pos-z").val());
+	// scale
+	selected.scale.x = parseFloat($("#object-pane-scale-x").val());
+	selected.scale.y = parseFloat($("#object-pane-scale-y").val());
+	selected.scale.z = parseFloat($("#object-pane-scale-z").val());
+	// rotation
+	selected.rotation.x = QL.etc.Math.radians(parseInt($("#object-pane-rotation-x").val()));
+	selected.rotation.y = QL.etc.Math.radians(parseInt($("#object-pane-rotation-y").val()));
+	selected.rotation.z = QL.etc.Math.radians(parseInt($("#object-pane-rotation-z").val()));
+
+	selected.updateMatrix();
+
+	selected.material.color.setStyle($("#object-pane-color").val());
 	this.panel.refresh();
+
+	var action = "update object "+ selected.id;
+
+	(function(obj1, obj2){
+		editor.history.add(		
+			function () {
+				obj1.matrix.decompose( selected.position, selected.quaternion, selected.scale );
+				selected.name = obj1.name;
+				selected.material.copy(obj1.material);
+				editor.panel.refresh();
+				//signals.objectChanged.dispatch( object );
+			},
+			function () {
+				obj2.matrix.decompose( selected.position, selected.quaternion, selected.scale );
+				selected.name = obj2.name;
+				selected.material.copy(obj2.material);
+				editor.panel.refresh();
+		
+			},
+			action
+		);
+	}) (oldObjState, {
+		name: selected.name,
+		matrix: selected.matrix.clone(),
+		material: selected.material.clone()
+	})
+
 };
 
 
 QL.gui.Editor.prototype.clearScene = function(){
+	var children = this.scene.children.slice();
+
 	this.scene.clear();
 	this.panel.refresh();
+
+	var editor = this;
+
+	var action = "clear scene";
+
+	editor.history.add(
+		function () {
+			children.forEach(function(child){
+				if(child.type === "Mesh"){
+					editor.scene.children.push(child);
+				}
+			})
+			editor.scene.selected = null;
+			editor.panel.refresh();
+			//signals.objectChanged.dispatch( object );
+		},
+		function () {
+			editor.scene.clear();
+			editor.panel.refresh();
+			//signals.objectChanged.dispatch( object );
+		},
+		action
+	);
+
 };
 
 QL.gui.Editor.prototype.refreshObjectPane = function(){

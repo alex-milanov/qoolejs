@@ -72,7 +72,9 @@ QL.ext.Scene.prototype.newMesh = function(){
 			color: 0x113311
 		},
 	]);
-	this.select(this.getObjectByName(meshName).id);
+	var mesh = this.getObjectByName(meshName);
+	this.select(mesh.id);
+	return mesh;
 };
 
 QL.ext.Scene.prototype.cloneMesh = function(_mod){
@@ -83,12 +85,16 @@ QL.ext.Scene.prototype.cloneMesh = function(_mod){
 	
 	var mesh = this.selected.clone();
 	mesh.name = "Block "+this.children.length;
+
+	this.selected.matrix.decompose(mesh.position, mesh.quaternion, mesh.scale)
  
 	mesh.position.set(0,0,0);
 	mesh.position[_mod.w] = this.selected.position[_mod.w];
 
 	this.add(mesh);
 	this.select(this.getObjectByName(mesh.name).id);
+
+	return mesh;
 };
 
 QL.ext.Scene.prototype.clear = function(){
