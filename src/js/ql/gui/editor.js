@@ -378,9 +378,11 @@ QL.gui.Editor.prototype.cloneObject = function(){
 };
 
 QL.gui.Editor.prototype.updateObject = function(objId){
+
 	if(!objId){
 		return false;
 	}
+	
 	var selected = this.scene.selected;
 
 	var oldObjState = {
@@ -506,7 +508,7 @@ QL.gui.Editor.prototype.refreshObjectPane = function(){
 		$(".object-pane").addClass("active");
 
 		// object pane code here
-		$(".object-update-trigger").attr("data-trigger-id", this.scene.selected.id);
+		$(".update-object-trigger").attr("data-trigger-id", this.scene.selected.id);
 		$("#object-pane-name").val(this.scene.selected.name);
 		$("#object-pane-pos-x").val(this.scene.selected.position.x);
 		$("#object-pane-pos-y").val(this.scene.selected.position.y);
