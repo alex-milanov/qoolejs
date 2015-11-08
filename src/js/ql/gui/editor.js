@@ -450,6 +450,7 @@ QL.gui.Editor.prototype.loadScene = function(){
 			var data = JSON.parse(e.target.result);
 			scope.scene.load(data);
 			scope.history.clear();
+			scope.panel.refresh();
 			$("#scene-title").text(file.name);
 		}
 	});
