@@ -17,19 +17,19 @@ html
 					| Mode: &nbsp;
 					a.obj-mode-option.selected(
 						data-option-param="obj-mode",
-						data-option-value="move"
+						data-option-value="move",
+						title="Move Mode"
 					) M
 					a.obj-mode-option(
 						data-option-param="obj-mode",
-						data-option-value="scale"
+						data-option-value="scale",
+						title="Scale Mode"
 					) S
 					a.obj-mode-option(
 						data-option-param="obj-mode",
-						data-option-value="rotate"
+						data-option-value="rotate",
+						title="Rotate Mode"
 					) R
-					a.clone-trigger(
-						data-trigger-method="cloneMesh"
-					) [C]lone
 				.right-bar
 					.debug-keys.fa.fa-keyboard-o
 					a.debug-toggle(
@@ -45,7 +45,12 @@ html
 					) [F]ull Screen
 			.left-panel.opened
 				.object-pane
-					.pane-title Object [E]dit
+					.pane-title
+						span Object [E]dit
+						a.btn-tool.clone-object-trigger(
+							data-trigger-method="cloneObject",
+							title="[C]lone Object"
+						): i.fa.fa-clone
 					.pane-body
 						ul.props
 							li
@@ -69,12 +74,25 @@ html
 							li
 								label Color 
 								input#object-pane-color(type="text")
-						button.btn.object-update-trigger(
-							data-trigger-method="updateMesh",
+						button.btn.update-object-trigger(
+							data-trigger-method="updateObject",
 							data-trigger-id=false
 						) Update
 				.scene-pane
-					.pane-title Scene: Test Level
+					.pane-title
+						span#scene-title Untitled
+						a.btn-tool.save-scene-trigger(
+							data-trigger-method="saveScene",
+							title="Save Scene"
+						): i.fa.fa-save
+						a.btn-tool.load-scene-trigger(
+							data-trigger-method="loadScene",
+							title="Load Scene"
+						): i.fa.fa-folder-open-o
+						a.btn-tool.new-scene-trigger(
+							data-trigger-method="newScene",
+							title="New Scene"
+						): i.fa.fa-file-o
 					.pane-body
 						.section
 							.title Lights
@@ -120,7 +138,7 @@ html
 		script(src="lib/three.js/three.js")
 		script(src="lib/threex.keyboardstate/threex.keyboardstate.js")
 		script(src="lib/perfect-scrollbar/js/perfect-scrollbar.jquery.js")
-
+		script(src="lib/file-saver.js/FileSaver.js")
 		//- ql
 		script(src="js/ql/ql.js")
 		script(src="js/ql/etc/math.js")
@@ -131,6 +149,7 @@ html
 		script(src="js/ql/ext/boxGeometry.js")
 		script(src="js/ql/ext/mesh.js")
 		script(src="js/ql/ext/scene.js")
+		script(src="js/ql/ext/objectLoader.js")
 		script(src="js/ql/ext/interactor.js")
 		script(src="js/ql/gui/element.js")
 		script(src="js/ql/gui/panel.js")

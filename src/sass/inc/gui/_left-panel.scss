@@ -51,6 +51,19 @@
 				-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 				-moz-box-sizing: border-box;    /* Firefox, other Gecko */
 				box-sizing: border-box;
+				.btn-tool {
+					float: right;
+					padding: 0px 5px;
+					height: 30px;
+					line-height: 30px;
+					font-size:14px;
+					background: $ql-panel-object-1-color;
+					display: block;
+					cursor: pointer;
+					&:hover {
+						background: $ql-panel-object-2-color;
+					}
+				}
 			}
 			.pane-body {
 				top: 31px;

@@ -231,7 +231,7 @@ QL.gui.Editor.prototype.init = function(){
 				keyCombo = "N";
 			}
 			if(keyCode == "C".charCodeAt(0)){
-				_editor.cloneMesh();
+				_editor.cloneObject();
 				keyCombo = "C";
 			}
 			if(keyCode == "L".charCodeAt(0)){
@@ -354,11 +354,11 @@ QL.gui.Editor.prototype.newMesh = function(){
 	);
 };
 
-QL.gui.Editor.prototype.cloneMesh = function(){
-	var mesh = this.scene.cloneMesh(this.activeView.mod);
+QL.gui.Editor.prototype.cloneObject = function(){
+	var mesh = this.scene.cloneObject(this.activeView.mod);
 	this.panel.refresh();
 
-	var action = "clone mesh" + mesh.id;
+	var action = "clone object" + mesh.id;
 
 	editor.history.add(
 		function () {
@@ -377,7 +377,7 @@ QL.gui.Editor.prototype.cloneMesh = function(){
 	);
 };
 
-QL.gui.Editor.prototype.updateMesh = function(objId){
+QL.gui.Editor.prototype.updateObject = function(objId){
 	if(!objId){
 		return false;
 	}
@@ -435,6 +435,39 @@ QL.gui.Editor.prototype.updateMesh = function(objId){
 
 };
 
+QL.gui.Editor.prototype.loadScene = function(){
+
+	var fileLoader = $("<input type='file' />");
+
+	var scope = this;
+
+	$(fileLoader).change(function(){
+		var file = this.files[0];
+		var fr = new FileReader();
+		fr.onload = receivedText;
+		fr.readAsText(file);
+		function receivedText(e) {
+			var data = JSON.parse(e.target.result);
+			scope.scene.load(data);
+			scope.history.clear();
+			$("#scene-title").text(file.name);
+		}
+	});
+
+	$(fileLoader).click();
+
+}
+
+QL.gui.Editor.prototype.saveScene = function(){
+	var blob = new Blob([JSON.stringify(this.scene.toJSON())], {type: "text/plain;charset=utf-8"});
+	window.saveAs(blob, "scene.json");
+}
+
+QL.gui.Editor.prototype.newScene  = function(){
+	this.clearScene();
+	this.history.clear();
+	$("#scene-title").text("Untitled");
+}
 
 QL.gui.Editor.prototype.clearScene = function(){
 	var children = this.scene.children.slice();

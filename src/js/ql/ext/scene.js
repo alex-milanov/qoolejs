@@ -7,8 +7,6 @@ QL.ext.Scene = function () {
 
 	THREE.Scene.call( this );
 
-	this.type = 'QLScene';
-
 	this.selected = false;
 
 };
@@ -77,7 +75,7 @@ QL.ext.Scene.prototype.newMesh = function(){
 	return mesh;
 };
 
-QL.ext.Scene.prototype.cloneMesh = function(_mod){
+QL.ext.Scene.prototype.cloneObject = function(_mod){
 
 	if(!this.selected){
 		return false;
@@ -150,3 +148,36 @@ QL.ext.Scene.prototype.addEntities = function(_entities){
 		}
 	});
 };
+
+QL.ext.Scene.prototype.load = function(data){
+
+	var loader = new THREE.ObjectLoader();
+
+	var scene = loader.parse(data)
+
+	this.uuid = scene.uuid;
+	this.name = scene.name;
+
+	var scope = this;
+
+
+	// clear the current scene
+	scope.clear();
+
+	scene.children.forEach(function(child){
+		// load only meshes for now
+		if(child.type === "Mesh"){
+			var geometry = child.geometry.clone();
+			var material = child.material.clone();
+			if(geometry.type === "BoxGeometry"){
+				geometry = new QL.ext.BoxGeometry().clone(geometry.parameters)
+			}
+			var mesh = new QL.ext.Mesh( geometry, material );
+			child.updateMatrix();
+			child.matrix.decompose( mesh.position, mesh.quaternion, mesh.scale )
+			mesh.updateMatrix();
+			mesh.name = child.name;
+			scope.add(mesh);
+		}
+	})
+}
