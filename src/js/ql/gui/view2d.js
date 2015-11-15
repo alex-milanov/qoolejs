@@ -211,87 +211,116 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 };
 
 
-QL.gui.View2D.prototype.drawBox = function(ctx, _obj, _lineDash, _strokeStyle, _showCoords){
+QL.gui.View2D.prototype.drawBox = function(ctx, obj, _lineDash, _strokeStyle, _showCoords){
 
 	var _mod = this.mod;
-	var that = this;
+	var scope = this;
 
 	var _center = [];
 	var _indexes = [];
 
-	var scaleVector = new QL.ext.Vector3().copy(_obj.scale);
+	var scaleVector = new QL.ext.Vector3().copy(obj.scale);
+	var center2 = this.center.clone().add(scope.offset);
 
-	_obj.geometry.quads.forEach(function(_quad, index){
+	var objPos3 = new QL.ext.Vector3().copy(obj.position);
 
-		var center2 = that.center.clone().add(that.offset);
+	var objCenter2 = objPos3.clone().toVector2(_mod).add(center2);
 
-		var objPos3 = new QL.ext.Vector3();
-		objPos3.copy(_obj.position);
+	if(obj.geometry.quads) {
+		obj.geometry.quads.forEach(function(_quad, index){
 
-		var objCenter2 = objPos3.clone().toVector2(_mod).add(center2);
+			//var scaleVector2 = scaleVector.toVector2(_mod);
+			// TODO: Impl a check whether a face should be displayed or not
+					
+			var quad2d = {
+				a: new QL.ext.Vector3().copy(_quad.a).multiply(scaleVector).applyEuler(obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(scope.zoom/100).add(center2),
+				b: new QL.ext.Vector3().copy(_quad.b).multiply(scaleVector).applyEuler(obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(scope.zoom/100).add(center2),
+				c: new QL.ext.Vector3().copy(_quad.c).multiply(scaleVector).applyEuler(obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(scope.zoom/100).add(center2),
+				d: new QL.ext.Vector3().copy(_quad.d).multiply(scaleVector).applyEuler(obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(scope.zoom/100).add(center2)
+			};
 
-		//var scaleVector2 = scaleVector.toVector2(_mod);
-		// TODO: Impl a check whether a face should be displayed or not
-				
-		var quad2d = {
-			a: new QL.ext.Vector3().copy(_quad.a).multiply(scaleVector).applyEuler(_obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(that.zoom/100).add(center2),
-			b: new QL.ext.Vector3().copy(_quad.b).multiply(scaleVector).applyEuler(_obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(that.zoom/100).add(center2),
-			c: new QL.ext.Vector3().copy(_quad.c).multiply(scaleVector).applyEuler(_obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(that.zoom/100).add(center2),
-			d: new QL.ext.Vector3().copy(_quad.d).multiply(scaleVector).applyEuler(_obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(that.zoom/100).add(center2)
-		};
+			ctx.beginPath();
+			ctx.moveTo(quad2d.a.x,quad2d.a.y);
+			ctx.lineTo(quad2d.b.x,quad2d.b.y);
+			ctx.lineTo(quad2d.c.x,quad2d.c.y);
+			ctx.lineTo(quad2d.d.x,quad2d.d.y);
+			ctx.lineTo(quad2d.a.x,quad2d.a.y);
+			ctx.closePath();
 
-		ctx.beginPath();
-		ctx.moveTo(quad2d.a.x,quad2d.a.y);
-		ctx.lineTo(quad2d.b.x,quad2d.b.y);
-		ctx.lineTo(quad2d.c.x,quad2d.c.y);
-		ctx.lineTo(quad2d.d.x,quad2d.d.y);
-		ctx.lineTo(quad2d.a.x,quad2d.a.y);
-		ctx.closePath();
+			scope.hitFaces.push({
+				triangle: new THREE.Triangle(
+					quad2d.a.toVector3(_mod),
+					quad2d.b.toVector3(_mod),
+					quad2d.c.toVector3(_mod)
+				),
+				position: obj.position.clone(),
+				objId: obj.id
+			});
+			scope.hitFaces.push({
+				triangle: new THREE.Triangle(
+					quad2d.b.toVector3(_mod),
+					quad2d.c.toVector3(_mod),
+					quad2d.d.toVector3(_mod)
+				),
+				position: obj.position.clone(),
+				objId: obj.id
+			});
 
-		that.hitFaces.push({
-			triangle: new THREE.Triangle(
-				quad2d.a.toVector3(_mod),
-				quad2d.b.toVector3(_mod),
-				quad2d.c.toVector3(_mod)
-			),
-			position: _obj.position.clone(),
-			objId: _obj.id
-		});
-		that.hitFaces.push({
-			triangle: new THREE.Triangle(
-				quad2d.b.toVector3(_mod),
-				quad2d.c.toVector3(_mod),
-				quad2d.d.toVector3(_mod)
-			),
-			position: _obj.position.clone(),
-			objId: _obj.id
-		});
+			ctx.strokeStyle = _strokeStyle || '#777';
+			var baseColor = new THREE.Color(0x555555);
+			ctx.stroke();
 
-		ctx.strokeStyle = _strokeStyle || '#777';
-		var baseColor = new THREE.Color(0x555555);
-		/*if(_obj.selected){
-			ctx.strokeStyle = "#DC3333";
-		}*/
+			if(_showCoords){
+				ctx.font="12px Arial";
+				ctx.fillStyle="#999";
 
-		//ctx.setLineDash(_lineDash || [0]);
-		ctx.stroke();
-
-		if(_showCoords){
-			ctx.font="12px Arial";
-			ctx.fillStyle="#999";
-
-		if(that.editor.indexes.length === 0 || that.editor.indexes.indexOf(index+"")>-1){
-				ctx.fillText("a("+(new QL.ext.Vector3()).copy(_quad.a).toVector2(_mod).toArray().join(", ")+"), "+quad2d.a.toArray().join(", "),quad2d.a.x,quad2d.a.y);
-				ctx.fillText("b("+(new QL.ext.Vector3()).copy(_quad.b).toVector2(_mod).toArray().join(", ")+"), "+quad2d.b.toArray().join(", "),quad2d.b.x,quad2d.b.y);
-				ctx.fillText("c("+(new QL.ext.Vector3()).copy(_quad.c).toVector2(_mod).toArray().join(", ")+"), "+quad2d.c.toArray().join(", "),quad2d.c.x,quad2d.c.y);
-				ctx.fillText("d("+(new QL.ext.Vector3()).copy(_quad.d).toVector2(_mod).toArray().join(", ")+"), "+quad2d.d.toArray().join(", "),quad2d.d.x,quad2d.d.y);
+			if(scope.editor.indexes.length === 0 || scope.editor.indexes.indexOf(index+"")>-1){
+					ctx.fillText("a("+(new QL.ext.Vector3()).copy(_quad.a).toVector2(_mod).toArray().join(", ")+"), "+quad2d.a.toArray().join(", "),quad2d.a.x,quad2d.a.y);
+					ctx.fillText("b("+(new QL.ext.Vector3()).copy(_quad.b).toVector2(_mod).toArray().join(", ")+"), "+quad2d.b.toArray().join(", "),quad2d.b.x,quad2d.b.y);
+					ctx.fillText("c("+(new QL.ext.Vector3()).copy(_quad.c).toVector2(_mod).toArray().join(", ")+"), "+quad2d.c.toArray().join(", "),quad2d.c.x,quad2d.c.y);
+					ctx.fillText("d("+(new QL.ext.Vector3()).copy(_quad.d).toVector2(_mod).toArray().join(", ")+"), "+quad2d.d.toArray().join(", "),quad2d.d.x,quad2d.d.y);
+				}
+				_indexes.push(index);
+				_center = objCenter2.clone();
 			}
-			_indexes.push(index);
-			_center = objCenter2.clone();
-		}
+		});
+	} else {
+		obj.geometry.faces.forEach(function(face, index){
 
 
-	});
+			var face2d = {
+				a: new QL.ext.Vector3().copy(obj.geometry.vertices[face.a]).multiply(scaleVector).applyEuler(obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(scope.zoom/100).add(center2),
+				b: new QL.ext.Vector3().copy(obj.geometry.vertices[face.b]).multiply(scaleVector).applyEuler(obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(scope.zoom/100).add(center2),
+				c: new QL.ext.Vector3().copy(obj.geometry.vertices[face.c]).multiply(scaleVector).applyEuler(obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(scope.zoom/100).add(center2)
+			};
+
+
+			ctx.beginPath();
+			ctx.moveTo(face2d.a.x,face2d.a.y);
+			ctx.lineTo(face2d.b.x,face2d.b.y);
+			ctx.lineTo(face2d.c.x,face2d.c.y);
+			ctx.lineTo(face2d.a.x,face2d.a.y);
+			ctx.closePath();
+
+
+			ctx.strokeStyle = _strokeStyle || '#777';
+			var baseColor = new THREE.Color(0x555555);
+
+			ctx.stroke();
+
+			scope.hitFaces.push({
+				triangle: new THREE.Triangle(
+					face2d.a.toVector3(_mod),
+					face2d.b.toVector3(_mod),
+					face2d.c.toVector3(_mod)
+				),
+				position: obj.position.clone(),
+				objId: obj.id
+			});
+
+
+		});
+	}
 
 	if(_showCoords){
 		ctx.fillText(_indexes.join(", "),_center.x,_center.y);
@@ -400,7 +429,7 @@ QL.gui.View2D.prototype.refresh = function(scene){
 	scene.children.forEach(function(_obj){
 		if(_obj.type === "Mesh"){
 			switch(_obj.geometry.type){
-				case "BoxGeometry":
+				default:
 					that.drawBox(that._layers.scene,_obj);
 				break;
 			}
