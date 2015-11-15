@@ -121,6 +121,9 @@ QL.gui.View3D.prototype.addEntities = function(entities){
 	});
 };
 
+QL.gui.View3D.prototype.init = function(){
+}
+
 QL.gui.View3D.prototype.refresh = function(){
 
 

@@ -129,8 +129,11 @@ QL.gui.Editor.prototype.init = function(){
 						_editor.activeView.offset.x -= interactionVector.x;
 						_editor.activeView.offset.y -= interactionVector.z;
 						_editor.activeView.zoom += interactionVector.y;
+
+						_editor.activeView.needRefreshingAll();
 					} else {
 						_editor.activeView.camera.position.add(interactionVector);
+
 					}
 				}
 
@@ -250,6 +253,10 @@ QL.gui.Editor.prototype.init = function(){
 
 	this.panel.init();
 	this.toolbar.init();
+
+	this.views.forEach(function(view){
+		view.init();
+	});
 
 	this.panel.refresh();
 

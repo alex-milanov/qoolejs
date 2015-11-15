@@ -4,27 +4,18 @@
 if(typeof QL === "undefined"){ var QL = {}; }
 if(typeof QL.gui === "undefined"){ QL.gui = {}; }
 
-function drawLine(ctx, start, finish, dash, stroke){
-	ctx.beginPath();
-	ctx.moveTo(start[0],start[1]);
-	ctx.lineTo(finish[0],finish[1]);
-	//ctx.setLineDash(dash);
-	ctx.strokeStyle = stroke;
-	ctx.stroke();
-}
-
 QL.gui.View2D = function(_conf, _scene, _editor){
 	this._dom = $(_conf.dom)[0];
 	//this.ctx = this.canvas.getContext("2d");
 
-	this._layers = {
-		grid: $(this._dom).find('.grid-layer')[0].getContext("2d"),
-		scene: $(this._dom).find('.grid-layer')[0].getContext("2d"),
-		selection: $(this._dom).find('.selection-layer')[0].getContext("2d"),
-		indicators: $(this._dom).find('.indicators-layer')[0].getContext("2d")
+	this.layers = {
+		grid: new iblokz.gui.Grid($(this._dom).find('.grid-layer')[0]),
+		scene: new iblokz.gui.Canvas($(this._dom).find('.scene-layer')[0]),
+		selection: new iblokz.gui.Canvas($(this._dom).find('.selection-layer')[0]),
+		indicators: new iblokz.gui.Canvas($(this._dom).find('.indicators-layer')[0])
 	};
 
-	this._needsRefresh = [];
+	this.toBeRefreshed = ["grid", "scene", "selection", "indicators"];
 
 	this.perspective = _conf.perspective;
 
@@ -109,6 +100,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 		});
 
 		_view.editor.select(selected.objId);
+		this.needRefreshing("scene","interaction");
 
 	};
 
@@ -175,6 +167,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 				case 2:
 					_view.offset.sub(changeVector.clone().sub(_view.interaction.last))
 					_view.interaction.last = changeVector.clone();
+					_view.needRefreshingAll();
 					break;
 
 			} 
@@ -205,6 +198,8 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 		} else if (_view.zoom > 25) {
 			_view.zoom -= 12.5;
 		}
+
+		_view.needRefreshingAll();
 
 	});
 
@@ -329,86 +324,43 @@ QL.gui.View2D.prototype.drawBox = function(ctx, obj, _lineDash, _strokeStyle, _s
 
 };
 
-
-QL.gui.View2D.prototype.drawGrid = function(){
-
-	var ctx = this._layers.grid;
-
-	var center = new QL.ext.Vector2(ctx.canvas.width/2,ctx.canvas.height/2);
-	var sizeVector = new QL.ext.Vector2(ctx.canvas.width,ctx.canvas.height);
-
-	center.add(this.offset)
-
-	drawLine(ctx, [
-		0, center.y
-	],[
-		sizeVector.x, center.y
-	],[0],'#96DC96');
-
-	drawLine(ctx, [
-		center.x, 0
-	],[
-		center.x, sizeVector.y
-	],[0],'#96DC96');
-
-	var step = 10;
-
-	step *=this.zoom/100;
-
-	var defaultLineColor = '#333';
-	var segmentColor = '#555';
-
-	for(var yPos = step; center.y - yPos > 0; yPos+=step){
-		var lineColor = (parseInt(yPos/step/5) === yPos/step/5) ? segmentColor : defaultLineColor;
-		drawLine(ctx, [
-			0, center.y-yPos
-		],[
-			sizeVector.x, center.y - yPos
-		],[0],lineColor);
-	}
-
-	for(var yPos = step; center.y + yPos < sizeVector.y; yPos+=step){
-		var lineColor = (parseInt(yPos/step/5) === yPos/step/5) ? segmentColor : defaultLineColor;
-		drawLine(ctx, [
-			0, center.y + yPos
-		],[
-			sizeVector.x, center.y + yPos
-		],[0],lineColor);
-	}
-
-	for(var xPos = step; center.x - xPos > 0; xPos+=step){
-		var lineColor = (parseInt(xPos/step/5) === xPos/step/5) ? segmentColor : defaultLineColor;
-		drawLine(ctx, [
-			center.x- xPos, 0
-		],[
-			center.x - xPos, sizeVector.y
-		],[0],lineColor);
-	}
-
-	for(var xPos = step; center.x + xPos < sizeVector.x; xPos+=step){
-		var lineColor = (parseInt(xPos/step/5) === xPos/step/5) ? segmentColor : defaultLineColor;
-		drawLine(ctx, [
-			center.x + xPos, 0
-		],[
-			center.x + xPos, sizeVector.y
-		],[0],lineColor);
-	}
+QL.gui.View2D.prototype.needRefreshing = function(){
+	var args = Array.prototype.slice.call(arguments);
+	args.forEach(function(arg){
+		if(this.toBeRefreshed.indexOf(arg)==-1){
+			this.toBeRefreshed.push(arg);
+		}
+	})
 }
 
+QL.gui.View2D.prototype.needRefreshingAll = function(){
+	this.toBeRefreshed = ["grid", "scene", "selection", "indicators"];
+}
+
+QL.gui.View2D.prototype.init = function(){
+	this.needRefreshingAll();
+}
 
 QL.gui.View2D.prototype.refresh = function(scene){
 
-	// update layers width/height
-	for( var layer in this._layers){
-		this._layers[layer].canvas.width = $(this._layers[layer].canvas.parentNode).width();
-		this._layers[layer].canvas.height = $(this._layers[layer].canvas.parentNode).height();
+	//
+	for( var layer in this.layers){
+
+		this.layers[layer].zoom = this.zoom;
+		this.layers[layer].offset = this.offset;
+		this.layers[layer].refresh();
+		// TODO: impl need refreshing
+		/*
+		if(this.toBeRefreshed.indexOf(layer)>-1){
+			this.layers[layer].refresh();
+			this.toBeRefreshed.splice(this.toBeRefreshed.indexOf(layer),1);
+			console.log(this.perspective + " view, "+layer+" layer refreshed");
+		}
+		*/
 	}
 
-	// refresh grid
-	this.drawGrid(this._layers.grid);
-
 	// draw text
-	var ctx = this._layers.indicators;
+	var ctx = this.layers.indicators.ctx;
 	ctx.font="16px Arial";
 	ctx.fillStyle="#999";
 	ctx.fillText(this.perspective,15,25);
@@ -430,7 +382,7 @@ QL.gui.View2D.prototype.refresh = function(scene){
 		if(_obj.type === "Mesh"){
 			switch(_obj.geometry.type){
 				default:
-					that.drawBox(that._layers.scene,_obj);
+					that.drawBox(that.layers.scene.ctx,_obj);
 				break;
 			}
 		}
@@ -450,7 +402,7 @@ QL.gui.View2D.prototype.refresh = function(scene){
 				boxColor = "#33DC33";
 				break;
 		}
-		this.drawBox(that._layers.selection, scene.selected,[0],boxColor,this.editor.params.debug);
+		this.drawBox(that.layers.selection.ctx, scene.selected,[0],boxColor,this.editor.params.debug);
 		this.selected = {
 			objId: scene.selected.id,
 			position: scene.selected.position.clone()
