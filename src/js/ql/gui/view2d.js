@@ -100,7 +100,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 		});
 
 		_view.editor.select(selected.objId);
-		this.needRefreshing("scene","interaction");
+		//this.needRefreshing("scene","interaction");
 
 	};
 

@@ -38,7 +38,7 @@ QL.gui.Editor = function(_views, _entities){
 
 	this.selectView(this.views[0]);
 
-	this.panel = new QL.gui.Panel(".left-panel", this);
+	this.panel = new QL.gui.Panel(".panel.left", this);
 	this.toolbar = new QL.gui.Toolbar(".toolbar", this);
 
 	this.scene.addEntities(_entities);
@@ -512,7 +512,7 @@ QL.gui.Editor.prototype.clearScene = function(){
 
 QL.gui.Editor.prototype.refreshObjectPane = function(){
 	if(this.scene.selected){
-		$(".object-pane").addClass("active");
+		$("#object-pane").addClass("active");
 
 		// object pane code here
 		$(".update-object-trigger").attr("data-trigger-id", this.scene.selected.id);
@@ -528,9 +528,9 @@ QL.gui.Editor.prototype.refreshObjectPane = function(){
 		$("#object-pane-rotation-x").val(parseInt(QL.etc.Math.degrees(this.scene.selected.rotation.x)));
 		$("#object-pane-rotation-y").val(parseInt(QL.etc.Math.degrees(this.scene.selected.rotation.y)));
 		$("#object-pane-rotation-z").val(parseInt(QL.etc.Math.degrees(this.scene.selected.rotation.z)));
-		$("#object-pane-color").val(this.scene.selected.material.color.getStyle());
+		$("#object-pane-color").val("#"+this.scene.selected.material.color.getHexString());
 	} else {
-		$(".object-pane").removeClass("active");
+		$("#object-pane").removeClass("active");
 	}
 };
 

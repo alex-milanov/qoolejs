@@ -1,6 +1,7 @@
 .gui {
 	.toolbar {
-		background: #333;
+		background: $ql-toolbar-background-color;
+		color: $ql-toolbar-text-color;
 		top: 0px;
 		right: 0px;
 		left: 0px;
@@ -12,14 +13,19 @@
 			line-height: $ql-toolbar-height;
 			margin: 0px;
 			padding: 0px;
-			color: #ccc;
 			position: absolute;
 			top: 0px;
+			img {
+				height: $ql-toolbar-height;
+				margin: 0px;
+				padding: 0px;
+				vertical-align: top;
+			}
 		}
 		.logo {
 			font-size: 24px;
 			font-family: $ql-font;
-			font-weight: bold;
+			font-weight: 600;
 			left: 40px;
 		}
 		a {

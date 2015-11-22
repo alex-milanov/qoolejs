@@ -22,7 +22,8 @@ var path = require('path');
 var paths = {
 	sass: ['./src/sass/**/*.scss'],
 	jade: ['./src/jade/**/*.jade'],
-	js: ['./src/js/**/*.js']
+	js: ['./src/js/**/*.js'],
+	assets: ['./src/assets/**/*']
 };
 
 gulp.task('sass', function(done) {
@@ -85,6 +86,17 @@ gulp.task('js', function(done) {
 		.on('end',done);
 });
 
+gulp.task('assets', function(done) {
+	del([
+		'./dist/assets/**/*'
+	], function(){
+		gulp.src('./src/assets/**/*')
+			.pipe(gulp.dest('./dist/assets/'))
+			.pipe( livereload())
+			.on('end',done);
+	});
+});
+
 
 /*gulp.task('nodemon', function () {
 	nodemon({
@@ -111,9 +123,10 @@ gulp.task('watch', function() {
 	gulp.watch(paths.sass, ['sass']);
 	gulp.watch(paths.jade, ['jade']);
 	gulp.watch(paths.js, ['js']);
+	gulp.watch(paths.assets, ['assets']);
 });
 
-gulp.task('build', ['sass','jade','js','bower-files']);
+gulp.task('build', ['sass','jade','js','assets','bower-files']);
 
 gulp.task('serve', ['express','livereload','watch']);
 

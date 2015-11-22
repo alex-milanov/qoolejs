@@ -25,7 +25,7 @@ QL.gui.Panel.prototype.refresh = function(){
 	$meshEntities.html("");
 
 	context.scene.children.forEach(function(_entity){
-		var _el = $("<li></li>");
+		var _el = $("<span></span>");
 		var _name = '';
 		if(_entity.name){
 			_name = _entity.name;
@@ -49,7 +49,7 @@ QL.gui.Panel.prototype.refresh = function(){
 
 		switch(_entity.type){
 			case "Mesh":
-				$meshEntities.append(_el);
+				$meshEntities.append($("<li></li>").append(_el));
 				break;
 		}
 	});
