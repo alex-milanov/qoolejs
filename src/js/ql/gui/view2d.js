@@ -119,6 +119,13 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 
 	});
 
+	$(this._dom).on("touchstart", function(ev) {
+		var e = ev.originalEvent;
+		_view.interaction.status = "mousedown";
+		_view.interaction.start.set(e.touches[0].clientX, e.touches[0].clientY);
+		_view.interaction.last.set(0, 0);
+	});
+
 	$(this._dom).mousemove(function(ev){
 		
 		if(["mousedown","mousemove"].indexOf(_view.interaction.status)>-1){
@@ -175,6 +182,63 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 		}
 	});
 
+	$(this._dom).on("touchmove", function(ev) {
+		var e = ev.originalEvent;
+		ev.preventDefault();
+		if(["mousedown","mousemove"].indexOf(_view.interaction.status)>-1){
+			_view.interaction.status = "mousemove";
+
+			var mousePos = new QL.ext.Vector2(e.touches[0].clientX,e.touches[0].clientY);
+
+			var changeVector = mousePos.clone().sub(_view.interaction.start).divideScalar(_view.zoom/100);
+			changeVector.x = parseInt(changeVector.x/2.5)*2.5
+			changeVector.y = parseInt(changeVector.y/2.5)*2.5
+			/*switch(ev.which) {
+
+				case 1:*/
+					if(_view.selected === false)
+						return;
+
+					var objectChanged = false;
+
+					var interactionVector = changeVector.clone().sub(_view.interaction.last).toVector3(_view.mod);
+
+					switch(_view.editor.params["obj-mode"]){
+						case "move":
+
+							//QL.ext.interactor.move(_view.scene.selected, interactionVector);
+							_view.editor.interact("move",interactionVector);
+							break;
+						case "scale":
+							interactionVector.z = -interactionVector.z;
+							//QL.ext.interactor.scale(_view.scene.selected, interactionVector.divideScalar(10));
+							_view.editor.interact("scale",interactionVector.divideScalar(20));
+							break;
+						case "rotate":
+
+							var oldRotation = _view.scene.selected.rotation.clone();
+
+							var mousePos3 = mousePos.clone().divideScalar(_view.zoom/100).sub(_view.center).toVector3(_view.mod);
+							mousePos3[_view.mod.w] = _view.scene.selected.position[_view.mod.w];
+							//console.log(mousePos3);
+							//QL.ext.interactor.lookAt(_view.scene.selected, mousePos3);
+							_view.editor.interact("lookAt",mousePos3);
+							
+							break;
+					}
+					_view.interaction.last = changeVector.clone();
+			/*		break;
+				case 2:
+					_view.offset.sub(changeVector.clone().sub(_view.interaction.last))
+					_view.interaction.last = changeVector.clone();
+					_view.needRefreshingAll();
+					break;
+
+			}*/ 
+
+		}
+	});
+
 	$(this._dom).mouseup(function(ev){
 		if(ev.which == 1 && 
 			(_view.interaction.status === "mousedown" || _view.interaction.last.toArray() == [0,0])
@@ -189,6 +253,24 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 		_editor.selectView(_view);
 		_editor.refreshObjectPane();
 
+	});
+
+	$(this._dom).on("touchend", function(ev) {
+		var e = ev.originalEvent;
+		if((_view.interaction.status === "mousedown" || _view.interaction.last.toArray() == [0,0])){
+			var hitPos = new QL.ext.Vector2(
+				e.touches[0].clientX,
+				e.touches[0].clientY
+			);
+			handleSelect(hitPos);
+		}
+		_view.interaction = {
+			status: "idle",
+			start: new QL.ext.Vector2(0,0),
+			last: new QL.ext.Vector2(0,0)
+		}
+		_editor.selectView(_view);
+		_editor.refreshObjectPane();
 	});
 
 	$(this._dom).on('mousewheel', function(event) {
