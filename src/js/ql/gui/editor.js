@@ -113,7 +113,7 @@ QL.gui.Editor.prototype.init = function(){
 							break;
 						case "scale":
 							interactionVector.z = -interactionVector.z;
-							interactionVector.divideScalar(force*4);
+							interactionVector.divideScalar(20/force*2.5);
 							break;
 						case "rotate":
 							var rotationVector = new QL.ext.Vector3();

@@ -148,7 +148,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 						case "scale":
 							interactionVector.z = -interactionVector.z;
 							//QL.ext.interactor.scale(_view.scene.selected, interactionVector.divideScalar(10));
-							_view.editor.interact("scale",interactionVector.divideScalar(10));
+							_view.editor.interact("scale",interactionVector.divideScalar(20));
 							break;
 						case "rotate":
 

@@ -18,6 +18,9 @@ QL.ext.interactor = {
 	},
 
 	scale: function(object3d, v3){
+		v3.x = ((object3d.scale.x + v3.x) > 0 ) ? v3.x : 0;
+		v3.y = ((object3d.scale.y + v3.y) > 0 ) ? v3.y : 0;
+		v3.z = ((object3d.scale.z + v3.z) > 0 ) ? v3.z : 0;
 		object3d.scale.add(v3);
 		object3d.updateMatrix();
 	},
