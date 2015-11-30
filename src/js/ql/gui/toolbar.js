@@ -15,10 +15,10 @@ QL.gui.Toolbar.prototype.init = function(){
 	
 	QL.gui.Element.prototype.init.call(this);
 	
-	var context = this._context;
+	var context = this.context;
 	context.indexes = [-1];
 
-	$(this._dom).find(".indexes").change(function(){
+	$(this.dom).find(".indexes").change(function(){
 		context.indexes = $(this).val().split(",");
 	});
 };

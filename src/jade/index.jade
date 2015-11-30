@@ -17,39 +17,70 @@ html
 					a.obj-mode-option.selected(
 						data-option-param="obj-mode",
 						data-option-value="move",
-						title="Move Mode"
+						title="Move Mode [M]"
 					): img(src="/assets/icons/move.png")
 					a.obj-mode-option(
 						data-option-param="obj-mode",
 						data-option-value="rotate",
-						title="Rotate Mode"
+						title="Rotate Mode [R]"
 					): img(src="/assets/icons/rotate.png")
 					a.obj-mode-option(
 						data-option-param="obj-mode",
 						data-option-value="scale",
-						title="Scale Mode"
+						title="Scale Mode [S]"
 					): img(src="/assets/icons/scale.png")
+					.splitter
+					a.undo-trigger(
+						data-trigger-method="undo",
+						title="Undo [Ctrl+Z]"
+					): i.fa.fa-undo
+					a.redo-trigger(
+						data-trigger-method="redo",
+						title="Redo [Ctrl+Y]"
+					): i.fa.fa-repeat
+					.splitter
+					a.new-mesh-trigger(
+						data-trigger-method="newMesh",
+						title="New Mesh [N]"
+					): i.fa.fa-plus
+					a.clone-object-trigger(
+						data-trigger-method="cloneObject",
+						title="Clone Object [C]"
+					): i.fa.fa-clone
+					a.clear-scene-trigger(
+						data-trigger-method="clearScene",
+						title="Clear Scene [L]"
+					): i.fa.fa-trash
 				.right-bar
-					.debug-keys.fa.fa-keyboard-o
 					a.debug-toggle(
 						data-toggle-ref=".debug-info",
 						data-toggle-class="visible",
-						data-toggle-param="debug"
-					) Debug
+						data-toggle-param="debug",
+						title="Debug [D]"
+					): i.fa.fa-bug
 					span.debug-info
 						input.indexes(type="number",placeholder="Indexes",value="-1")
-					a.fullscreen-toggle(
-						data-toggle-ref=".views",
-						data-toggle-class="fullscreen"
-					) [F]ull Screen
+					//- a.fullscreen-toggle(
+					//- 	data-toggle-ref=".views",
+					//- 	data-toggle-class="fullscreen"
+					//- ) [F]ull Screen
+					.debug-keys.fa.fa-keyboard-o
+					a.new-scene-trigger(
+						data-trigger-method="newScene",
+						title="New Scene"
+					): i.fa.fa-file-o
+					a.load-scene-trigger(
+						data-trigger-method="loadScene",
+						title="Load Scene"
+					): i.fa.fa-folder-open-o
+					a.save-scene-trigger(
+						data-trigger-method="saveScene",
+						title="Save Scene"
+					): i.fa.fa-save
 			.panel.left.opened
 				.pane#object-pane
 					.pane-title
 						span Object [E]dit
-						a.btn-tool.clone-object-trigger(
-							data-trigger-method="cloneObject",
-							title="[C]lone Object"
-						): i.fa.fa-clone
 					.pane-body
 						.section
 							ul
@@ -81,18 +112,6 @@ html
 				.pane.active#scene-pane
 					.pane-title
 						span#scene-title Untitled
-						a.btn-tool.save-scene-trigger(
-							data-trigger-method="saveScene",
-							title="Save Scene"
-						): i.fa.fa-save
-						a.btn-tool.load-scene-trigger(
-							data-trigger-method="loadScene",
-							title="Load Scene"
-						): i.fa.fa-folder-open-o
-						a.btn-tool.new-scene-trigger(
-							data-trigger-method="newScene",
-							title="New Scene"
-						): i.fa.fa-file-o
 					.pane-body
 						.section
 							.section-title Lights
@@ -100,12 +119,6 @@ html
 							.section-title Cameras
 						.section
 							.section-title Meshes
-							a.btn.new-mesh-trigger(
-								data-trigger-method="newMesh"
-							) [N]ew Mesh
-							a.btn.clear-scene-trigger(
-								data-trigger-method="clearScene"
-							) C[L]ear Scene
 							ul.entities#mesh-entities
 								li: span
 									| Block 1
@@ -116,18 +129,42 @@ html
 
 			.views
 				.view#view-tl
+					a.fullscreen-toggle.fa.fa-expand(
+						data-toggle-ref="#view-tl",
+						data-toggle-class="fullscreen",
+						data-toggle-self="fa-compress fa-expand",
+						title="Fullscreen [F]"
+					)
 					canvas.grid-layer
 					canvas.scene-layer
 					canvas.selection-layer
 					canvas.indicators-layer
 				.view#view-tr
+					a.fullscreen-toggle.fa.fa-expand(
+						data-toggle-ref="#view-tr",
+						data-toggle-class="fullscreen",
+						data-toggle-self="fa-compress fa-expand",
+						title="Fullscreen [F]"
+					)
 					canvas.layer-3d
 				.view#view-bl
+					a.fullscreen-toggle.fa.fa-expand(
+						data-toggle-ref="#view-bl",
+						data-toggle-class="fullscreen",
+						data-toggle-self="fa-compress fa-expand",
+						title="Fullscreen [F]"
+					)
 					canvas.grid-layer
 					canvas.scene-layer
 					canvas.selection-layer
 					canvas.indicators-layer
 				.view#view-br
+					a.fullscreen-toggle.fa.fa-expand(
+						data-toggle-ref="#view-br",
+						data-toggle-class="fullscreen",
+						data-toggle-self="fa-compress fa-expand",
+						title="Fullscreen [F]"
+					)
 					canvas.grid-layer
 					canvas.scene-layer
 					canvas.selection-layer

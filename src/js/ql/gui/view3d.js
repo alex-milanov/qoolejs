@@ -4,7 +4,8 @@ if(typeof QL === "undefined"){ var QL = {}; }
 if(typeof QL.gui === "undefined"){ QL.gui = {}; }
 
 QL.gui.View3D = function(conf, scene){
-	this.dom = $(conf.dom)[0];
+	QL.gui.Element.call(this, conf.dom);
+	
 	this.canvas = $(this.dom).find(".layer-3d")[0];
 	this.perspective = conf.perspective;
 
@@ -79,6 +80,9 @@ QL.gui.View3D = function(conf, scene){
 	//this.renderer.shadowMap.enabled = true;
 };
 
+QL.gui.View3D.prototype = Object.create( QL.gui.Element.prototype );
+QL.gui.View3D.prototype.constructor = QL.gui.View3D;
+
 QL.gui.View3D.prototype.addBlock = function(entity){
 
 	var width = entity.finish[0]-entity.start[0];
@@ -122,6 +126,7 @@ QL.gui.View3D.prototype.addEntities = function(entities){
 };
 
 QL.gui.View3D.prototype.init = function(){
+	QL.gui.Element.prototype.init.call(this);
 }
 
 QL.gui.View3D.prototype.refresh = function(){

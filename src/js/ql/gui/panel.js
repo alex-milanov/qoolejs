@@ -8,20 +8,20 @@ QL.gui.Panel = function(dom, context){
 	QL.gui.Element.call(this, dom, context);
 };
 
-QL.gui.Panel.prototype = Object.create( QL.gui.Element );
+QL.gui.Panel.prototype = Object.create( QL.gui.Element.prototype );
 QL.gui.Panel.prototype.constructor = QL.gui.Panel;
 
 QL.gui.Panel.prototype.init = function(){
 	QL.gui.Element.prototype.init.call(this);
-	$(this._dom).find(".pane-body").perfectScrollbar();
+	$(this.dom).find(".pane-body").perfectScrollbar();
 };
 
 QL.gui.Panel.prototype.refresh = function(){
 	
-	var context = this._context;
+	var context = this.context;
 
 	// clean up the entities list
-	var $meshEntities = $(this._dom).find(".entities#mesh-entities");
+	var $meshEntities = $(this.dom).find(".entities#mesh-entities");
 	$meshEntities.html("");
 
 	context.scene.children.forEach(function(_entity){
@@ -55,5 +55,5 @@ QL.gui.Panel.prototype.refresh = function(){
 	});
 	context.refreshObjectPane();
 
-	$(this._dom).find(".pane-body").perfectScrollbar('update');
+	$(this.dom).find(".pane-body").perfectScrollbar('update');
 };

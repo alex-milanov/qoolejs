@@ -22,6 +22,10 @@
 				vertical-align: top;
 			}
 		}
+		.splitter {
+			display: inline-block;
+			width: 40px;
+		}
 		.logo {
 			font-size: 24px;
 			font-family: $ql-font;

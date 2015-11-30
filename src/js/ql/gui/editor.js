@@ -65,7 +65,7 @@ QL.gui.Editor.prototype.init = function(){
 		var keyCombo = '';
 
 		// keyboard interactions
-		if($(_editor._dom).find(':focus').length === 0) {
+		if($(_editor.dom).find(':focus').length === 0) {
 
 			var interactionVector = new QL.ext.Vector3(0,0,0);
 
@@ -150,14 +150,14 @@ QL.gui.Editor.prototype.init = function(){
 	}
 
 	// keyboard triggers
-	$(this._dom)[0].addEventListener("keyup", function(event){
+	$(this.dom)[0].addEventListener("keyup", function(event){
 		var keyCode = event.keyCode;
 		var keyCombo = "";
 
 		// desselect and blur on esc
 		if(keyCode == 27){
-			if($(_editor._dom).find(':focus').length > 0){
-				$(_editor._dom).find(":focus").blur();
+			if($(_editor.dom).find(':focus').length > 0){
+				$(_editor.dom).find(":focus").blur();
 			} else {
 				_editor.scene.selected = false;
 				_editor.refreshObjectPane();
@@ -165,7 +165,7 @@ QL.gui.Editor.prototype.init = function(){
 			keyCombo = "ESC";
 		}
 
-		if($(_editor._dom).find(':focus').length === 0) {
+		if($(_editor.dom).find(':focus').length === 0) {
 
 			// undo/redo
 			if(event.ctrlKey && keyCode == "Z".charCodeAt(0)){
@@ -179,7 +179,7 @@ QL.gui.Editor.prototype.init = function(){
 
 			// focus on object pane
 			if(keyCode == "E".charCodeAt(0)){
-				$(_editor._dom).find("#object-pane-name").focus();
+				$(_editor.dom).find("#object-pane-name").focus();
 				keyCombo = "E";
 			}
 			
@@ -190,7 +190,7 @@ QL.gui.Editor.prototype.init = function(){
 			}
 
 			if(keyCode == "F".charCodeAt(0)){
-				$(_editor._dom).find(".fullscreen-toggle").click();
+				$(_editor.activeView.dom).find(".fullscreen-toggle").click();
 				keyCombo = "F";
 			}
 
@@ -308,8 +308,8 @@ QL.gui.Editor.prototype.interact = function(action, v3){
 
 QL.gui.Editor.prototype.selectView = function(view){
 	this.activeView = view;
-	$(this._dom).find(".views .view").removeClass("selected");
-	$(this.activeView._dom).addClass("selected");
+	$(this.dom).find(".views .view").removeClass("selected");
+	$(this.activeView.dom).addClass("selected");
 }
 
 QL.gui.Editor.prototype.selectNextView = function(direction){
@@ -362,6 +362,10 @@ QL.gui.Editor.prototype.newMesh = function(){
 };
 
 QL.gui.Editor.prototype.cloneObject = function(){
+
+	if(!this.scene.selected)
+		return false;
+
 	var mesh = this.scene.cloneObject(this.activeView.mod);
 	this.panel.refresh();
 
@@ -509,6 +513,14 @@ QL.gui.Editor.prototype.clearScene = function(){
 	);
 
 };
+
+QL.gui.Editor.prototype.undo = function(){
+	this.history.undo();
+}
+
+QL.gui.Editor.prototype.redo = function(){
+	this.history.redo();
+}
 
 QL.gui.Editor.prototype.refreshObjectPane = function(){
 	if(this.scene.selected){

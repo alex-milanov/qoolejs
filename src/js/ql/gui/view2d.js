@@ -5,14 +5,16 @@ if(typeof QL === "undefined"){ var QL = {}; }
 if(typeof QL.gui === "undefined"){ QL.gui = {}; }
 
 QL.gui.View2D = function(_conf, _scene, _editor){
-	this._dom = $(_conf.dom)[0];
+
+	QL.gui.Element.call(this, _conf.dom);
+	//this.dom = $(_conf.dom)[0];
 	//this.ctx = this.canvas.getContext("2d");
 
 	this.layers = {
-		grid: new iblokz.gui.Grid($(this._dom).find('.grid-layer')[0]),
-		scene: new iblokz.gui.Canvas($(this._dom).find('.scene-layer')[0]),
-		selection: new iblokz.gui.Canvas($(this._dom).find('.selection-layer')[0]),
-		indicators: new iblokz.gui.Canvas($(this._dom).find('.indicators-layer')[0])
+		grid: new iblokz.gui.Grid($(this.dom).find('.grid-layer')[0]),
+		scene: new iblokz.gui.Canvas($(this.dom).find('.scene-layer')[0]),
+		selection: new iblokz.gui.Canvas($(this.dom).find('.selection-layer')[0]),
+		indicators: new iblokz.gui.Canvas($(this.dom).find('.indicators-layer')[0])
 	};
 
 	this.toBeRefreshed = ["grid", "scene", "selection", "indicators"];
@@ -20,8 +22,8 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 	this.perspective = _conf.perspective;
 
 	this.center = new QL.ext.Vector2(
-		this._dom.width/2,
-		this._dom.height/2
+		this.dom.width/2,
+		this.dom.height/2
 	);
 
 	this.zoom = 100;
@@ -111,7 +113,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 	}
 
 	// mouse move
-	$(this._dom).mousedown(function(ev){
+	$(this.dom).mousedown(function(ev){
 
 		_view.interaction.status = "mousedown";
 		_view.interaction.start.set(ev.offsetX, ev.offsetY);
@@ -119,14 +121,14 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 
 	});
 
-	$(this._dom).on("touchstart", function(ev) {
+	$(this.dom).on("touchstart", function(ev) {
 		var e = ev.originalEvent;
 		_view.interaction.status = "mousedown";
 		_view.interaction.start.set(e.touches[0].clientX, e.touches[0].clientY);
 		_view.interaction.last.set(0, 0);
 	});
 
-	$(this._dom).mousemove(function(ev){
+	$(this.dom).mousemove(function(ev){
 		
 		if(["mousedown","mousemove"].indexOf(_view.interaction.status)>-1){
 			_view.interaction.status = "mousemove";
@@ -182,7 +184,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 		}
 	});
 
-	$(this._dom).on("touchmove", function(ev) {
+	$(this.dom).on("touchmove", function(ev) {
 		var e = ev.originalEvent;
 		ev.preventDefault();
 		if(["mousedown","mousemove"].indexOf(_view.interaction.status)>-1){
@@ -239,7 +241,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 		}
 	});
 
-	$(this._dom).mouseup(function(ev){
+	$(this.dom).mouseup(function(ev){
 		if(ev.which == 1 && 
 			(_view.interaction.status === "mousedown" || _view.interaction.last.toArray() == [0,0])
 		){
@@ -255,7 +257,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 
 	});
 
-	$(this._dom).on("touchend", function(ev) {
+	$(this.dom).on("touchend", function(ev) {
 		var e = ev.originalEvent;
 		if((_view.interaction.status === "mousedown" || _view.interaction.last.toArray() == [0,0])){
 			var hitPos = new QL.ext.Vector2(
@@ -273,7 +275,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 		_editor.refreshObjectPane();
 	});
 
-	$(this._dom).on('mousewheel', function(event) {
+	$(this.dom).on('mousewheel', function(event) {
 		//console.log(event.originalEvent.deltaX, event.originalEvent.deltaY, event.originalEvent.deltaFactor);
 		if(event.originalEvent.deltaY < 0 && _view.zoom < 400){
 			_view.zoom += 12.5;
@@ -286,6 +288,9 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 	});
 
 };
+
+QL.gui.View2D.prototype = Object.create( QL.gui.Element.prototype );
+QL.gui.View2D.prototype.constructor = QL.gui.View2D;
 
 
 QL.gui.View2D.prototype.drawBox = function(ctx, obj, _lineDash, _strokeStyle, _showCoords){
@@ -420,6 +425,7 @@ QL.gui.View2D.prototype.needRefreshingAll = function(){
 }
 
 QL.gui.View2D.prototype.init = function(){
+	QL.gui.Element.prototype.init.call(this);
 	this.needRefreshingAll();
 }
 
@@ -452,8 +458,8 @@ QL.gui.View2D.prototype.refresh = function(scene){
 	ctx.fillText(this.offset.toArray().join(", "),ctx.canvas.width - 65, ctx.canvas.height - 15);
 
 	this.center.set(
-		$(this._dom).width()/2,
-		$(this._dom).height()/2
+		$(this.dom).width()/2,
+		$(this.dom).height()/2
 	);
 
 	this.hitFaces = [];
