@@ -3,11 +3,13 @@
 if(typeof QL === "undefined"){ var QL = {}; }
 if(typeof QL.gui === "undefined"){ QL.gui = {}; }
 
-QL.gui.View3D = function(conf, scene){
+QL.gui.View3D = function(conf, scene, editor){
 	QL.gui.Element.call(this, conf.dom);
 	
 	this.canvas = $(this.dom).find(".layer-3d")[0];
 	this.perspective = conf.perspective;
+
+	this.editor = editor;
 
 	this.canvas.width = $(this.canvas).width();
 	this.canvas.height = $(this.canvas).height();
@@ -29,7 +31,6 @@ QL.gui.View3D = function(conf, scene){
 	this.renderer.setSize(this.canvas.width, this.canvas.height );
 
 	this.scene.fog = new THREE.Fog( 0x33373f, 500, 10000 );
-
 
 	this.camera = new THREE.PerspectiveCamera( 75, this.canvas.width / this.canvas.height, 1, 10000 );
 	this.camera.position.z = 300;
@@ -127,6 +128,88 @@ QL.gui.View3D.prototype.addEntities = function(entities){
 
 QL.gui.View3D.prototype.init = function(){
 	QL.gui.Element.prototype.init.call(this);
+
+	var scope = this;
+
+	var raycaster = new THREE.Raycaster();
+	var mouse = new THREE.Vector2();
+
+	function onDocumentTouchStart( event ) {
+		
+		event.preventDefault();
+		
+		event.offsetX = event.touches[0].offsetX;
+		event.offsetY = event.touches[0].offsetY;
+		onDocumentMouseDown( event );
+
+	}	
+
+	function onDocumentMouseDown( event ) {
+
+		event.preventDefault();
+
+		mouse.x = event.offsetX/scope.canvas.clientWidth*2 - 1; //( event.clientX / scope.canvas.clientWidth ) * 2 - 1;
+		mouse.y = -event.offsetY/scope.canvas.clientHeight*2 + 1; //( event.clientY / scope.canvas.clientHeight ) * 2 + 1;
+
+		raycaster.setFromCamera( mouse, scope.camera );
+
+		var objects = [];
+		scope.scene.children.forEach(function(child){
+			if(child.type === "Mesh"){
+				objects.push(child);
+			}
+		})
+
+		var intersects = raycaster.intersectObjects( objects );
+
+
+		if ( intersects.length > 0 ) {
+
+			if(!scope.scene.selected){
+				scope.editor.select(intersects[ 0 ].object.id);
+			} else {
+				var selectedIndex = -1;
+				intersects.forEach(function(intersect, index){
+					if(intersect.object.id === scope.scene.selected.id){
+						selectedIndex = index;
+					}
+				})
+
+				if(selectedIndex + 1 >= intersects.length){
+					scope.editor.select(intersects[ 0 ].object.id);
+				} else {
+					scope.editor.select(intersects[ selectedIndex + 1 ].object.id)
+				}
+			}
+
+			
+			/*var particle = new THREE.Sprite( particleMaterial );
+			particle.position.copy( intersects[ 0 ].point );
+			particle.scale.x = particle.scale.y = 16;
+			scope.scene.add( particle );*/
+			
+
+		} else {
+			scope.scene.selected = null;
+		}
+
+
+
+		/*
+		// Parse all the faces
+		for ( var i in intersects ) {
+
+			intersects[ i ].face.material[ 0 ].color.setHex( Math.random() * 0xffffff | 0x80000000 );
+
+		}
+		*/
+	}
+
+
+	scope.canvas.addEventListener( 'mousedown', onDocumentMouseDown, false );
+	scope.canvas.addEventListener( 'touchstart', onDocumentTouchStart, false );
+
+
 }
 
 QL.gui.View3D.prototype.refresh = function(){
