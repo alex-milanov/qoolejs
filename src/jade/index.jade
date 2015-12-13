@@ -30,14 +30,21 @@ html
 						title="Scale Mode [S]"
 					): img(src="/assets/icons/scale.png")
 					.splitter
-					a.undo-trigger(
-						data-trigger-method="undo",
-						title="Undo [Ctrl+Z]"
-					): i.fa.fa-undo
-					a.redo-trigger(
-						data-trigger-method="redo",
-						title="Redo [Ctrl+Y]"
-					): i.fa.fa-repeat
+					a.obj-mode-option(
+						data-option-param="obj-mode",
+						data-option-value="vertex",
+						title="Vertex Edit Mode"
+					): img(src="/assets/icons/vertex.png")
+					a.obj-mode-option(
+						data-option-param="obj-mode",
+						data-option-value="edge",
+						title="Edge Edit Mode"
+					): img(src="/assets/icons/edge.png")
+					a.obj-mode-option(
+						data-option-param="obj-mode",
+						data-option-value="face",
+						title="Face Edit Mode"
+					): img(src="/assets/icons/face.png")
 					.splitter
 					a.new-mesh-trigger(
 						data-trigger-method="newMesh",
@@ -52,6 +59,15 @@ html
 						title="Clear Scene [L]"
 					): i.fa.fa-trash
 				.right-bar
+					a.undo-trigger(
+						data-trigger-method="undo",
+						title="Undo [Ctrl+Z]"
+					): i.fa.fa-undo
+					a.redo-trigger(
+						data-trigger-method="redo",
+						title="Redo [Ctrl+Y]"
+					): i.fa.fa-repeat
+					.splitter
 					a.debug-toggle(
 						data-toggle-ref=".debug-info",
 						data-toggle-class="visible",
@@ -65,18 +81,6 @@ html
 					//- 	data-toggle-class="fullscreen"
 					//- ) [F]ull Screen
 					.debug-keys.fa.fa-keyboard-o
-					a.new-scene-trigger(
-						data-trigger-method="newScene",
-						title="New Scene"
-					): i.fa.fa-file-o
-					a.load-scene-trigger(
-						data-trigger-method="loadScene",
-						title="Load Scene"
-					): i.fa.fa-folder-open-o
-					a.save-scene-trigger(
-						data-trigger-method="saveScene",
-						title="Save Scene"
-					): i.fa.fa-save
 			.panel.left.opened
 				.pane#object-pane
 					.pane-title
@@ -112,6 +116,18 @@ html
 				.pane.active#scene-pane
 					.pane-title
 						span#scene-title Untitled
+						a.load-scene-trigger(
+							data-trigger-method="loadScene",
+							title="Load Scene"
+						): i.fa.fa-folder-open-o
+						a.save-scene-trigger(
+							data-trigger-method="saveScene",
+							title="Save Scene"
+						): i.fa.fa-save
+						a.new-scene-trigger(
+							data-trigger-method="newScene",
+							title="New Scene"
+						): i.fa.fa-file-o
 					.pane-body
 						.section
 							.section-title Lights

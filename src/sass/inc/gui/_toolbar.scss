@@ -39,12 +39,12 @@
 			cursor: pointer;
 			position: relative;
 			&:hover {
-				color: #333;
-				background: $ql-panel-object-2-color;
+				color: #fff;
+				background: #444;
 			}
 			&.selected, &.toggled {
-				color: #333;
-				background: $ql-panel-object-1-color;
+				color: #fff;
+				background: #555;
 			}
 		}
 		
