@@ -48,29 +48,49 @@ iblokz.gui.Canvas.prototype.rect = function(rect, background, stroke, dash){
 }
 
 iblokz.gui.Canvas.prototype.path = function(points, background, stroke, dash){
-	this.ctx.beginPath();
 	
+	var scope = this;
+
+	scope.ctx.beginPath();
+
 	points.forEach(function(point, index){
 		if(index == 0){
-			ctx.moveTo(point.x,point.y);
+			scope.ctx.moveTo(point.x,point.y);
 		} else {
-			ctx.lineTo(point.x,point.y);
+			scope.ctx.lineTo(point.x,point.y);
 		}
 	})
-	ctx.closePath();
+	scope.ctx.closePath();
 
 	if(background){
-		this.ctx.fillStyle = background;
-		this.ctx.fill();
+		scope.ctx.fillStyle = background;
+		scope.ctx.fill();
 	}
 	if(dash) {
-		this.ctx.setLineDash(dash);
+		scope.ctx.setLineDash(dash);
 	}
 	if(stroke){
-		this.ctx.lineWidth = 1;
-		this.ctx.strokeStyle = stroke;
-		this.ctx.stroke();
+		scope.ctx.lineWidth = 1;
+		scope.ctx.strokeStyle = stroke;
+		scope.ctx.stroke();
 	}
+}
+
+iblokz.gui.Canvas.prototype.text = function(text, position, options){
+
+	if(!options)
+		options = {};
+
+	if(!position)
+		position = new iblokz.gfx.Vector2(
+			this.ctx.canvas.width/2,
+			this.ctx.canvas.height/2
+		)
+
+	this.ctx.font = options.font || "12px Arial";
+	this.ctx.fillStyle = options.color || "#999";
+
+	this.ctx.fillText(text, position.x, position.y);
 }
 
 iblokz.gui.Canvas.prototype.getSize = function(){

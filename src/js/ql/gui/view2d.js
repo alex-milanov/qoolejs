@@ -292,9 +292,9 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 QL.gui.View2D.prototype = Object.create( QL.gui.Element.prototype );
 QL.gui.View2D.prototype.constructor = QL.gui.View2D;
 
+QL.gui.View2D.prototype.drawObject = function(canvas, obj, _lineDash, _strokeStyle, _showCoords){
 
-QL.gui.View2D.prototype.drawBox = function(ctx, obj, _lineDash, _strokeStyle, _showCoords){
-
+	var ctx = canvas.ctx;
 	var _mod = this.mod;
 	var scope = this;
 
@@ -308,26 +308,35 @@ QL.gui.View2D.prototype.drawBox = function(ctx, obj, _lineDash, _strokeStyle, _s
 
 	var objCenter2 = objPos3.clone().toVector2(_mod).add(center2);
 
+
+	var transformVectorTo2DCanvas = function(v3){
+		return new QL.ext.Vector3().copy(v3).multiply(scaleVector).applyEuler(obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(scope.zoom/100).add(center2)
+	}
+
 	if(obj.geometry.quads) {
 		obj.geometry.quads.forEach(function(_quad, index){
 
 			//var scaleVector2 = scaleVector.toVector2(_mod);
 			// TODO: Impl a check whether a face should be displayed or not
-					
+
 			var quad2d = {
-				a: new QL.ext.Vector3().copy(_quad.a).multiply(scaleVector).applyEuler(obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(scope.zoom/100).add(center2),
-				b: new QL.ext.Vector3().copy(_quad.b).multiply(scaleVector).applyEuler(obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(scope.zoom/100).add(center2),
-				c: new QL.ext.Vector3().copy(_quad.c).multiply(scaleVector).applyEuler(obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(scope.zoom/100).add(center2),
-				d: new QL.ext.Vector3().copy(_quad.d).multiply(scaleVector).applyEuler(obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(scope.zoom/100).add(center2)
+				a: new transformVectorTo2DCanvas(_quad.a),
+				b: new transformVectorTo2DCanvas(_quad.b),
+				c: new transformVectorTo2DCanvas(_quad.c),
+				d: new transformVectorTo2DCanvas(_quad.d)
 			};
 
-			ctx.beginPath();
+			var path2d = [quad2d.a,quad2d.b,quad2d.c,quad2d.d,quad2d.a];
+
+			canvas.path(path2d, false, _strokeStyle || '#777');
+
+			/*ctx.beginPath();
 			ctx.moveTo(quad2d.a.x,quad2d.a.y);
 			ctx.lineTo(quad2d.b.x,quad2d.b.y);
 			ctx.lineTo(quad2d.c.x,quad2d.c.y);
 			ctx.lineTo(quad2d.d.x,quad2d.d.y);
 			ctx.lineTo(quad2d.a.x,quad2d.a.y);
-			ctx.closePath();
+			ctx.closePath();*/
 
 			scope.hitFaces.push({
 				triangle: new THREE.Triangle(
@@ -348,15 +357,13 @@ QL.gui.View2D.prototype.drawBox = function(ctx, obj, _lineDash, _strokeStyle, _s
 				objId: obj.id
 			});
 
-			ctx.strokeStyle = _strokeStyle || '#777';
 			var baseColor = new THREE.Color(0x555555);
-			ctx.stroke();
 
 			if(_showCoords){
 				ctx.font="12px Arial";
 				ctx.fillStyle="#999";
 
-			if(scope.editor.indexes.length === 0 || scope.editor.indexes.indexOf(index+"")>-1){
+				if(scope.editor.indexes.length === 0 || scope.editor.indexes.indexOf(index+"")>-1){
 					ctx.fillText("a("+(new QL.ext.Vector3()).copy(_quad.a).toVector2(_mod).toArray().join(", ")+"), "+quad2d.a.toArray().join(", "),quad2d.a.x,quad2d.a.y);
 					ctx.fillText("b("+(new QL.ext.Vector3()).copy(_quad.b).toVector2(_mod).toArray().join(", ")+"), "+quad2d.b.toArray().join(", "),quad2d.b.x,quad2d.b.y);
 					ctx.fillText("c("+(new QL.ext.Vector3()).copy(_quad.c).toVector2(_mod).toArray().join(", ")+"), "+quad2d.c.toArray().join(", "),quad2d.c.x,quad2d.c.y);
@@ -369,26 +376,17 @@ QL.gui.View2D.prototype.drawBox = function(ctx, obj, _lineDash, _strokeStyle, _s
 	} else {
 		obj.geometry.faces.forEach(function(face, index){
 
-
 			var face2d = {
-				a: new QL.ext.Vector3().copy(obj.geometry.vertices[face.a]).multiply(scaleVector).applyEuler(obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(scope.zoom/100).add(center2),
-				b: new QL.ext.Vector3().copy(obj.geometry.vertices[face.b]).multiply(scaleVector).applyEuler(obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(scope.zoom/100).add(center2),
-				c: new QL.ext.Vector3().copy(obj.geometry.vertices[face.c]).multiply(scaleVector).applyEuler(obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(scope.zoom/100).add(center2)
+				a: transformVectorTo2DCanvas(obj.geometry.vertices[face.a]),
+				b: transformVectorTo2DCanvas(obj.geometry.vertices[face.b]),
+				c: transformVectorTo2DCanvas(obj.geometry.vertices[face.c])
 			};
 
+			var path2d = [face2d.a,face2d.b,face2d.c,face2d.a];
 
-			ctx.beginPath();
-			ctx.moveTo(face2d.a.x,face2d.a.y);
-			ctx.lineTo(face2d.b.x,face2d.b.y);
-			ctx.lineTo(face2d.c.x,face2d.c.y);
-			ctx.lineTo(face2d.a.x,face2d.a.y);
-			ctx.closePath();
+			canvas.path(path2d, false, _strokeStyle || '#777');
 
-
-			ctx.strokeStyle = _strokeStyle || '#777';
 			var baseColor = new THREE.Color(0x555555);
-
-			ctx.stroke();
 
 			scope.hitFaces.push({
 				triangle: new THREE.Triangle(
@@ -447,15 +445,18 @@ QL.gui.View2D.prototype.refresh = function(scene){
 		*/
 	}
 
-	// draw text
-	var ctx = this.layers.indicators.ctx;
-	ctx.font="16px Arial";
-	ctx.fillStyle="#999";
-	ctx.fillText(this.perspective,15,25);
-	ctx.font="14px Arial";
-	ctx.fillText(this.zoom,ctx.canvas.width - 65,25);
-	ctx.font="12px Arial";
-	ctx.fillText(this.offset.toArray().join(", "),ctx.canvas.width - 65, ctx.canvas.height - 15);
+	// draw indicators
+	this.layers.indicators.text(this.perspective, new iblokz.gfx.Vector2(15,25),{font: "16px Arial", color: "#999"});
+	this.layers.indicators.text(
+		this.zoom, 
+		new iblokz.gfx.Vector2(this.layers.indicators.ctx.canvas.width - 65, 25),
+		{font: "14px Arial", color: "#999"}
+	);
+	this.layers.indicators.text(
+		this.offset.toArray().join(", "), 
+		new iblokz.gfx.Vector2(this.layers.indicators.ctx.canvas.width - 65, this.layers.indicators.ctx.canvas.height - 15),
+		{font: "12px Arial", color: "#999"}
+	);
 
 	this.center.set(
 		$(this.dom).width()/2,
@@ -470,7 +471,7 @@ QL.gui.View2D.prototype.refresh = function(scene){
 		if(_obj.type === "Mesh"){
 			switch(_obj.geometry.type){
 				default:
-					that.drawBox(that.layers.scene.ctx,_obj);
+					that.drawObject(that.layers.scene,_obj);
 				break;
 			}
 		}
@@ -490,7 +491,7 @@ QL.gui.View2D.prototype.refresh = function(scene){
 				boxColor = "#33DC33";
 				break;
 		}
-		this.drawBox(that.layers.selection.ctx, scene.selected,[0],boxColor,this.editor.params.debug);
+		this.drawObject(that.layers.selection, scene.selected,[0],boxColor,this.editor.params.debug);
 		this.selected = {
 			objId: scene.selected.id,
 			position: scene.selected.position.clone()
