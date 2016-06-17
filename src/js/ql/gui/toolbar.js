@@ -1,28 +1,29 @@
-"use strict";
+'use strict';
 
-if(typeof QL === "undefined"){ var QL = {}; }
-if(typeof QL.gui === "undefined"){ QL.gui = {}; }
+import jQuery from 'jquery';
+import Element from './element';
 
-
-QL.gui.Toolbar = function(dom, context){
-	QL.gui.Element.call(this, dom, context);
+var Toolbar = function(dom, context){
+	Element.call(this, dom, context);
 };
 
-QL.gui.Toolbar.prototype = Object.create( QL.gui.Element );
-QL.gui.Toolbar.prototype.constructor = QL.gui.Toolbar;
+Toolbar.prototype = Object.create( Element );
+Toolbar.prototype.constructor = Toolbar;
 
-QL.gui.Toolbar.prototype.init = function(){
-	
-	QL.gui.Element.prototype.init.call(this);
-	
+Toolbar.prototype.init = function(){
+
+	Element.prototype.init.call(this);
+
 	var context = this.context;
 	context.indexes = [-1];
 
-	$(this.dom).find(".indexes").change(function(){
-		context.indexes = $(this).val().split(",");
+	jQuery(this.dom).find(".indexes").change(function(){
+		context.indexes = jQuery(this).val().split(",");
 	});
 };
 
-QL.gui.Toolbar.prototype.refresh = function(){
-	
+Toolbar.prototype.refresh = function(){
+
 };
+
+export default Toolbar;

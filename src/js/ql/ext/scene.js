@@ -1,9 +1,10 @@
-"use strict";
+'use strict';
 
-if(typeof QL === "undefined"){ var QL = {}; }
-if(typeof QL.ext === "undefined"){ QL.ext = {}; }
+import THREE from 'three';
+import BoxGeometry from './box-geometry';
+import Mesh from './mesh';
 
-QL.ext.Scene = function () {
+var Scene = function () {
 
 	THREE.Scene.call( this );
 
@@ -11,11 +12,11 @@ QL.ext.Scene = function () {
 
 };
 
-QL.ext.Scene.prototype = Object.create( THREE.Scene.prototype );
-QL.ext.Scene.prototype.constructor = QL.ext.Scene;
+Scene.prototype = Object.create( THREE.Scene.prototype );
+Scene.prototype.constructor = Scene;
 
 
-QL.ext.Scene.prototype.select = function(_objId){
+Scene.prototype.select = function(_objId){
 
 	if(!this.selected || this.selected.id !== _objId){
 		this.selected = this.getObjectById(_objId);
@@ -24,7 +25,7 @@ QL.ext.Scene.prototype.select = function(_objId){
 	}
 };
 
-QL.ext.Scene.prototype.selectNext = function(direction){
+Scene.prototype.selectNext = function(direction){
 	if(this.children.length == 0){
 		return false;
 	}
@@ -35,14 +36,14 @@ QL.ext.Scene.prototype.selectNext = function(direction){
 	var index = this.children.indexOf(this.selected);
 
 	var indexToBeSelected = index + direction;
-	
+
 	var nextToBeSelected = false;
 	var iterations = 0;
 	while(!(nextToBeSelected && nextToBeSelected.id && nextToBeSelected.type == "Mesh") && (iterations < this.children.length)){
-		
+
 		nextToBeSelected = this.children[indexToBeSelected];
 
-		if((direction == 1 && indexToBeSelected < this.children.length - 1) || 
+		if((direction == 1 && indexToBeSelected < this.children.length - 1) ||
 			(direction == -1 && indexToBeSelected > 0)){
 			indexToBeSelected+= direction;
 		} else if (direction == 1 ) {
@@ -59,7 +60,7 @@ QL.ext.Scene.prototype.selectNext = function(direction){
 }
 
 
-QL.ext.Scene.prototype.newMesh = function(){
+Scene.prototype.newMesh = function(){
 	var meshName = "Block "+this.children.length;
 	this.addEntities([
 		{
@@ -75,17 +76,17 @@ QL.ext.Scene.prototype.newMesh = function(){
 	return mesh;
 };
 
-QL.ext.Scene.prototype.cloneObject = function(_mod){
+Scene.prototype.cloneObject = function(_mod){
 
 	if(!this.selected){
 		return false;
 	}
-	
+
 	var mesh = this.selected.clone();
 	mesh.name = "Block "+this.children.length;
 
 	this.selected.matrix.decompose(mesh.position, mesh.quaternion, mesh.scale)
- 
+
 	mesh.position.set(0,0,0);
 	mesh.position[_mod.w] = this.selected.position[_mod.w];
 
@@ -95,8 +96,8 @@ QL.ext.Scene.prototype.cloneObject = function(_mod){
 	return mesh;
 };
 
-QL.ext.Scene.prototype.clear = function(){
-	
+Scene.prototype.clear = function(){
+
 	// extract non mesh children
 	var newChildren = [];
 
@@ -110,7 +111,7 @@ QL.ext.Scene.prototype.clear = function(){
 	this.selected = null;
 };
 
-QL.ext.Scene.prototype.addBlock = function(_entity){
+Scene.prototype.addBlock = function(_entity){
 
 	var width = _entity.finish[0]-_entity.start[0];
 	var height = _entity.finish[1]-_entity.start[1];
@@ -122,10 +123,10 @@ QL.ext.Scene.prototype.addBlock = function(_entity){
 		z: (_entity.start[2]+depth/2)
 	};
 
-	var geometry = new QL.ext.BoxGeometry( width, height, depth );
+	var geometry = new BoxGeometry( width, height, depth );
 	var color = _entity.color || 0x777777;
 	var material = new THREE.MeshBasicMaterial( { color: color, wireframe: false } );
-	var mesh = new QL.ext.Mesh( geometry, material );
+	var mesh = new Mesh( geometry, material );
 	mesh.position.set( pos.x, pos.y, pos.z );
 	mesh.receiveShadow = true;
 	mesh.castShadow = true;
@@ -137,7 +138,7 @@ QL.ext.Scene.prototype.addBlock = function(_entity){
 	this.add( mesh );
 };
 
-QL.ext.Scene.prototype.addEntities = function(_entities){
+Scene.prototype.addEntities = function(_entities){
 
 	var that = this;
 	_entities.forEach(function(_entity){
@@ -149,7 +150,7 @@ QL.ext.Scene.prototype.addEntities = function(_entities){
 	});
 };
 
-QL.ext.Scene.prototype.load = function(data){
+Scene.prototype.load = function(data){
 
 	var loader = new THREE.ObjectLoader();
 
@@ -170,9 +171,9 @@ QL.ext.Scene.prototype.load = function(data){
 			var geometry = child.geometry.clone();
 			var material = child.material.clone();
 			if(geometry.type === "BoxGeometry"){
-				geometry = new QL.ext.BoxGeometry().clone(geometry.parameters)
+				geometry = new BoxGeometry().clone(geometry.parameters)
 			}
-			var mesh = new QL.ext.Mesh( geometry, material );
+			var mesh = new Mesh( geometry, material );
 			child.updateMatrix();
 			child.matrix.decompose( mesh.position, mesh.quaternion, mesh.scale )
 			mesh.updateMatrix();
@@ -181,3 +182,5 @@ QL.ext.Scene.prototype.load = function(data){
 		}
 	})
 }
+
+export default Scene;

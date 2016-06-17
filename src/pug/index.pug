@@ -2,8 +2,8 @@ doctype html
 html
 	head
 		title QooleJS Alpha
-		link(rel="stylesheet",href="lib/font-awesome/css/font-awesome.css")
-		link(rel="stylesheet",href="lib/perfect-scrollbar/css/perfect-scrollbar.css")
+		//-link(rel="stylesheet",href="lib/font-awesome/css/font-awesome.css")
+		//-link(rel="stylesheet",href="lib/perfect-scrollbar/css/perfect-scrollbar.css")
 		link(rel="stylesheet",href="css/style.css")
 	body
 		.gui
@@ -18,33 +18,33 @@ html
 						data-option-param="obj-mode",
 						data-option-value="move",
 						title="Move Mode [M]"
-					): img(src="/assets/icons/move.png")
+					): img(src="/img/icons/move.png")
 					a.obj-mode-option(
 						data-option-param="obj-mode",
 						data-option-value="rotate",
 						title="Rotate Mode [R]"
-					): img(src="/assets/icons/rotate.png")
+					): img(src="/img/icons/rotate.png")
 					a.obj-mode-option(
 						data-option-param="obj-mode",
 						data-option-value="scale",
 						title="Scale Mode [S]"
-					): img(src="/assets/icons/scale.png")
+					): img(src="/img/icons/scale.png")
 					.splitter
 					a.obj-mode-option(
 						data-option-param="obj-mode",
 						data-option-value="vertex",
 						title="Vertex Edit Mode"
-					): img(src="/assets/icons/vertex.png")
+					): img(src="/img/icons/vertex.png")
 					a.obj-mode-option(
 						data-option-param="obj-mode",
 						data-option-value="edge",
 						title="Edge Edit Mode"
-					): img(src="/assets/icons/edge.png")
+					): img(src="/img/icons/edge.png")
 					a.obj-mode-option(
 						data-option-param="obj-mode",
 						data-option-value="face",
 						title="Face Edit Mode"
-					): img(src="/assets/icons/face.png")
+					): img(src="/img/icons/face.png")
 					.splitter
 					a.new-mesh-trigger(
 						data-trigger-method="newMesh",
@@ -89,25 +89,25 @@ html
 						.section
 							ul
 								li
-									label Name 
+									label Name
 									input#object-pane-name(type="text")
 								li
-									label Position 
+									label Position
 									input.p30#object-pane-pos-x(type="number")
 									input.p30#object-pane-pos-y(type="number")
 									input.p30#object-pane-pos-z(type="number")
 								li
-									label Scale 
+									label Scale
 									input.p30#object-pane-scale-x(type="number",step="0.125")
 									input.p30#object-pane-scale-y(type="number",step="0.125")
 									input.p30#object-pane-scale-z(type="number",step="0.125")
 								li
-									label Rotation 
+									label Rotation
 									input.p30#object-pane-rotation-x(type="number",step="1")
 									input.p30#object-pane-rotation-y(type="number",step="1")
 									input.p30#object-pane-rotation-z(type="number",step="1")
 								li
-									label Color 
+									label Color
 									input#object-pane-color(type="color")
 							button.btn.update-object-trigger(
 								data-trigger-method="updateObject",
@@ -186,37 +186,37 @@ html
 					canvas.selection-layer
 					canvas.indicators-layer
 		//- lib
-		script(src="lib/jquery/dist/jquery.js")
-		script(src="lib/jquery-mousewheel/jquery.mousewheel.js")
-		script(src="lib/lodash/lodash.js")
-		script(src="lib/three.js/three.js")
-		script(src="lib/threex.keyboardstate/threex.keyboardstate.js")
-		script(src="lib/perfect-scrollbar/js/perfect-scrollbar.jquery.js")
-		script(src="lib/file-saver.js/FileSaver.js")
+		//- script(src="lib/jquery/dist/jquery.js")
+		//- script(src="lib/jquery-mousewheel/jquery.mousewheel.js")
+		//- script(src="lib/lodash/lodash.js")
+		//- script(src="lib/three.js/three.js")
+		//- script(src="lib/threex.keyboardstate/threex.keyboardstate.js")
+		//- script(src="lib/perfect-scrollbar/js/perfect-scrollbar.jquery.js")
+		//- script(src="lib/file-saver.js/FileSaver.js")
 		//- iblokz
 		//- iblokz.gfx
-		script(src="js/iblokz/gfx/rect.js")
-		script(src="js/iblokz/gfx/vector2.js")
+		//- script(src="js/iblokz/gfx/rect.js")
+		//- script(src="js/iblokz/gfx/vector2.js")
 		//- iblokz.gui
-		script(src="js/iblokz/gui/element.js")
-		script(src="js/iblokz/gui/canvas.js")
-		script(src="js/iblokz/gui/grid.js")
+		//- script(src="js/iblokz/gui/element.js")
+		//- script(src="js/iblokz/gui/canvas.js")
+		//- script(src="js/iblokz/gui/grid.js")
 		//- ql
-		script(src="js/ql/ql.js")
-		script(src="js/ql/etc/math.js")
-		script(src="js/ql/etc/history.js")
-		script(src="js/ql/ext/vector2.js")
-		script(src="js/ql/ext/vector3.js")
-		script(src="js/ql/ext/quad.js")
-		script(src="js/ql/ext/boxGeometry.js")
-		script(src="js/ql/ext/mesh.js")
-		script(src="js/ql/ext/scene.js")
-		script(src="js/ql/ext/interactor.js")
-		script(src="js/ql/gui/element.js")
-		script(src="js/ql/gui/panel.js")
-		script(src="js/ql/gui/toolbar.js")
-		script(src="js/ql/gui/view2d.js")
-		script(src="js/ql/gui/view3d.js")
-		script(src="js/ql/gui/editor.js")
+		//- script(src="js/ql/ql.js")
+		//- script(src="js/ql/etc/math.js")
+		//- script(src="js/ql/etc/history.js")
+		//- script(src="js/ql/ext/vector2.js")
+		//- script(src="js/ql/ext/vector3.js")
+		//- script(src="js/ql/ext/quad.js")
+		//- script(src="js/ql/ext/boxGeometry.js")
+		//- script(src="js/ql/ext/mesh.js")
+		//- script(src="js/ql/ext/scene.js")
+		//- script(src="js/ql/ext/interactor.js")
+		//- script(src="js/ql/gui/element.js")
+		//- script(src="js/ql/gui/panel.js")
+		//- script(src="js/ql/gui/toolbar.js")
+		//- script(src="js/ql/gui/view2d.js")
+		//- script(src="js/ql/gui/view3d.js")
+		//- script(src="js/ql/gui/editor.js")
 		//- app
-		script(src="js/main.js")
+		script(src="js/app.js")

@@ -1,16 +1,15 @@
 "use strict";
 
-if(typeof iblokz === "undefined"){ var iblokz = {}; }
-if(typeof iblokz.gfx === "undefined"){ iblokz.gfx = {}; }
+import Vector2 from './vector2';
 
-iblokz.gfx.Rect = function(x, y, width, height) {
+var Rect = function(x, y, width, height) {
 	this.x = x;
 	this.y = y;
 	this.width = width;
 	this.height = height;
 }
 
-iblokz.gfx.Rect.prototype.set = function(x, y, width, height) {
+Rect.prototype.set = function(x, y, width, height) {
 	this.x = x;
 	this.y = y;
 	this.width = width;
@@ -18,43 +17,43 @@ iblokz.gfx.Rect.prototype.set = function(x, y, width, height) {
 	return this;
 }
 
-iblokz.gfx.Rect.prototype.setStart = function(start){
+Rect.prototype.setStart = function(start){
 	this.x = start.x;
 	this.y = start.y;
 	return this;
 }
 
-iblokz.gfx.Rect.prototype.getStart = function(){
-	var start = new iblokz.gfx.Vector2();
+Rect.prototype.getStart = function(){
+	var start = new Vector2();
 	start.x = this.x;
 	start.y = this.y;
 	return start;
 }
 
 
-iblokz.gfx.Rect.prototype.setEnd = function(end){
+Rect.prototype.setEnd = function(end){
 	this.width = end.x - this.x;
 	this.height = end.y - this.y;
 	return this;
 }
 
-iblokz.gfx.Rect.prototype.getEnd = function(){
-	var end = new iblokz.gfx.Vector2();
+Rect.prototype.getEnd = function(){
+	var end = new Vector2();
 	end.x = this.x + this.width;
 	end.y = this.y + this.height;
 	return end;
 }
 
 
-iblokz.gfx.Rect.prototype.getSize = function(){
-	var end = new iblokz.gfx.Vector2();
+Rect.prototype.getSize = function(){
+	var end = new Vector2();
 	end.x = this.width;
 	end.y = this.height;
 	return end;
 }
 
-iblokz.gfx.Rect.prototype.fromVectors = function(a, b){
-	
+Rect.prototype.fromVectors = function(a, b){
+
 	if(a.x <= b.x){
 		this.x = a.x;
 		this.width = b.x - a.x;
@@ -74,21 +73,21 @@ iblokz.gfx.Rect.prototype.fromVectors = function(a, b){
 	return this;
 }
 
-iblokz.gfx.Rect.prototype.pan = function(v) {
+Rect.prototype.pan = function(v) {
 	var start = this.getStart();
 	start.add(v);
 	this.setStart(start);
 	return this;
 }
 
-iblokz.gfx.Rect.prototype.resize = function(v) {
+Rect.prototype.resize = function(v) {
 	var end = this.getEnd();
 	end.add(v);
 	this.setEnd(end);
 	return this;
 }
 
-iblokz.gfx.Rect.prototype.containsVector = function(v){
+Rect.prototype.containsVector = function(v){
 	if((v.x >= this.x && v.x <= this.x+this.width)
 		&& (v.y >= this.y && v.y <= this.y+this.height)){
 		return true;
@@ -97,7 +96,7 @@ iblokz.gfx.Rect.prototype.containsVector = function(v){
 	}
 }
 
-iblokz.gfx.Rect.prototype.containsRect = function(rect){
+Rect.prototype.containsRect = function(rect){
 	var start = this.getStart();
 	var end = this.getEnd();
 	if((start.x <= rect.x && rect.x+rect.width <= end.x)
@@ -108,17 +107,17 @@ iblokz.gfx.Rect.prototype.containsRect = function(rect){
 	}
 }
 
-iblokz.gfx.Rect.prototype.contains = function(obj){
-	if(obj instanceof iblokz.gfx.Rect){
+Rect.prototype.contains = function(obj){
+	if(obj instanceof Rect){
 		return this.containsRect(obj);
-	} 
-	if(obj instanceof iblokz.gfx.Vector2){
+	}
+	if(obj instanceof Vector2){
 		return this.containsVector(obj);
 	}
 	return false;
 }
 
-iblokz.gfx.Rect.prototype.copy = function(rect){
+Rect.prototype.copy = function(rect){
 	this.x = rect.x || this.x;
 	this.y = rect.y || this.y;
 	this.width = rect.width || this.width;
@@ -127,11 +126,13 @@ iblokz.gfx.Rect.prototype.copy = function(rect){
 	return this;
 }
 
-iblokz.gfx.Rect.prototype.clone = function(){
-	var newRect = new iblokz.gfx.Rect();
+Rect.prototype.clone = function(){
+	var newRect = new Rect();
 	newRect.x = this.x;
 	newRect.y = this.y;
 	newRect.width = this.width;
 	newRect.height = this.height;
 	return newRect;
 }
+
+export default Rect;

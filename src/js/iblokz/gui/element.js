@@ -1,9 +1,7 @@
 "use strict";
 
-if(typeof iblokz === "undefined"){ var iblokz = {}; }
-if(typeof iblokz.gui === "undefined"){ iblokz.gui = {}; }
 
-iblokz.gui.Element = function(dom){
+var Element = function(dom){
 
 	this.dom = null;
 
@@ -33,18 +31,18 @@ iblokz.gui.Element = function(dom){
 
 };
 
-iblokz.gui.Element.prototype.on = function(eventName, listener){
+Element.prototype.on = function(eventName, listener){
 	this.dom.addEventListener(eventName, listener);
 	return this;
 }
 
-iblokz.gui.Element.prototype.append = function(target){
+Element.prototype.append = function(target){
 	this.dom.appendChild(target);
 	return this;
 }
 
-iblokz.gui.Element.prototype.appendTo = function(target){
-	if (target instanceof iblokz.gui.Element){
+Element.prototype.appendTo = function(target){
+	if (target instanceof Element){
 		target.append(this.dom);
 	} else if (target instanceof HTMLElement){
 		target.appendChild(this.dom);
@@ -55,6 +53,8 @@ iblokz.gui.Element.prototype.appendTo = function(target){
 	return this;
 }
 
-iblokz.gui.Element.prototype.find = function(selector){
+Element.prototype.find = function(selector){
 	return this.dom.querySelectorAll(selector);
 }
+
+export default Element;

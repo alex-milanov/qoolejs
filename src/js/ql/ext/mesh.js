@@ -1,26 +1,27 @@
-"use strict";
+'use strict';
 
-if(typeof QL === "undefined"){ var QL = {}; }
-if(typeof QL.ext === "undefined"){ QL.ext = {}; }
+import THREE from 'three';
 
-QL.ext.Mesh = function ( geometry, material ) {
+var Mesh = function ( geometry, material ) {
 
 	THREE.Mesh.call( this, geometry, material );
 }
 
 
-QL.ext.Mesh.prototype = Object.create( THREE.Mesh.prototype );
-QL.ext.Mesh.prototype.constructor = THREE.Mesh;
+Mesh.prototype = Object.create( THREE.Mesh.prototype );
+Mesh.prototype.constructor = THREE.Mesh;
 
-QL.ext.Mesh.prototype.clone = function ( object, recursive ) {
+Mesh.prototype.clone = function ( object, recursive ) {
 
 	var geometry = this.geometry.clone();
 	var material = this.material.clone();
 
-	if ( object === undefined ) object = new QL.ext.Mesh( geometry, material );
+	if ( object === undefined ) object = new Mesh( geometry, material );
 
 	THREE.Object3D.prototype.clone.call( this, object, recursive );
 
 	return object;
 
 };
+
+export default Mesh;

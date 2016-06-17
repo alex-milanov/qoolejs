@@ -1,31 +1,30 @@
-"use strict";
+'use strict';
 
-if(typeof QL === "undefined"){ var QL = {}; }
-if(typeof QL.gui === "undefined"){ QL.gui = {}; }
+import jQuery from 'jquery';
+import Element from './element';
 
-
-QL.gui.Panel = function(dom, context){
-	QL.gui.Element.call(this, dom, context);
+var Panel = function(dom, context){
+	Element.call(this, dom, context);
 };
 
-QL.gui.Panel.prototype = Object.create( QL.gui.Element.prototype );
-QL.gui.Panel.prototype.constructor = QL.gui.Panel;
+Panel.prototype = Object.create( Element.prototype );
+Panel.prototype.constructor = Panel;
 
-QL.gui.Panel.prototype.init = function(){
-	QL.gui.Element.prototype.init.call(this);
-	$(this.dom).find(".pane-body").perfectScrollbar();
+Panel.prototype.init = function(){
+	Element.prototype.init.call(this);
+	jQuery(this.dom).find(".pane-body").perfectScrollbar();
 };
 
-QL.gui.Panel.prototype.refresh = function(){
-	
+Panel.prototype.refresh = function(){
+
 	var context = this.context;
 
 	// clean up the entities list
-	var $meshEntities = $(this.dom).find(".entities#mesh-entities");
+	var $meshEntities = jQuery(this.dom).find(".entities#mesh-entities");
 	$meshEntities.html("");
 
 	context.scene.children.forEach(function(_entity){
-		var _el = $("<span></span>");
+		var _el = jQuery("<span></span>");
 		var _name = '';
 		if(_entity.name){
 			_name = _entity.name;
@@ -43,17 +42,19 @@ QL.gui.Panel.prototype.refresh = function(){
 
 		if(_entity.type === "Mesh"){
 			_el.click(function(){
-				context.select(parseInt($(this).attr("data-obj-id")));
+				context.select(parseInt(jQuery(this).attr("data-obj-id")));
 			});
 		}
 
 		switch(_entity.type){
 			case "Mesh":
-				$meshEntities.append($("<li></li>").append(_el));
+				$meshEntities.append(jQuery("<li></li>").append(_el));
 				break;
 		}
 	});
 	context.refreshObjectPane();
 
-	$(this.dom).find(".pane-body").perfectScrollbar('update');
+	jQuery(this.dom).find(".pane-body").perfectScrollbar('update');
 };
+
+export default Panel;

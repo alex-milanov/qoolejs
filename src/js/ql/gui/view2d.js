@@ -1,33 +1,37 @@
-"use strict";
+'use strict';
 
+import THREE from 'three';
+import jQuery from 'jquery';
+import _ from 'lodash';
 
-if(typeof QL === "undefined"){ var QL = {}; }
-if(typeof QL.gui === "undefined"){ QL.gui = {}; }
+import iblokz from '../../iblokz';
+import ext from '../ext';
+import Element from './element';
 
-QL.gui.View2D = function(_conf, _scene, _editor){
+var View2D = function(_conf, _scene, _editor){
 
-	QL.gui.Element.call(this, _conf.dom);
-	//this.dom = $(_conf.dom)[0];
+	Element.call(this, _conf.dom);
+	//this.dom = jQuery(_conf.dom)[0];
 	//this.ctx = this.canvas.getContext("2d");
 
 	this.layers = {
-		grid: new iblokz.gui.Grid($(this.dom).find('.grid-layer')[0]),
-		scene: new iblokz.gui.Canvas($(this.dom).find('.scene-layer')[0]),
-		selection: new iblokz.gui.Canvas($(this.dom).find('.selection-layer')[0]),
-		indicators: new iblokz.gui.Canvas($(this.dom).find('.indicators-layer')[0])
+		grid: new iblokz.gui.Grid(jQuery(this.dom).find('.grid-layer')[0]),
+		scene: new iblokz.gui.Canvas(jQuery(this.dom).find('.scene-layer')[0]),
+		selection: new iblokz.gui.Canvas(jQuery(this.dom).find('.selection-layer')[0]),
+		indicators: new iblokz.gui.Canvas(jQuery(this.dom).find('.indicators-layer')[0])
 	};
 
 	this.toBeRefreshed = ["grid", "scene", "selection", "indicators"];
 
 	this.perspective = _conf.perspective;
 
-	this.center = new QL.ext.Vector2(
+	this.center = new ext.Vector2(
 		this.dom.width/2,
 		this.dom.height/2
 	);
 
 	this.zoom = 100;
-	this.offset = new QL.ext.Vector2(0,0);
+	this.offset = new ext.Vector2(0,0);
 
 	this.mod = {
 		x: 0, xD: 1,
@@ -78,7 +82,7 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 	// select
 	var handleSelect = function(ev){
 
-		var hitPos = new QL.ext.Vector2(
+		var hitPos = new ext.Vector2(
 			ev.offsetX,
 			ev.offsetY
 		);
@@ -108,12 +112,12 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 
 	this.interaction = {
 		status: "idle",
-		start: new QL.ext.Vector2(0,0),
-		last: new QL.ext.Vector2(0,0)
+		start: new ext.Vector2(0,0),
+		last: new ext.Vector2(0,0)
 	}
 
 	// mouse move
-	$(this.dom).mousedown(function(ev){
+	jQuery(this.dom).mousedown(function(ev){
 
 		_view.interaction.status = "mousedown";
 		_view.interaction.start.set(ev.offsetX, ev.offsetY);
@@ -121,19 +125,20 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 
 	});
 
-	$(this.dom).on("touchstart", function(ev) {
+	jQuery(this.dom).on("touchstart", function(ev) {
 		var e = ev.originalEvent;
 		_view.interaction.status = "mousedown";
 		_view.interaction.start.set(e.touches[0].clientX, e.touches[0].clientY);
 		_view.interaction.last.set(0, 0);
 	});
 
-	$(this.dom).mousemove(function(ev){
-		
+	jQuery(this.dom).mousemove(function(ev){
+
 		if(["mousedown","mousemove"].indexOf(_view.interaction.status)>-1){
+			console.log(_view.interaction.status);
 			_view.interaction.status = "mousemove";
 
-			var mousePos = new QL.ext.Vector2(ev.offsetX,ev.offsetY);
+			var mousePos = new ext.Vector2(ev.offsetX,ev.offsetY);
 
 			var changeVector = mousePos.clone().sub(_view.interaction.start).divideScalar(_view.zoom/100);
 			changeVector.x = parseInt(changeVector.x/2.5)*2.5
@@ -151,12 +156,12 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 					switch(_view.editor.params["obj-mode"]){
 						case "move":
 
-							//QL.ext.interactor.move(_view.scene.selected, interactionVector);
+							//ext.interactor.move(_view.scene.selected, interactionVector);
 							_view.editor.interact("move",interactionVector);
 							break;
 						case "scale":
 							interactionVector.z = -interactionVector.z;
-							//QL.ext.interactor.scale(_view.scene.selected, interactionVector.divideScalar(10));
+							//ext.interactor.scale(_view.scene.selected, interactionVector.divideScalar(10));
 							_view.editor.interact("scale",interactionVector.divideScalar(20));
 							break;
 						case "rotate":
@@ -166,9 +171,9 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 							var mousePos3 = mousePos.clone().divideScalar(_view.zoom/100).sub(_view.center).toVector3(_view.mod);
 							mousePos3[_view.mod.w] = _view.scene.selected.position[_view.mod.w];
 							//console.log(mousePos3);
-							//QL.ext.interactor.lookAt(_view.scene.selected, mousePos3);
+							//ext.interactor.lookAt(_view.scene.selected, mousePos3);
 							_view.editor.interact("lookAt",mousePos3);
-							
+
 							break;
 					}
 					_view.interaction.last = changeVector.clone();
@@ -179,18 +184,18 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 					_view.needRefreshingAll();
 					break;
 
-			} 
+			}
 
 		}
 	});
 
-	$(this.dom).on("touchmove", function(ev) {
+	jQuery(this.dom).on("touchmove", function(ev) {
 		var e = ev.originalEvent;
 		ev.preventDefault();
 		if(["mousedown","mousemove"].indexOf(_view.interaction.status)>-1){
 			_view.interaction.status = "mousemove";
 
-			var mousePos = new QL.ext.Vector2(e.touches[0].clientX,e.touches[0].clientY);
+			var mousePos = new ext.Vector2(e.touches[0].clientX,e.touches[0].clientY);
 
 			var changeVector = mousePos.clone().sub(_view.interaction.start).divideScalar(_view.zoom/100);
 			changeVector.x = parseInt(changeVector.x/2.5)*2.5
@@ -208,12 +213,12 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 					switch(_view.editor.params["obj-mode"]){
 						case "move":
 
-							//QL.ext.interactor.move(_view.scene.selected, interactionVector);
+							//ext.interactor.move(_view.scene.selected, interactionVector);
 							_view.editor.interact("move",interactionVector);
 							break;
 						case "scale":
 							interactionVector.z = -interactionVector.z;
-							//QL.ext.interactor.scale(_view.scene.selected, interactionVector.divideScalar(10));
+							//ext.interactor.scale(_view.scene.selected, interactionVector.divideScalar(10));
 							_view.editor.interact("scale",interactionVector.divideScalar(20));
 							break;
 						case "rotate":
@@ -223,9 +228,9 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 							var mousePos3 = mousePos.clone().divideScalar(_view.zoom/100).sub(_view.center).toVector3(_view.mod);
 							mousePos3[_view.mod.w] = _view.scene.selected.position[_view.mod.w];
 							//console.log(mousePos3);
-							//QL.ext.interactor.lookAt(_view.scene.selected, mousePos3);
+							//ext.interactor.lookAt(_view.scene.selected, mousePos3);
 							_view.editor.interact("lookAt",mousePos3);
-							
+
 							break;
 					}
 					_view.interaction.last = changeVector.clone();
@@ -236,31 +241,32 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 					_view.needRefreshingAll();
 					break;
 
-			}*/ 
+			}*/
 
 		}
 	});
 
-	$(this.dom).mouseup(function(ev){
-		if(ev.which == 1 && 
+	jQuery(this.dom).mouseup(function(ev){
+		console.log('mouseup');
+		if(ev.which == 1 &&
 			(_view.interaction.status === "mousedown" || _view.interaction.last.toArray() == [0,0])
 		){
 			handleSelect(ev)
 		}
 		_view.interaction = {
 			status: "idle",
-			start: new QL.ext.Vector2(0,0),
-			last: new QL.ext.Vector2(0,0)
+			start: new ext.Vector2(0,0),
+			last: new ext.Vector2(0,0)
 		}
 		_editor.selectView(_view);
 		_editor.refreshObjectPane();
 
 	});
 
-	$(this.dom).on("touchend", function(ev) {
+	jQuery(this.dom).on("touchend", function(ev) {
 		var e = ev.originalEvent;
 		if((_view.interaction.status === "mousedown" || _view.interaction.last.toArray() == [0,0])){
-			var hitPos = new QL.ext.Vector2(
+			var hitPos = new ext.Vector2(
 				e.touches[0].clientX,
 				e.touches[0].clientY
 			);
@@ -268,14 +274,14 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 		}
 		_view.interaction = {
 			status: "idle",
-			start: new QL.ext.Vector2(0,0),
-			last: new QL.ext.Vector2(0,0)
+			start: new ext.Vector2(0,0),
+			last: new ext.Vector2(0,0)
 		}
 		_editor.selectView(_view);
 		_editor.refreshObjectPane();
 	});
 
-	$(this.dom).on('mousewheel', function(event) {
+	jQuery(this.dom).on('mousewheel', function(event) {
 		//console.log(event.originalEvent.deltaX, event.originalEvent.deltaY, event.originalEvent.deltaFactor);
 		if(event.originalEvent.deltaY < 0 && _view.zoom < 400){
 			_view.zoom += 12.5;
@@ -289,10 +295,10 @@ QL.gui.View2D = function(_conf, _scene, _editor){
 
 };
 
-QL.gui.View2D.prototype = Object.create( QL.gui.Element.prototype );
-QL.gui.View2D.prototype.constructor = QL.gui.View2D;
+View2D.prototype = Object.create( Element.prototype );
+View2D.prototype.constructor = View2D;
 
-QL.gui.View2D.prototype.drawObject = function(canvas, obj, _lineDash, _strokeStyle, _showCoords){
+View2D.prototype.drawObject = function(canvas, obj, _lineDash, _strokeStyle, _showCoords){
 
 	var ctx = canvas.ctx;
 	var _mod = this.mod;
@@ -301,16 +307,16 @@ QL.gui.View2D.prototype.drawObject = function(canvas, obj, _lineDash, _strokeSty
 	var _center = [];
 	var _indexes = [];
 
-	var scaleVector = new QL.ext.Vector3().copy(obj.scale);
+	var scaleVector = new ext.Vector3().copy(obj.scale);
 	var center2 = this.center.clone().add(scope.offset);
 
-	var objPos3 = new QL.ext.Vector3().copy(obj.position);
+	var objPos3 = new ext.Vector3().copy(obj.position);
 
 	var objCenter2 = objPos3.clone().toVector2(_mod).add(center2);
 
 
 	var transformVectorTo2DCanvas = function(v3){
-		return new QL.ext.Vector3().copy(v3).multiply(scaleVector).applyEuler(obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(scope.zoom/100).add(center2)
+		return new ext.Vector3().copy(v3).multiply(scaleVector).applyEuler(obj.rotation).add(objPos3).toVector2(_mod).multiplyScalar(scope.zoom/100).add(center2)
 	}
 
 	if(obj.geometry.quads) {
@@ -364,10 +370,10 @@ QL.gui.View2D.prototype.drawObject = function(canvas, obj, _lineDash, _strokeSty
 				ctx.fillStyle="#999";
 
 				if(scope.editor.indexes.length === 0 || scope.editor.indexes.indexOf(index+"")>-1){
-					ctx.fillText("a("+(new QL.ext.Vector3()).copy(_quad.a).toVector2(_mod).toArray().join(", ")+"), "+quad2d.a.toArray().join(", "),quad2d.a.x,quad2d.a.y);
-					ctx.fillText("b("+(new QL.ext.Vector3()).copy(_quad.b).toVector2(_mod).toArray().join(", ")+"), "+quad2d.b.toArray().join(", "),quad2d.b.x,quad2d.b.y);
-					ctx.fillText("c("+(new QL.ext.Vector3()).copy(_quad.c).toVector2(_mod).toArray().join(", ")+"), "+quad2d.c.toArray().join(", "),quad2d.c.x,quad2d.c.y);
-					ctx.fillText("d("+(new QL.ext.Vector3()).copy(_quad.d).toVector2(_mod).toArray().join(", ")+"), "+quad2d.d.toArray().join(", "),quad2d.d.x,quad2d.d.y);
+					ctx.fillText("a("+(new ext.Vector3()).copy(_quad.a).toVector2(_mod).toArray().join(", ")+"), "+quad2d.a.toArray().join(", "),quad2d.a.x,quad2d.a.y);
+					ctx.fillText("b("+(new ext.Vector3()).copy(_quad.b).toVector2(_mod).toArray().join(", ")+"), "+quad2d.b.toArray().join(", "),quad2d.b.x,quad2d.b.y);
+					ctx.fillText("c("+(new ext.Vector3()).copy(_quad.c).toVector2(_mod).toArray().join(", ")+"), "+quad2d.c.toArray().join(", "),quad2d.c.x,quad2d.c.y);
+					ctx.fillText("d("+(new ext.Vector3()).copy(_quad.d).toVector2(_mod).toArray().join(", ")+"), "+quad2d.d.toArray().join(", "),quad2d.d.x,quad2d.d.y);
 				}
 				_indexes.push(index);
 				_center = objCenter2.clone();
@@ -409,7 +415,7 @@ QL.gui.View2D.prototype.drawObject = function(canvas, obj, _lineDash, _strokeSty
 
 };
 
-QL.gui.View2D.prototype.needRefreshing = function(){
+View2D.prototype.needRefreshing = function(){
 	var args = Array.prototype.slice.call(arguments);
 	args.forEach(function(arg){
 		if(this.toBeRefreshed.indexOf(arg)==-1){
@@ -418,16 +424,16 @@ QL.gui.View2D.prototype.needRefreshing = function(){
 	})
 }
 
-QL.gui.View2D.prototype.needRefreshingAll = function(){
+View2D.prototype.needRefreshingAll = function(){
 	this.toBeRefreshed = ["grid", "scene", "selection", "indicators"];
 }
 
-QL.gui.View2D.prototype.init = function(){
-	QL.gui.Element.prototype.init.call(this);
+View2D.prototype.init = function(){
+	Element.prototype.init.call(this);
 	this.needRefreshingAll();
 }
 
-QL.gui.View2D.prototype.refresh = function(scene){
+View2D.prototype.refresh = function(scene){
 
 	//
 	for( var layer in this.layers){
@@ -448,19 +454,19 @@ QL.gui.View2D.prototype.refresh = function(scene){
 	// draw indicators
 	this.layers.indicators.text(this.perspective, new iblokz.gfx.Vector2(15,25),{font: "16px Arial", color: "#999"});
 	this.layers.indicators.text(
-		this.zoom, 
+		this.zoom,
 		new iblokz.gfx.Vector2(this.layers.indicators.ctx.canvas.width - 65, 25),
 		{font: "14px Arial", color: "#999"}
 	);
 	this.layers.indicators.text(
-		this.offset.toArray().join(", "), 
+		this.offset.toArray().join(", "),
 		new iblokz.gfx.Vector2(this.layers.indicators.ctx.canvas.width - 65, this.layers.indicators.ctx.canvas.height - 15),
 		{font: "12px Arial", color: "#999"}
 	);
 
 	this.center.set(
-		$(this.dom).width()/2,
-		$(this.dom).height()/2
+		jQuery(this.dom).width()/2,
+		jQuery(this.dom).height()/2
 	);
 
 	this.hitFaces = [];
@@ -500,3 +506,5 @@ QL.gui.View2D.prototype.refresh = function(scene){
 		this.selected = false;
 	}
 };
+
+export default View2D;

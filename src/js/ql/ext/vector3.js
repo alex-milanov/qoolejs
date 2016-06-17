@@ -1,18 +1,18 @@
-"use strict";
+'use strict';
 
-if(typeof QL === "undefined"){ var QL = {}; }
-if(typeof QL.ext === "undefined"){ QL.ext = {}; }
+import THREE from 'three';
+import Vector2 from './vector2';
 
-QL.ext.Vector3 = function( x, y, z ){
+var Vector3 = function( x, y, z ){
 	THREE.Vector3.call( this, x, y, z );
 };
 
-QL.ext.Vector3.prototype = Object.create( THREE.Vector3.prototype );
-QL.ext.Vector3.prototype.constructor = THREE.Vector3;
+Vector3.prototype = Object.create( THREE.Vector3.prototype );
+Vector3.prototype.constructor = THREE.Vector3;
 
-QL.ext.Vector3.prototype.toVector2 = function(mod){
+Vector3.prototype.toVector2 = function(mod){
 
-	var	v2 = new QL.ext.Vector2(
+	var	v2 = new Vector2(
 		this[mod.u]*mod.xD,
 		this[mod.v]*mod.yD
 	);
@@ -21,6 +21,8 @@ QL.ext.Vector3.prototype.toVector2 = function(mod){
 };
 
 
-QL.ext.Vector3.prototype.clone = function () {
-	return new QL.ext.Vector3( this.x, this.y, this.z );
+Vector3.prototype.clone = function () {
+	return new Vector3( this.x, this.y, this.z );
 };
+
+export default Vector3;

@@ -1,28 +1,26 @@
+'use strict';
 
+import jQuery from 'jquery';
 
-if(typeof QL === "undefined"){ var QL = {}; }
-if(typeof QL.gui === "undefined"){ QL.gui = {}; }
-
-
-QL.gui.Element = function(dom, context){
+var Element = function(dom, context){
 
 	this.dom = dom;
 	this.context = (typeof context === 'undefined') ? this : context ;
 
 };
 
-QL.gui.Element.prototype.init = function(){
+Element.prototype.init = function(){
 
 	var context = this.context;
 
-	$(this.dom).on("click","[class*='-toggle']",function(){
-		$(this).toggleClass("toggled");
-		var $toggleRef = $($(this).data("toggle-ref"));
-		var _toggleClass = $(this).data("toggle-class");
-		var _toggleParam = $(this).data("toggle-param");
-		var _toggleSelf = $(this).data("toggle-self") || "";
-		$toggleRef.toggleClass(_toggleClass);
-		$(this).toggleClass(_toggleSelf);
+	jQuery(this.dom).on("click","[class*='-toggle']",function(){
+		jQuery(this).toggleClass("toggled");
+		var jQuerytoggleRef = jQuery(jQuery(this).data("toggle-ref"));
+		var _toggleClass = jQuery(this).data("toggle-class");
+		var _toggleParam = jQuery(this).data("toggle-param");
+		var _toggleSelf = jQuery(this).data("toggle-self") || "";
+		jQuerytoggleRef.toggleClass(_toggleClass);
+		jQuery(this).toggleClass(_toggleSelf);
 		if(_toggleParam !== ""){
 			if(!context.params)
 				context.params = {};
@@ -30,28 +28,29 @@ QL.gui.Element.prototype.init = function(){
 		}
 	});
 
-	$(this.dom).on("click","[class*='-trigger']",function(){
-		var _triggerMethod = $(this).data("trigger-method");
+	jQuery(this.dom).on("click","[class*='-trigger']",function(){
+		var _triggerMethod = jQuery(this).data("trigger-method");
 		if(typeof context[_triggerMethod] !== "undefined"){
-			if($(this).data("trigger-id")){
-				context[_triggerMethod]($(this).data("trigger-id"));
+			if(jQuery(this).data("trigger-id")){
+				context[_triggerMethod](jQuery(this).data("trigger-id"));
 			} else {
 				context[_triggerMethod]();
 			}
 		}
 	});
 
-	$(this.dom).on("click","[class*='-option']",function(_ev){
-		$("a[class*='-option']").removeClass("selected");
-		$(this).addClass("selected");
+	jQuery(this.dom).on("click","[class*='-option']",function(_ev){
+		jQuery("a[class*='-option']").removeClass("selected");
+		jQuery(this).addClass("selected");
 
-		var _optionParam = $(this).data("option-param");
-		var _optionValue = $(this).data("option-value");
+		var _optionParam = jQuery(this).data("option-param");
+		var _optionValue = jQuery(this).data("option-value");
 
 		if(!context.params)
 			context.params = {};
 		context.params[_optionParam] = _optionValue;
 	});
 
-
 };
+
+export default Element;

@@ -1,18 +1,21 @@
-"use strict";
+'use strict';
 
-if(typeof QL === "undefined"){ var QL = {}; }
-if(typeof QL.gui === "undefined"){ QL.gui = {}; }
+import THREE from 'three';
+import jQuery from 'jquery';
 
-QL.gui.View3D = function(conf, scene, editor){
-	QL.gui.Element.call(this, conf.dom);
-	
-	this.canvas = $(this.dom).find(".layer-3d")[0];
+import ext from '../ext';
+import Element from './element';
+
+var View3D = function(conf, scene, editor){
+	Element.call(this, conf.dom);
+
+	this.canvas = jQuery(this.dom).find(".layer-3d")[0];
 	this.perspective = conf.perspective;
 
 	this.editor = editor;
 
-	this.canvas.width = $(this.canvas).width();
-	this.canvas.height = $(this.canvas).height();
+	this.canvas.width = jQuery(this.canvas).width();
+	this.canvas.height = jQuery(this.canvas).height();
 	this.center = [
 		this.canvas.width/2,
 		this.canvas.height/2
@@ -81,10 +84,10 @@ QL.gui.View3D = function(conf, scene, editor){
 	//this.renderer.shadowMap.enabled = true;
 };
 
-QL.gui.View3D.prototype = Object.create( QL.gui.Element.prototype );
-QL.gui.View3D.prototype.constructor = QL.gui.View3D;
+View3D.prototype = Object.create( Element.prototype );
+View3D.prototype.constructor = View3D;
 
-QL.gui.View3D.prototype.addBlock = function(entity){
+View3D.prototype.addBlock = function(entity){
 
 	var width = entity.finish[0]-entity.start[0];
 	var height = entity.finish[1]-entity.start[1];
@@ -96,10 +99,10 @@ QL.gui.View3D.prototype.addBlock = function(entity){
 		z: (entity.start[2]+depth/2)
 	};
 
-	var geometry = new QL.ext.BoxGeometry( width, height, depth );
+	var geometry = new ext.BoxGeometry( width, height, depth );
 	var color = entity.color || 0x777777;
 	var material = new THREE.MeshBasicMaterial( { color: color, wireframe: false } );
-	var mesh = new QL.ext.Mesh( geometry, material );
+	var mesh = new ext.Mesh( geometry, material );
 	mesh.position.set( pos.x, pos.y, pos.z );
 	mesh.receiveShadow = true;
 	mesh.castShadow = true;
@@ -111,7 +114,7 @@ QL.gui.View3D.prototype.addBlock = function(entity){
 	this.scene.add( mesh );
 };
 
-QL.gui.View3D.prototype.addEntities = function(entities){
+View3D.prototype.addEntities = function(entities){
 
 	var that = this;
 	entities.forEach(function(entity){
@@ -126,8 +129,8 @@ QL.gui.View3D.prototype.addEntities = function(entities){
 	});
 };
 
-QL.gui.View3D.prototype.init = function(){
-	QL.gui.Element.prototype.init.call(this);
+View3D.prototype.init = function(){
+	Element.prototype.init.call(this);
 
 	var scope = this;
 
@@ -135,14 +138,14 @@ QL.gui.View3D.prototype.init = function(){
 	var mouse = new THREE.Vector2();
 
 	function onDocumentTouchStart( event ) {
-		
+
 		event.preventDefault();
-		
+
 		event.offsetX = event.touches[0].offsetX;
 		event.offsetY = event.touches[0].offsetY;
 		onDocumentMouseDown( event );
 
-	}	
+	}
 
 	function onDocumentMouseDown( event ) {
 
@@ -182,12 +185,12 @@ QL.gui.View3D.prototype.init = function(){
 				}
 			}
 
-			
+
 			/*var particle = new THREE.Sprite( particleMaterial );
 			particle.position.copy( intersects[ 0 ].point );
 			particle.scale.x = particle.scale.y = 16;
 			scope.scene.add( particle );*/
-			
+
 
 		} else {
 			scope.scene.selected = null;
@@ -212,12 +215,12 @@ QL.gui.View3D.prototype.init = function(){
 
 }
 
-QL.gui.View3D.prototype.refresh = function(){
+View3D.prototype.refresh = function(){
 
 
-	$(this.canvas).attr("style","");
-	this.canvas.width = $(this.dom).width();
-	this.canvas.height = $(this.dom).height();
+	jQuery(this.canvas).attr("style","");
+	this.canvas.width = jQuery(this.dom).width();
+	this.canvas.height = jQuery(this.dom).height();
 
 	this.renderer.setSize(this.canvas.width, this.canvas.height );
 
@@ -242,3 +245,5 @@ QL.gui.View3D.prototype.refresh = function(){
 	*/
 
 };
+
+export default View3D;

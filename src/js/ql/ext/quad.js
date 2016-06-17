@@ -1,9 +1,6 @@
-"use strict";
+'use strict';
 
-if(typeof QL === "undefined"){ var QL = {}; }
-if(typeof QL.ext === "undefined"){ QL.ext = {}; }
-
-QL.ext.Quad = function ( a, b, c, d ) {
+var Quad = function ( a, b, c, d ) {
 
 	this.a = a;
 	this.b = b;
@@ -12,16 +9,15 @@ QL.ext.Quad = function ( a, b, c, d ) {
 
 };
 
-QL.ext.Quad.prototype = {
-
-	constructor: QL.ext.Quad,
-
+Quad.prototype = {
+	constructor: Quad,
 	clone: function () {
 
-		var quad = new QL.ext.Quad( this.a, this.b, this.c, this.d );
+		var quad = new Quad( this.a, this.b, this.c, this.d );
 
 		return quad;
 
 	}
-
 };
+
+export default Quad;

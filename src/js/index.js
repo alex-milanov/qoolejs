@@ -1,5 +1,8 @@
+'use strict';
 
-var _views = {
+import QL from './ql';
+
+const _views = {
 	"tl": {
 		"dom": "#view-tl",
 		"perspective": "top" // x, z
@@ -18,7 +21,7 @@ var _views = {
 	}
 };
 
-var _entities = [
+const _entities = [
 	/*{
 		type: "cube",
 		position: [25,25,25],  // x, y, z
@@ -147,6 +150,5 @@ var _entities = [
 	}
 ];
 
-var editor = new QL.gui.Editor(_views,_entities);
+const editor = new QL.gui.Editor(_views,_entities);
 editor.init();
-
