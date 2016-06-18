@@ -1,7 +1,6 @@
 'use strict';
 
 import THREE from 'three';
-import jQuery from 'jquery';
 
 import ext from '../ext';
 import Element from './element';
@@ -9,13 +8,17 @@ import Element from './element';
 var View3D = function(conf, scene, editor){
 	Element.call(this, conf.dom);
 
-	this.canvas = jQuery(this.dom).find(".layer-3d")[0];
+	let dom = (typeof this.dom === 'string')
+		? document.querySelector(this.dom)
+		: this.dom;
+
+	this.canvas = dom.querySelector(".layer-3d");
 	this.perspective = conf.perspective;
 
 	this.editor = editor;
 
-	this.canvas.width = jQuery(this.canvas).width();
-	this.canvas.height = jQuery(this.canvas).height();
+	this.canvas.width = dom.clientWidth;
+	this.canvas.height = dom.clientHeight;
 	this.center = [
 		this.canvas.width/2,
 		this.canvas.height/2
@@ -217,10 +220,11 @@ View3D.prototype.init = function(){
 
 View3D.prototype.refresh = function(){
 
+	let dom = document.querySelector(this.dom);
 
-	jQuery(this.canvas).attr("style","");
-	this.canvas.width = jQuery(this.dom).width();
-	this.canvas.height = jQuery(this.dom).height();
+	this.canvas.setAttribute('style', '');
+	this.canvas.width = dom.clientWidth;
+	this.canvas.height = dom.clientHeight;
 
 	this.renderer.setSize(this.canvas.width, this.canvas.height );
 

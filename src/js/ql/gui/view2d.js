@@ -1,7 +1,7 @@
 'use strict';
 
 import THREE from 'three';
-import jQuery from 'jquery';
+import {Observable as $} from 'rx-lite';
 import _ from 'lodash';
 
 import iblokz from '../../iblokz';
@@ -11,14 +11,17 @@ import Element from './element';
 var View2D = function(_conf, _scene, _editor){
 
 	Element.call(this, _conf.dom);
-	//this.dom = jQuery(_conf.dom)[0];
 	//this.ctx = this.canvas.getContext("2d");
 
+	let dom = (typeof this.dom === 'string')
+		? document.querySelector(this.dom)
+		: this.dom;
+
 	this.layers = {
-		grid: new iblokz.gui.Grid(jQuery(this.dom).find('.grid-layer')[0]),
-		scene: new iblokz.gui.Canvas(jQuery(this.dom).find('.scene-layer')[0]),
-		selection: new iblokz.gui.Canvas(jQuery(this.dom).find('.selection-layer')[0]),
-		indicators: new iblokz.gui.Canvas(jQuery(this.dom).find('.indicators-layer')[0])
+		grid: new iblokz.gui.Grid(dom.querySelector('.grid-layer')),
+		scene: new iblokz.gui.Canvas(dom.querySelector('.scene-layer')),
+		selection: new iblokz.gui.Canvas(dom.querySelector('.selection-layer')),
+		indicators: new iblokz.gui.Canvas(dom.querySelector('.indicators-layer'))
 	};
 
 	this.toBeRefreshed = ["grid", "scene", "selection", "indicators"];
@@ -26,8 +29,8 @@ var View2D = function(_conf, _scene, _editor){
 	this.perspective = _conf.perspective;
 
 	this.center = new ext.Vector2(
-		this.dom.width/2,
-		this.dom.height/2
+		dom.clientWidth/2,
+		dom.clientHeight/2
 	);
 
 	this.zoom = 100;
@@ -113,29 +116,27 @@ var View2D = function(_conf, _scene, _editor){
 	this.interaction = {
 		status: "idle",
 		start: new ext.Vector2(0,0),
-		last: new ext.Vector2(0,0)
+		last: new ext.Vector2(0,0),
+		button: 0
 	}
 
 	// mouse move
-	jQuery(this.dom).mousedown(function(ev){
-
+	$.fromEvent(dom, 'mousedown').map((ev) => {
 		_view.interaction.status = "mousedown";
 		_view.interaction.start.set(ev.offsetX, ev.offsetY);
 		_view.interaction.last.set(0, 0);
+		_view.interaction.button = ev.button;
+	}).subscribe();
 
-	});
-
-	jQuery(this.dom).on("touchstart", function(ev) {
+	$.fromEvent(dom, 'touchstart').map((ev) => {
 		var e = ev.originalEvent;
 		_view.interaction.status = "mousedown";
 		_view.interaction.start.set(e.touches[0].clientX, e.touches[0].clientY);
 		_view.interaction.last.set(0, 0);
-	});
+	}).subscribe();
 
-	jQuery(this.dom).mousemove(function(ev){
-
+	$.fromEvent(dom, 'mousemove').map((ev) => {
 		if(["mousedown","mousemove"].indexOf(_view.interaction.status)>-1){
-			console.log(_view.interaction.status);
 			_view.interaction.status = "mousemove";
 
 			var mousePos = new ext.Vector2(ev.offsetX,ev.offsetY);
@@ -143,9 +144,9 @@ var View2D = function(_conf, _scene, _editor){
 			var changeVector = mousePos.clone().sub(_view.interaction.start).divideScalar(_view.zoom/100);
 			changeVector.x = parseInt(changeVector.x/2.5)*2.5
 			changeVector.y = parseInt(changeVector.y/2.5)*2.5
-			switch(ev.which) {
+			switch(_view.interaction.button) {
 
-				case 1:
+				case 0:
 					if(_view.selected === false)
 						return;
 
@@ -178,7 +179,7 @@ var View2D = function(_conf, _scene, _editor){
 					}
 					_view.interaction.last = changeVector.clone();
 					break;
-				case 2:
+				case 1:
 					_view.offset.sub(changeVector.clone().sub(_view.interaction.last))
 					_view.interaction.last = changeVector.clone();
 					_view.needRefreshingAll();
@@ -187,9 +188,9 @@ var View2D = function(_conf, _scene, _editor){
 			}
 
 		}
-	});
+	}).subscribe();
 
-	jQuery(this.dom).on("touchmove", function(ev) {
+	$.fromEvent(dom, 'touchmove').map((ev) => {
 		var e = ev.originalEvent;
 		ev.preventDefault();
 		if(["mousedown","mousemove"].indexOf(_view.interaction.status)>-1){
@@ -244,11 +245,10 @@ var View2D = function(_conf, _scene, _editor){
 			}*/
 
 		}
-	});
+	}).subscribe();
 
-	jQuery(this.dom).mouseup(function(ev){
-		console.log('mouseup');
-		if(ev.which == 1 &&
+	$.fromEvent(dom, 'mouseup').map((ev) => {
+		if(ev.button == 0 &&
 			(_view.interaction.status === "mousedown" || _view.interaction.last.toArray() == [0,0])
 		){
 			handleSelect(ev)
@@ -256,14 +256,15 @@ var View2D = function(_conf, _scene, _editor){
 		_view.interaction = {
 			status: "idle",
 			start: new ext.Vector2(0,0),
-			last: new ext.Vector2(0,0)
+			last: new ext.Vector2(0,0),
+			button: 0
 		}
 		_editor.selectView(_view);
 		_editor.refreshObjectPane();
 
-	});
+	}).subscribe();
 
-	jQuery(this.dom).on("touchend", function(ev) {
+	$.fromEvent(dom, 'touchend').map((ev) => {
 		var e = ev.originalEvent;
 		if((_view.interaction.status === "mousedown" || _view.interaction.last.toArray() == [0,0])){
 			var hitPos = new ext.Vector2(
@@ -279,11 +280,11 @@ var View2D = function(_conf, _scene, _editor){
 		}
 		_editor.selectView(_view);
 		_editor.refreshObjectPane();
-	});
+	}).subscribe();
 
-	jQuery(this.dom).on('mousewheel', function(event) {
+	$.fromEvent(dom, 'wheel').map((ev) => {
 		//console.log(event.originalEvent.deltaX, event.originalEvent.deltaY, event.originalEvent.deltaFactor);
-		if(event.originalEvent.deltaY < 0 && _view.zoom < 400){
+		if(ev.deltaY < 0 && _view.zoom < 400){
 			_view.zoom += 12.5;
 		} else if (_view.zoom > 25) {
 			_view.zoom -= 12.5;
@@ -291,7 +292,7 @@ var View2D = function(_conf, _scene, _editor){
 
 		_view.needRefreshingAll();
 
-	});
+	}).subscribe();
 
 };
 
@@ -435,6 +436,10 @@ View2D.prototype.init = function(){
 
 View2D.prototype.refresh = function(scene){
 
+	let dom = (typeof this.dom === 'string')
+		? document.querySelector(this.dom)
+		: this.dom;
+
 	//
 	for( var layer in this.layers){
 
@@ -465,8 +470,8 @@ View2D.prototype.refresh = function(scene){
 	);
 
 	this.center.set(
-		jQuery(this.dom).width()/2,
-		jQuery(this.dom).height()/2
+		dom.clientWidth/2,
+		dom.clientHeight/2
 	);
 
 	this.hitFaces = [];
