@@ -1,6 +1,6 @@
 'use strict';
 
-import jQuery from 'jquery';
+import {Observable as $} from 'rx-lite';
 import Element from './element';
 
 var Toolbar = function(dom, context){
@@ -14,12 +14,16 @@ Toolbar.prototype.init = function(){
 
 	Element.prototype.init.call(this);
 
-	var context = this.context;
+	let context = this.context;
+	let dom = document.querySelector(this.dom);
+
 	context.indexes = [-1];
 
-	jQuery(this.dom).find(".indexes").change(function(){
-		context.indexes = jQuery(this).val().split(",");
-	});
+	[].slice.call(dom.querySelectorAll('.indexes')).map(el =>
+		$.fromEvent(el, 'change').map(() => {
+			context.indexes = el.value.split(",");
+		}).subscribe()
+	);
 };
 
 Toolbar.prototype.refresh = function(){

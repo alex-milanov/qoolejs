@@ -407,6 +407,7 @@ Editor.prototype.updateObject = function(objId){
 	}
 
 	var selected = this.scene.selected;
+	let editor = this;
 
 	var oldObjState = {
 		name: selected.name,
