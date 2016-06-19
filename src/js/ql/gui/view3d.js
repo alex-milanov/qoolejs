@@ -1,7 +1,5 @@
 'use strict';
 
-import THREE from 'three';
-
 import ext from '../ext';
 import Element from './element';
 

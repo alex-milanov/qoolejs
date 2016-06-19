@@ -1,8 +1,6 @@
 'use strict';
 
-import THREE from 'three';
 import {Observable as $} from 'rx-lite';
-import _ from 'lodash';
 
 import iblokz from '../../iblokz';
 import ext from '../ext';
@@ -88,7 +86,7 @@ var View2D = function(_conf, _scene, _editor){
 			ev.offsetY
 		);
 
-		var old = _.clone(_view.selected);
+		var old = Object.assign({}, _view.selected);
 
 		var selected = false;
 		var hits = 0;
@@ -101,7 +99,7 @@ var View2D = function(_conf, _scene, _editor){
 					if(hitFace.objId === old.objId)
 						return true;
 
-					selected = _.clone(hitFace);
+					selected = Object.assign({}, hitFace);
 				}
 			}
 		});

@@ -1,8 +1,6 @@
 'use strict';
 
-import THREE from 'three';
 import {Observable as $} from 'rx-lite';
-import _ from 'lodash';
 
 import iblokz from '../../iblokz';
 import ext from '../ext';

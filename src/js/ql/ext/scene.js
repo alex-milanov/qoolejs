@@ -1,6 +1,5 @@
 'use strict';
 
-import THREE from 'three';
 import BoxGeometry from './box-geometry';
 import Mesh from './mesh';
 

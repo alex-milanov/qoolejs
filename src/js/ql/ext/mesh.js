@@ -1,7 +1,5 @@
 'use strict';
 
-import THREE from 'three';
-
 var Mesh = function ( geometry, material ) {
 
 	THREE.Mesh.call( this, geometry, material );

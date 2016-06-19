@@ -1,6 +1,5 @@
 'use strict';
 
-import THREE from 'three';
 import Vector3 from './vector3';
 
 var Vector2 = function( x, y ){

@@ -1,6 +1,5 @@
 "use strict";
 
-import THREE from 'three';
 import Quad from './quad';
 import Vector3 from './vector3';
 
