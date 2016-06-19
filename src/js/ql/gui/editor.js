@@ -1,25 +1,33 @@
-"use strict";
+'use strict';
 
-if(typeof QL === "undefined"){ var QL = {}; }
-if(typeof QL.gui === "undefined"){ QL.gui = {}; }
+import {Observable as $} from 'rx-lite';
+
+import iblokz from '../../iblokz';
+import ext from '../ext';
+import etc from '../etc';
+import Element from './element';
+import Toolbar from './toolbar';
+import Panel from './panel';
+import View3D from './view3d';
+import View2D from './view2d';
 
 
-QL.gui.Editor = function(_views, _entities){
+var Editor = function(_views, _entities){
 
-	QL.gui.Element.call(this, 'body' );
+	Element.call(this, 'body' );
 
 	this.params = {
 		"obj-mode": "move"
 	};
 
-	this.history = new QL.etc.History();
+	this.history = new etc.History();
 
 	this.entities = _entities;
 
 	this.keyboard = {};
 
 	// init scene
-	this.scene = new QL.ext.Scene();
+	this.scene = new ext.Scene();
 
 	// init views
 	this.views = [];
@@ -28,31 +36,33 @@ QL.gui.Editor = function(_views, _entities){
 
 		switch(viewConf.perspective){
 			case "3d":
-				this.views.push(new QL.gui.View3D(viewConf, this.scene, this));
+				this.views.push(new View3D(viewConf, this.scene, this));
 				break;
 			default:
-				this.views.push(new QL.gui.View2D(viewConf, this.scene, this));
+				this.views.push(new View2D(viewConf, this.scene, this));
 				break;
 		}
 	}
 
 	this.selectView(this.views[0]);
 
-	this.panel = new QL.gui.Panel(".panel.left", this);
-	this.toolbar = new QL.gui.Toolbar(".toolbar", this);
+	this.panel = new Panel(".panel.left", this);
+	this.toolbar = new Toolbar(".toolbar", this);
 
 	this.scene.addEntities(_entities);
 
 };
 
 
-QL.gui.Editor.prototype = Object.create( QL.gui.Element );
-QL.gui.Editor.prototype.constructor = QL.gui.Editor;
+Editor.prototype = Object.create( Element );
+Editor.prototype.constructor = Editor;
 
-QL.gui.Editor.prototype.init = function(){
+Editor.prototype.init = function(){
 
 	var _editor = this;
-	_editor.keyboard = new THREEx.KeyboardState();
+	_editor.keyboard = {};// new THREEx.KeyboardState();
+
+	let dom = this.dom;
 
 	function animStep(){
 		requestAnimationFrame( animStep );
@@ -65,16 +75,17 @@ QL.gui.Editor.prototype.init = function(){
 		var keyCombo = '';
 
 		// keyboard interactions
-		if($(_editor.dom).find(':focus').length === 0) {
+		/*
+		if(jQuery(_editor.dom).find(':focus').length === 0) {
 
-			var interactionVector = new QL.ext.Vector3(0,0,0);
+			var interactionVector = new ext.Vector3(0,0,0);
 
 			var force = _editor.keyboard.pressed("shift") ? 10 : 2.5;
 
 			// initial object interaction
-			if(_editor.keyboard.pressed("up") 
-				|| _editor.keyboard.pressed("down") 
-				|| _editor.keyboard.pressed("left") 
+			if(_editor.keyboard.pressed("up")
+				|| _editor.keyboard.pressed("down")
+				|| _editor.keyboard.pressed("left")
 				|| _editor.keyboard.pressed("right")
 				|| _editor.keyboard.pressed("pageup")
 				|| _editor.keyboard.pressed("pagedown")){
@@ -108,7 +119,7 @@ QL.gui.Editor.prototype.init = function(){
 				if(_editor.scene.selected) {
 					switch(_editor.params['obj-mode']){
 						case "move":
-							//QL.ext.interactor.move(_editor.scene.selected, interactionVector);
+							//ext.interact.move(_editor.scene.selected, interactionVector);
 							//_editor.interact("move", interactionVector);
 							break;
 						case "scale":
@@ -116,7 +127,7 @@ QL.gui.Editor.prototype.init = function(){
 							interactionVector.divideScalar(20/force*2.5);
 							break;
 						case "rotate":
-							var rotationVector = new QL.ext.Vector3();
+							var rotationVector = new ext.Vector3();
 							rotationVector.z = -interactionVector.x;
 							rotationVector.x = interactionVector.z;
 							rotationVector.y = -interactionVector.y;
@@ -142,22 +153,25 @@ QL.gui.Editor.prototype.init = function(){
 				keyCombo = keys.join(" + ");
 			}
 		}
+		*/
 
-		if(keyCombo !== '' && $(".debug-keys").text() !== keyCombo){
-			$(".debug-keys").text(" "+keyCombo);
+		if(keyCombo !== '' && dom.querySelector('.debug-keys').textContent !== keyCombo){
+			dom.querySelector('.debug-keys').textContent = ' '+keyCombo;
 		}
 
 	}
 
 	// keyboard triggers
-	$(this.dom)[0].addEventListener("keyup", function(event){
+	dom.addEventListener("keyup", function(event){
 		var keyCode = event.keyCode;
 		var keyCombo = "";
 
+		const focusedElements = [].slice.call(dom.querySelectorAll(':focus'));
+
 		// desselect and blur on esc
 		if(keyCode == 27){
-			if($(_editor.dom).find(':focus').length > 0){
-				$(_editor.dom).find(":focus").blur();
+			if(focusedElements.length > 0){
+				focusedElements.map(el => el.blur())
 			} else {
 				_editor.scene.selected = false;
 				_editor.refreshObjectPane();
@@ -165,7 +179,7 @@ QL.gui.Editor.prototype.init = function(){
 			keyCombo = "ESC";
 		}
 
-		if($(_editor.dom).find(':focus').length === 0) {
+		if(focusedElements.length === 0) {
 
 			// undo/redo
 			if(event.ctrlKey && keyCode == "Z".charCodeAt(0)){
@@ -179,10 +193,10 @@ QL.gui.Editor.prototype.init = function(){
 
 			// focus on object pane
 			if(keyCode == "E".charCodeAt(0)){
-				$(_editor.dom).find("#object-pane-name").focus();
+				dom.querySelector("#object-pane-name").focus();
 				keyCombo = "E";
 			}
-			
+
 			if(keyCode == "T".charCodeAt(0)){
 				_editor.activeView.zoom = 100;
 				_editor.activeView.offset.set(0, 0);
@@ -190,7 +204,7 @@ QL.gui.Editor.prototype.init = function(){
 			}
 
 			if(keyCode == "F".charCodeAt(0)){
-				$(_editor.activeView.dom).find(".fullscreen-toggle").click();
+				_editor.activeView.dom.querySelector(".fullscreen-toggle").click();
 				keyCombo = "F";
 			}
 
@@ -244,8 +258,8 @@ QL.gui.Editor.prototype.init = function(){
 
 		}
 
-		if(keyCombo !== '' && $(".debug-keys").text() !== keyCombo){
-			$(".debug-keys").text(" "+keyCombo);
+		if(keyCombo !== '' && dom.querySelector(".debug-keys").textContent !== keyCombo){
+			dom.querySelector(".debug-keys").textContent = " " + keyCombo;
 		}
 	}, false);
 
@@ -262,28 +276,32 @@ QL.gui.Editor.prototype.init = function(){
 
 };
 
-QL.gui.Editor.prototype.changeMode = function(mode){
+Editor.prototype.changeMode = function(mode){
 	if(this.params['obj-mode'] !== mode){
 		this.params['obj-mode'] = mode;
-		$("a.obj-mode-option[data-option-param='obj-mode']").removeClass("selected");
-		$("a.obj-mode-option[data-option-param='obj-mode'][data-option-value='"+mode+"']").addClass("selected");
+		[].slice.call(
+			dom.querySelectorAll("a.obj-mode-option[data-option-param='obj-mode']")
+		).map(el =>
+			el.classList.remove("selected")
+		);
+		dom.querySelector("a.obj-mode-option[data-option-param='obj-mode'][data-option-value='"+mode+"']").classList.add("selected");
 	}
 }
 
-QL.gui.Editor.prototype.interact = function(action, v3){
-	
+Editor.prototype.interact = function(action, v3){
+
 	var preMatrix = new THREE.Matrix4();
 	var selected = this.scene.selected;
 
 	preMatrix.copy( selected.matrix );
 
 	// apply action
-	QL.ext.interactor[action](selected, v3);
+	ext.interact[action](selected, v3);
 
 	var editor = this;
 
 	//-> setTimeOut
-	
+
 	if ( preMatrix.equals( selected.matrix ) === false ) {
 
 		( function ( matrix1, matrix2 ) {
@@ -303,17 +321,21 @@ QL.gui.Editor.prototype.interact = function(action, v3){
 		} )( preMatrix.clone(), selected.matrix.clone() );
 
 	}
-	
+
 }
 
-QL.gui.Editor.prototype.selectView = function(view){
+Editor.prototype.selectView = function(view){
 	this.activeView = view;
-	$(this.dom).find(".views .view").removeClass("selected");
-	$(this.activeView.dom).addClass("selected");
+	[].slice.call(
+		this.dom.querySelectorAll('.views .view')
+	).map(el =>
+		el.classList.remove('selected')
+	);
+	this.activeView.dom.classList.add('selected');
 }
 
-QL.gui.Editor.prototype.selectNextView = function(direction){
-	
+Editor.prototype.selectNextView = function(direction){
+
 	var index = this.views.indexOf(this.activeView);
 
 	index += direction;
@@ -328,17 +350,17 @@ QL.gui.Editor.prototype.selectNextView = function(direction){
 }
 
 
-QL.gui.Editor.prototype.select = function(_objId){
+Editor.prototype.select = function(_objId){
 	this.scene.select(_objId);
 	this.panel.refresh();
 };
 
-QL.gui.Editor.prototype.selectNext = function(direction){
+Editor.prototype.selectNext = function(direction){
 	this.scene.selectNext(direction);
 	this.panel.refresh();
 }
 
-QL.gui.Editor.prototype.newMesh = function(){
+Editor.prototype.newMesh = function(){
 	var mesh = this.scene.newMesh();
 	this.panel.refresh();
 
@@ -361,7 +383,7 @@ QL.gui.Editor.prototype.newMesh = function(){
 	);
 };
 
-QL.gui.Editor.prototype.cloneObject = function(){
+Editor.prototype.cloneObject = function(){
 
 	if(!this.scene.selected)
 		return false;
@@ -388,13 +410,14 @@ QL.gui.Editor.prototype.cloneObject = function(){
 	);
 };
 
-QL.gui.Editor.prototype.updateObject = function(objId){
+Editor.prototype.updateObject = function(objId){
 
 	if(!objId){
 		return false;
 	}
-	
+
 	var selected = this.scene.selected;
+	let editor = this;
 
 	var oldObjState = {
 		name: selected.name,
@@ -402,28 +425,28 @@ QL.gui.Editor.prototype.updateObject = function(objId){
 		material: selected.material.clone()
 	};
 
-	selected.name = $("#object-pane-name").val();
-	selected.position.x = parseFloat($("#object-pane-pos-x").val());
-	selected.position.y = parseFloat($("#object-pane-pos-y").val());
-	selected.position.z = parseFloat($("#object-pane-pos-z").val());
+	selected.name = dom.querySelector("#object-pane-name").value;
+	selected.position.x = parseFloat(dom.querySelector("#object-pane-pos-x").value);
+	selected.position.y = parseFloat(dom.querySelector("#object-pane-pos-y").value);
+	selected.position.z = parseFloat(dom.querySelector("#object-pane-pos-z").value);
 	// scale
-	selected.scale.x = parseFloat($("#object-pane-scale-x").val());
-	selected.scale.y = parseFloat($("#object-pane-scale-y").val());
-	selected.scale.z = parseFloat($("#object-pane-scale-z").val());
+	selected.scale.x = parseFloat(dom.querySelector("#object-pane-scale-x").value);
+	selected.scale.y = parseFloat(dom.querySelector("#object-pane-scale-y").value);
+	selected.scale.z = parseFloat(dom.querySelector("#object-pane-scale-z").value);
 	// rotation
-	selected.rotation.x = QL.etc.Math.radians(parseInt($("#object-pane-rotation-x").val()));
-	selected.rotation.y = QL.etc.Math.radians(parseInt($("#object-pane-rotation-y").val()));
-	selected.rotation.z = QL.etc.Math.radians(parseInt($("#object-pane-rotation-z").val()));
+	selected.rotation.x = etc.math.radians(parseInt(dom.querySelector("#object-pane-rotation-x").value));
+	selected.rotation.y = etc.math.radians(parseInt(dom.querySelector("#object-pane-rotation-y").value));
+	selected.rotation.z = etc.math.radians(parseInt(dom.querySelector("#object-pane-rotation-z").value));
 
 	selected.updateMatrix();
 
-	selected.material.color.setStyle($("#object-pane-color").val());
+	selected.material.color.setStyle(dom.querySelector("#object-pane-color").value);
 	this.panel.refresh();
 
 	var action = "update object "+ selected.id;
 
 	(function(obj1, obj2){
-		editor.history.add(		
+		editor.history.add(
 			function () {
 				obj1.matrix.decompose( selected.position, selected.quaternion, selected.scale );
 				selected.name = obj1.name;
@@ -436,7 +459,7 @@ QL.gui.Editor.prototype.updateObject = function(objId){
 				selected.name = obj2.name;
 				selected.material.copy(obj2.material);
 				editor.panel.refresh();
-		
+
 			},
 			action
 		);
@@ -448,42 +471,43 @@ QL.gui.Editor.prototype.updateObject = function(objId){
 
 };
 
-QL.gui.Editor.prototype.loadScene = function(){
+Editor.prototype.loadScene = function(){
 
-	var fileLoader = $("<input type='file' />");
+	var fileLoader = document.createElement('input')
+	fileLoader.setAttribute('type', 'file');
 
-	var scope = this;
+	var editor = this;
 
-	$(fileLoader).change(function(){
+	fileLoader.addEventListener('change', function(){
 		var file = this.files[0];
 		var fr = new FileReader();
 		fr.onload = receivedText;
 		fr.readAsText(file);
 		function receivedText(e) {
 			var data = JSON.parse(e.target.result);
-			scope.scene.load(data);
-			scope.history.clear();
-			scope.panel.refresh();
-			$("#scene-title").text(file.name);
+			editor.scene.load(data);
+			editor.history.clear();
+			editor.panel.refresh();
+			editor.dom.querySelector("#scene-title").textContent = file.name;
 		}
 	});
 
-	$(fileLoader).click();
+	fileLoader.click();
 
 }
 
-QL.gui.Editor.prototype.saveScene = function(){
+Editor.prototype.saveScene = function(){
 	var blob = new Blob([JSON.stringify(this.scene.toJSON())], {type: "text/plain;charset=utf-8"});
 	window.saveAs(blob, "scene.json");
 }
 
-QL.gui.Editor.prototype.newScene  = function(){
+Editor.prototype.newScene  = function(){
 	this.clearScene();
 	this.history.clear();
-	$("#scene-title").text("Untitled");
+	this.dom.querySelector('#scene-title').textContent = 'Untitled';
 }
 
-QL.gui.Editor.prototype.clearScene = function(){
+Editor.prototype.clearScene = function(){
 	var children = this.scene.children.slice();
 
 	this.scene.clear();
@@ -514,36 +538,36 @@ QL.gui.Editor.prototype.clearScene = function(){
 
 };
 
-QL.gui.Editor.prototype.undo = function(){
+Editor.prototype.undo = function(){
 	this.history.undo();
 }
 
-QL.gui.Editor.prototype.redo = function(){
+Editor.prototype.redo = function(){
 	this.history.redo();
 }
 
-QL.gui.Editor.prototype.refreshObjectPane = function(){
+Editor.prototype.refreshObjectPane = function(){
 	if(this.scene.selected){
-		$("#object-pane").addClass("active");
+		this.dom.querySelector("#object-pane").classList.add("active");
 
 		// object pane code here
-		$(".update-object-trigger").attr("data-trigger-id", this.scene.selected.id);
-		$("#object-pane-name").val(this.scene.selected.name);
-		$("#object-pane-pos-x").val(this.scene.selected.position.x);
-		$("#object-pane-pos-y").val(this.scene.selected.position.y);
-		$("#object-pane-pos-z").val(this.scene.selected.position.z);
+		this.dom.querySelector(".update-object-trigger").setAttribute("data-trigger-id", this.scene.selected.id);
+		this.dom.querySelector("#object-pane-name").value = this.scene.selected.name;
+		this.dom.querySelector("#object-pane-pos-x").value = this.scene.selected.position.x;
+		this.dom.querySelector("#object-pane-pos-y").value = this.scene.selected.position.y;
+		this.dom.querySelector("#object-pane-pos-z").value = this.scene.selected.position.z;
 		// scale
-		$("#object-pane-scale-x").val(this.scene.selected.scale.x);
-		$("#object-pane-scale-y").val(this.scene.selected.scale.y);
-		$("#object-pane-scale-z").val(this.scene.selected.scale.z);
+		this.dom.querySelector("#object-pane-scale-x").value = this.scene.selected.scale.x;
+		this.dom.querySelector("#object-pane-scale-y").value = this.scene.selected.scale.y;
+		this.dom.querySelector("#object-pane-scale-z").value = this.scene.selected.scale.z;
 		// rotation
-		$("#object-pane-rotation-x").val(parseInt(QL.etc.Math.degrees(this.scene.selected.rotation.x)));
-		$("#object-pane-rotation-y").val(parseInt(QL.etc.Math.degrees(this.scene.selected.rotation.y)));
-		$("#object-pane-rotation-z").val(parseInt(QL.etc.Math.degrees(this.scene.selected.rotation.z)));
-		$("#object-pane-color").val("#"+this.scene.selected.material.color.getHexString());
+		this.dom.querySelector("#object-pane-rotation-x").value = parseInt(etc.math.degrees(this.scene.selected.rotation.x));
+		this.dom.querySelector("#object-pane-rotation-y").value = parseInt(etc.math.degrees(this.scene.selected.rotation.y));
+		this.dom.querySelector("#object-pane-rotation-z").value = parseInt(etc.math.degrees(this.scene.selected.rotation.z));
+		this.dom.querySelector("#object-pane-color").value = "#"+this.scene.selected.material.color.getHexString();
 	} else {
-		$("#object-pane").removeClass("active");
+		this.dom.querySelector("#object-pane").classList.remove("active");
 	}
 };
 
-
+export default Editor;

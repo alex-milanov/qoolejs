@@ -1,23 +1,23 @@
 "use strict";
 
-if(typeof iblokz === "undefined"){ var iblokz = {}; }
-if(typeof iblokz.gui === "undefined"){ iblokz.gui = {}; }
+import Vector2 from '../gfx/vector2';
+import Canvas from './canvas';
 
-iblokz.gui.Grid = function(dom){
-	iblokz.gui.Canvas.call(this, dom);
+var Grid = function(dom){
+	Canvas.call(this, dom);
 }
 
-iblokz.gui.Grid.prototype = Object.create( iblokz.gui.Canvas.prototype );
-iblokz.gui.Grid.prototype.constructor = iblokz.gui.Grid;
+Grid.prototype = Object.create( Canvas.prototype );
+Grid.prototype.constructor = Grid;
 
-iblokz.gui.Grid.prototype.refresh = function(){
+Grid.prototype.refresh = function(){
 
-	iblokz.gui.Canvas.prototype.refresh.call(this);
+	Canvas.prototype.refresh.call(this);
 
 	var ctx = this.ctx;
 
-	var center = new QL.ext.Vector2(ctx.canvas.width/2,ctx.canvas.height/2);
-	var sizeVector = new QL.ext.Vector2(ctx.canvas.width,ctx.canvas.height);
+	var center = new Vector2(ctx.canvas.width/2,ctx.canvas.height/2);
+	var sizeVector = new Vector2(ctx.canvas.width,ctx.canvas.height);
 
 	center.add(this.offset)
 
@@ -53,3 +53,4 @@ iblokz.gui.Grid.prototype.refresh = function(){
 	}
 }
 
+export default Grid;

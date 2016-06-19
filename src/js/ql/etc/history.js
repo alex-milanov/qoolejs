@@ -1,16 +1,13 @@
 "use strict";
 
-if(typeof QL === "undefined"){ var QL = {}; }
-if(typeof QL.etc === "undefined"){ QL.etc = {}; }
-
-QL.etc.History = function(){
+var History = function(){
 
 	this.events = [];
 	this.index = -1;
 
-}
+};
 
-QL.etc.History.prototype = {
+History.prototype = {
 	add: function(undo, redo, title){
 		this.index ++;
 
@@ -60,4 +57,6 @@ QL.etc.History.prototype = {
 
 	}
 
-}
+};
+
+export default History;

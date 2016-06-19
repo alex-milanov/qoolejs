@@ -1,24 +1,24 @@
 "use strict";
 
-if(typeof iblokz === "undefined"){ var iblokz = {}; }
-if(typeof iblokz.gui === "undefined"){ iblokz.gui = {}; }
+import Vector2 from '../gfx/vector2';
+import Element from './element';
 
-iblokz.gui.Canvas = function(dom) {
-	iblokz.gui.Element.call(this, dom);
+var Canvas = function(dom) {
+	Element.call(this, dom);
 	this.ctx = this.dom.getContext("2d");
 
-	this.offset = new iblokz.gfx.Vector2(0,0);
+	this.offset = new Vector2(0,0);
 	this.zoom = 100;
 }
 
-iblokz.gui.Canvas.prototype = Object.create( iblokz.gui.Element.prototype );
-iblokz.gui.Canvas.prototype.constructor = iblokz.gui.Canvas;
+Canvas.prototype = Object.create( Element.prototype );
+Canvas.prototype.constructor = Canvas;
 
-iblokz.gui.Canvas.prototype.clear = function(){
+Canvas.prototype.clear = function(){
 	this.ctx.clearRect(0,0,this.dom.width,this.dom.height);
 }
 
-iblokz.gui.Canvas.prototype.line = function(start, finish, stroke, dash){
+Canvas.prototype.line = function(start, finish, stroke, dash){
 	this.ctx.beginPath();
 	this.ctx.moveTo(start[0],start[1]);
 	this.ctx.lineTo(finish[0],finish[1]);
@@ -30,7 +30,7 @@ iblokz.gui.Canvas.prototype.line = function(start, finish, stroke, dash){
 	this.ctx.stroke();
 }
 
-iblokz.gui.Canvas.prototype.rect = function(rect, background, stroke, dash){
+Canvas.prototype.rect = function(rect, background, stroke, dash){
 	this.ctx.beginPath();
 	this.ctx.rect(rect.x, rect.y, rect.width, rect.height);
 	if(background){
@@ -47,8 +47,8 @@ iblokz.gui.Canvas.prototype.rect = function(rect, background, stroke, dash){
 	}
 }
 
-iblokz.gui.Canvas.prototype.path = function(points, background, stroke, dash){
-	
+Canvas.prototype.path = function(points, background, stroke, dash){
+
 	var scope = this;
 
 	scope.ctx.beginPath();
@@ -76,13 +76,13 @@ iblokz.gui.Canvas.prototype.path = function(points, background, stroke, dash){
 	}
 }
 
-iblokz.gui.Canvas.prototype.text = function(text, position, options){
+Canvas.prototype.text = function(text, position, options){
 
 	if(!options)
 		options = {};
 
 	if(!position)
-		position = new iblokz.gfx.Vector2(
+		position = new Vector2(
 			this.ctx.canvas.width/2,
 			this.ctx.canvas.height/2
 		)
@@ -93,8 +93,8 @@ iblokz.gui.Canvas.prototype.text = function(text, position, options){
 	this.ctx.fillText(text, position.x, position.y);
 }
 
-iblokz.gui.Canvas.prototype.getSize = function(){
-	var size = new iblokz.gfx.Rect();
+Canvas.prototype.getSize = function(){
+	var size = new Rect();
 	size.width = this.ctx.canvas.width;
 	size.height = this.ctx.canvas.height;
 	size.x = this.offset.x;
@@ -102,11 +102,13 @@ iblokz.gui.Canvas.prototype.getSize = function(){
 	return size;
 }
 
-iblokz.gui.Canvas.prototype.init = function() {
+Canvas.prototype.init = function() {
 	this.refresh();
-} 
+}
 
-iblokz.gui.Canvas.prototype.refresh = function() {
-	this.ctx.canvas.width = $(this.ctx.canvas).width();
-	this.ctx.canvas.height = $(this.ctx.canvas).height();
-} 
+Canvas.prototype.refresh = function() {
+	this.ctx.canvas.width = this.dom.clientWidth;
+	this.ctx.canvas.height = this.dom.clientHeight;
+}
+
+export default Canvas;

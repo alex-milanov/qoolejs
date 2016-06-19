@@ -1,59 +1,64 @@
-"use strict";
+'use strict';
 
-if(typeof QL === "undefined"){ var QL = {}; }
-if(typeof QL.gui === "undefined"){ QL.gui = {}; }
+import {Observable as $} from 'rx-lite';
+import Element from './element';
 
-
-QL.gui.Panel = function(dom, context){
-	QL.gui.Element.call(this, dom, context);
+var Panel = function(dom, context){
+	Element.call(this, dom, context);
 };
 
-QL.gui.Panel.prototype = Object.create( QL.gui.Element.prototype );
-QL.gui.Panel.prototype.constructor = QL.gui.Panel;
+Panel.prototype = Object.create( Element.prototype );
+Panel.prototype.constructor = Panel;
 
-QL.gui.Panel.prototype.init = function(){
-	QL.gui.Element.prototype.init.call(this);
-	$(this.dom).find(".pane-body").perfectScrollbar();
+Panel.prototype.init = function(){
+	Element.prototype.init.call(this);
+	//jQuery(this.dom).find(".pane-body").perfectScrollbar();
 };
 
-QL.gui.Panel.prototype.refresh = function(){
-	
-	var context = this.context;
+Panel.prototype.refresh = function(){
+
+	let context = this.context;
+	let dom = this.dom;
+
+	let meshEntities = dom.querySelector('.entities#mesh-entities');
 
 	// clean up the entities list
-	var $meshEntities = $(this.dom).find(".entities#mesh-entities");
-	$meshEntities.html("");
+	while (meshEntities.firstChild) meshEntities.removeChild(meshEntities.firstChild);
 
-	context.scene.children.forEach(function(_entity){
-		var _el = $("<span></span>");
-		var _name = '';
-		if(_entity.name){
-			_name = _entity.name;
+	context.scene.children.forEach(function(entity){
+		var el =  document.createElement('span');
+		let name = '';
+		if (entity.name) {
+			name = entity.name
 		} else {
-			_name = _entity.type;
-			if(_entity.geometry && _entity.geometry.type){
-				_name += "[ "+_entity.geometry.type+" ]";
+			name = entity.type
+			if (entity.geometry && entity.geometry.type) {
+				name += `[ ${entity.geometry.type} ]`
 			}
 		}
-		_el.text(_name);
-		_el.attr("data-obj-id",_entity.id);
-		if(_entity.selected){
-			_el.addClass("selected");
+
+		el.textContent = name;
+		el.setAttribute("data-obj-id", entity.id);
+
+		if(entity.selected) el.classList.add("selected");
+
+		if(entity.type === "Mesh"){
+			$.fromEvent(el, 'click').map(() =>
+				context.select(parseInt(el.getAttribute("data-obj-id")))
+			).subscribe();
 		}
 
-		if(_entity.type === "Mesh"){
-			_el.click(function(){
-				context.select(parseInt($(this).attr("data-obj-id")));
-			});
-		}
-
-		switch(_entity.type){
+		switch(entity.type){
 			case "Mesh":
-				$meshEntities.append($("<li></li>").append(_el));
+				let li = document.createElement('li');
+				li.appendChild(el);
+				meshEntities.appendChild(li);
 				break;
 		}
 	});
 	context.refreshObjectPane();
 
-	$(this.dom).find(".pane-body").perfectScrollbar('update');
+	//jQuery(this.dom).find(".pane-body").perfectScrollbar('update');
 };
+
+export default Panel;
