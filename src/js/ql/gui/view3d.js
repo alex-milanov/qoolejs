@@ -8,9 +8,7 @@ import Element from './element';
 var View3D = function(conf, scene, editor){
 	Element.call(this, conf.dom);
 
-	let dom = (typeof this.dom === 'string')
-		? document.querySelector(this.dom)
-		: this.dom;
+	let dom = this.dom;
 
 	this.canvas = dom.querySelector(".layer-3d");
 	this.perspective = conf.perspective;
@@ -220,7 +218,7 @@ View3D.prototype.init = function(){
 
 View3D.prototype.refresh = function(){
 
-	let dom = document.querySelector(this.dom);
+	let dom = this.dom;
 
 	this.canvas.setAttribute('style', '');
 	this.canvas.width = dom.clientWidth;

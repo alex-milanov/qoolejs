@@ -15,7 +15,7 @@ Toolbar.prototype.init = function(){
 	Element.prototype.init.call(this);
 
 	let context = this.context;
-	let dom = document.querySelector(this.dom);
+	let dom = this.dom;
 
 	context.indexes = [-1];
 

@@ -13,9 +13,7 @@ var View2D = function(_conf, _scene, _editor){
 	Element.call(this, _conf.dom);
 	//this.ctx = this.canvas.getContext("2d");
 
-	let dom = (typeof this.dom === 'string')
-		? document.querySelector(this.dom)
-		: this.dom;
+	let dom = this.dom;
 
 	this.layers = {
 		grid: new iblokz.gui.Grid(dom.querySelector('.grid-layer')),
@@ -436,9 +434,7 @@ View2D.prototype.init = function(){
 
 View2D.prototype.refresh = function(scene){
 
-	let dom = (typeof this.dom === 'string')
-		? document.querySelector(this.dom)
-		: this.dom;
+	let dom = this.dom;
 
 	//
 	for( var layer in this.layers){

@@ -18,7 +18,7 @@ Panel.prototype.init = function(){
 Panel.prototype.refresh = function(){
 
 	let context = this.context;
-	let dom = document.querySelector(this.dom);
+	let dom = this.dom;
 
 	let meshEntities = dom.querySelector('.entities#mesh-entities');
 

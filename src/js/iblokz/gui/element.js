@@ -1,6 +1,5 @@
 "use strict";
 
-
 var Element = function(dom){
 
 	this.dom = null;

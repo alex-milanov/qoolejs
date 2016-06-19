@@ -1,7 +1,5 @@
 "use strict";
 
-import jQuery from 'jquery';
-
 import Vector2 from '../gfx/vector2';
 import Element from './element';
 
@@ -109,8 +107,8 @@ Canvas.prototype.init = function() {
 }
 
 Canvas.prototype.refresh = function() {
-	this.ctx.canvas.width = jQuery(this.ctx.canvas).width();
-	this.ctx.canvas.height = jQuery(this.ctx.canvas).height();
+	this.ctx.canvas.width = this.dom.clientWidth;
+	this.ctx.canvas.height = this.dom.clientHeight;
 }
 
 export default Canvas;

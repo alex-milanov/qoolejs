@@ -1,7 +1,7 @@
 'use strict';
 
 import THREE from 'three';
-import jQuery from 'jquery';
+import {Observable as $} from 'rx-lite';
 import _ from 'lodash';
 
 import iblokz from '../../iblokz';
@@ -63,6 +63,8 @@ Editor.prototype.init = function(){
 
 	var _editor = this;
 	_editor.keyboard = {};// new THREEx.KeyboardState();
+
+	let dom = this.dom;
 
 	function animStep(){
 		requestAnimationFrame( animStep );
@@ -155,21 +157,23 @@ Editor.prototype.init = function(){
 		}
 		*/
 
-		if(keyCombo !== '' && jQuery(".debug-keys").text() !== keyCombo){
-			jQuery(".debug-keys").text(" "+keyCombo);
+		if(keyCombo !== '' && dom.querySelector('.debug-keys').textContent !== keyCombo){
+			dom.querySelector('.debug-keys').textContent = ' '+keyCombo;
 		}
 
 	}
 
 	// keyboard triggers
-	jQuery(this.dom)[0].addEventListener("keyup", function(event){
+	dom.addEventListener("keyup", function(event){
 		var keyCode = event.keyCode;
 		var keyCombo = "";
 
+		const focusedElements = [].slice.call(dom.querySelectorAll(':focus'));
+
 		// desselect and blur on esc
 		if(keyCode == 27){
-			if(jQuery(_editor.dom).find(':focus').length > 0){
-				jQuery(_editor.dom).find(":focus").blur();
+			if(focusedElements.length > 0){
+				focusedElements.map(el => el.blur())
 			} else {
 				_editor.scene.selected = false;
 				_editor.refreshObjectPane();
@@ -177,7 +181,7 @@ Editor.prototype.init = function(){
 			keyCombo = "ESC";
 		}
 
-		if(jQuery(_editor.dom).find(':focus').length === 0) {
+		if(focusedElements.length === 0) {
 
 			// undo/redo
 			if(event.ctrlKey && keyCode == "Z".charCodeAt(0)){
@@ -191,7 +195,7 @@ Editor.prototype.init = function(){
 
 			// focus on object pane
 			if(keyCode == "E".charCodeAt(0)){
-				jQuery(_editor.dom).find("#object-pane-name").focus();
+				dom.querySelector("#object-pane-name").focus();
 				keyCombo = "E";
 			}
 
@@ -202,7 +206,7 @@ Editor.prototype.init = function(){
 			}
 
 			if(keyCode == "F".charCodeAt(0)){
-				jQuery(_editor.activeView.dom).find(".fullscreen-toggle").click();
+				_editor.activeView.dom.querySelector(".fullscreen-toggle").click();
 				keyCombo = "F";
 			}
 
@@ -256,8 +260,8 @@ Editor.prototype.init = function(){
 
 		}
 
-		if(keyCombo !== '' && jQuery(".debug-keys").text() !== keyCombo){
-			jQuery(".debug-keys").text(" "+keyCombo);
+		if(keyCombo !== '' && dom.querySelector(".debug-keys").textContent !== keyCombo){
+			dom.querySelector(".debug-keys").textContent = " " + keyCombo;
 		}
 	}, false);
 
@@ -277,8 +281,12 @@ Editor.prototype.init = function(){
 Editor.prototype.changeMode = function(mode){
 	if(this.params['obj-mode'] !== mode){
 		this.params['obj-mode'] = mode;
-		jQuery("a.obj-mode-option[data-option-param='obj-mode']").removeClass("selected");
-		jQuery("a.obj-mode-option[data-option-param='obj-mode'][data-option-value='"+mode+"']").addClass("selected");
+		[].slice.call(
+			dom.querySelectorAll("a.obj-mode-option[data-option-param='obj-mode']")
+		).map(el =>
+			el.classList.remove("selected")
+		);
+		dom.querySelector("a.obj-mode-option[data-option-param='obj-mode'][data-option-value='"+mode+"']").classList.add("selected");
 	}
 }
 
@@ -320,8 +328,12 @@ Editor.prototype.interact = function(action, v3){
 
 Editor.prototype.selectView = function(view){
 	this.activeView = view;
-	jQuery(this.dom).find(".views .view").removeClass("selected");
-	jQuery(this.activeView.dom).addClass("selected");
+	[].slice.call(
+		this.dom.querySelectorAll('.views .view')
+	).map(el =>
+		el.classList.remove('selected')
+	);
+	this.activeView.dom.classList.add('selected');
 }
 
 Editor.prototype.selectNextView = function(direction){
@@ -415,22 +427,22 @@ Editor.prototype.updateObject = function(objId){
 		material: selected.material.clone()
 	};
 
-	selected.name = jQuery("#object-pane-name").val();
-	selected.position.x = parseFloat(jQuery("#object-pane-pos-x").val());
-	selected.position.y = parseFloat(jQuery("#object-pane-pos-y").val());
-	selected.position.z = parseFloat(jQuery("#object-pane-pos-z").val());
+	selected.name = dom.querySelector("#object-pane-name").value;
+	selected.position.x = parseFloat(dom.querySelector("#object-pane-pos-x").value);
+	selected.position.y = parseFloat(dom.querySelector("#object-pane-pos-y").value);
+	selected.position.z = parseFloat(dom.querySelector("#object-pane-pos-z").value);
 	// scale
-	selected.scale.x = parseFloat(jQuery("#object-pane-scale-x").val());
-	selected.scale.y = parseFloat(jQuery("#object-pane-scale-y").val());
-	selected.scale.z = parseFloat(jQuery("#object-pane-scale-z").val());
+	selected.scale.x = parseFloat(dom.querySelector("#object-pane-scale-x").value);
+	selected.scale.y = parseFloat(dom.querySelector("#object-pane-scale-y").value);
+	selected.scale.z = parseFloat(dom.querySelector("#object-pane-scale-z").value);
 	// rotation
-	selected.rotation.x = etc.math.radians(parseInt(jQuery("#object-pane-rotation-x").val()));
-	selected.rotation.y = etc.math.radians(parseInt(jQuery("#object-pane-rotation-y").val()));
-	selected.rotation.z = etc.math.radians(parseInt(jQuery("#object-pane-rotation-z").val()));
+	selected.rotation.x = etc.math.radians(parseInt(dom.querySelector("#object-pane-rotation-x").value));
+	selected.rotation.y = etc.math.radians(parseInt(dom.querySelector("#object-pane-rotation-y").value));
+	selected.rotation.z = etc.math.radians(parseInt(dom.querySelector("#object-pane-rotation-z").value));
 
 	selected.updateMatrix();
 
-	selected.material.color.setStyle(jQuery("#object-pane-color").val());
+	selected.material.color.setStyle(dom.querySelector("#object-pane-color").value);
 	this.panel.refresh();
 
 	var action = "update object "+ selected.id;
@@ -463,25 +475,26 @@ Editor.prototype.updateObject = function(objId){
 
 Editor.prototype.loadScene = function(){
 
-	var fileLoader = jQuery("<input type='file' />");
+	var fileLoader = document.createElement('input')
+	fileLoader.setAttribute('type', 'file');
 
-	var scope = this;
+	var editor = this;
 
-	jQuery(fileLoader).change(function(){
+	fileLoader.addEventListener('change', function(){
 		var file = this.files[0];
 		var fr = new FileReader();
 		fr.onload = receivedText;
 		fr.readAsText(file);
 		function receivedText(e) {
 			var data = JSON.parse(e.target.result);
-			scope.scene.load(data);
-			scope.history.clear();
-			scope.panel.refresh();
-			jQuery("#scene-title").text(file.name);
+			editor.scene.load(data);
+			editor.history.clear();
+			editor.panel.refresh();
+			editor.dom.querySelector("#scene-title").textContent = file.name;
 		}
 	});
 
-	jQuery(fileLoader).click();
+	fileLoader.click();
 
 }
 
@@ -493,7 +506,7 @@ Editor.prototype.saveScene = function(){
 Editor.prototype.newScene  = function(){
 	this.clearScene();
 	this.history.clear();
-	jQuery("#scene-title").text("Untitled");
+	this.dom.querySelector('#scene-title').textContent = 'Untitled';
 }
 
 Editor.prototype.clearScene = function(){
@@ -537,25 +550,25 @@ Editor.prototype.redo = function(){
 
 Editor.prototype.refreshObjectPane = function(){
 	if(this.scene.selected){
-		jQuery("#object-pane").addClass("active");
+		this.dom.querySelector("#object-pane").classList.add("active");
 
 		// object pane code here
-		jQuery(".update-object-trigger").attr("data-trigger-id", this.scene.selected.id);
-		jQuery("#object-pane-name").val(this.scene.selected.name);
-		jQuery("#object-pane-pos-x").val(this.scene.selected.position.x);
-		jQuery("#object-pane-pos-y").val(this.scene.selected.position.y);
-		jQuery("#object-pane-pos-z").val(this.scene.selected.position.z);
+		this.dom.querySelector(".update-object-trigger").setAttribute("data-trigger-id", this.scene.selected.id);
+		this.dom.querySelector("#object-pane-name").value = this.scene.selected.name;
+		this.dom.querySelector("#object-pane-pos-x").value = this.scene.selected.position.x;
+		this.dom.querySelector("#object-pane-pos-y").value = this.scene.selected.position.y;
+		this.dom.querySelector("#object-pane-pos-z").value = this.scene.selected.position.z;
 		// scale
-		jQuery("#object-pane-scale-x").val(this.scene.selected.scale.x);
-		jQuery("#object-pane-scale-y").val(this.scene.selected.scale.y);
-		jQuery("#object-pane-scale-z").val(this.scene.selected.scale.z);
+		this.dom.querySelector("#object-pane-scale-x").value = this.scene.selected.scale.x;
+		this.dom.querySelector("#object-pane-scale-y").value = this.scene.selected.scale.y;
+		this.dom.querySelector("#object-pane-scale-z").value = this.scene.selected.scale.z;
 		// rotation
-		jQuery("#object-pane-rotation-x").val(parseInt(etc.math.degrees(this.scene.selected.rotation.x)));
-		jQuery("#object-pane-rotation-y").val(parseInt(etc.math.degrees(this.scene.selected.rotation.y)));
-		jQuery("#object-pane-rotation-z").val(parseInt(etc.math.degrees(this.scene.selected.rotation.z)));
-		jQuery("#object-pane-color").val("#"+this.scene.selected.material.color.getHexString());
+		this.dom.querySelector("#object-pane-rotation-x").value = parseInt(etc.math.degrees(this.scene.selected.rotation.x));
+		this.dom.querySelector("#object-pane-rotation-y").value = parseInt(etc.math.degrees(this.scene.selected.rotation.y));
+		this.dom.querySelector("#object-pane-rotation-z").value = parseInt(etc.math.degrees(this.scene.selected.rotation.z));
+		this.dom.querySelector("#object-pane-color").value = "#"+this.scene.selected.material.color.getHexString();
 	} else {
-		jQuery("#object-pane").removeClass("active");
+		this.dom.querySelector("#object-pane").classList.remove("active");
 	}
 };
 

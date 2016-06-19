@@ -4,7 +4,12 @@ import {Observable as $} from 'rx-lite';
 
 var Element = function(dom, context){
 
-	this.dom = dom;
+	this.dom = (dom instanceof HTMLElement)
+		? dom
+		: (typeof dom === 'string')
+			? document.querySelector(dom)
+			: false;
+
 	this.context = (typeof context === 'undefined') ? this : context ;
 
 };
@@ -12,7 +17,7 @@ var Element = function(dom, context){
 Element.prototype.init = function(){
 
 	let context = this.context;
-	let dom = document.querySelector(this.dom);
+	let dom = this.dom;
 
 	[].slice.call(dom.querySelectorAll('[class*=\'-toggle\']'))
 		.map(el =>
@@ -24,7 +29,12 @@ Element.prototype.init = function(){
 				let toggleSelf = el.getAttribute('data-toggle-self');
 				console.log(toggleRefEl, toggleClass, toggleParam, toggleSelf);
 				toggleRefEl.classList.toggle(toggleClass);
-				if(toggleSelf) el.classList.toggle(toggleSelf);
+				if(toggleSelf) {
+					console.log(toggleSelf);
+					toggleSelf.split(' ').map(
+						cls => el.classList.toggle(cls)
+					);
+				}
 				if(toggleParam !== ""){
 					if(!context.params)
 						context.params = {};
