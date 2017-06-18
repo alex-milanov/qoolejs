@@ -3,8 +3,8 @@
 
 @import "inc/overrides.scss";
 @import "inc/vars.scss";
-@import "inc/common.scss";
+@import "inc/common.sass";
 
-@import "inc/gui/toolbar.scss";
-@import "inc/gui/panel.scss";
-@import "inc/gui/views.scss";
+@import "ui/toolbar.scss";
+@import "ui/panel.scss";
+@import "ui/views.scss";

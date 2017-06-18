@@ -1,6 +1,6 @@
 'use strict';
 
-import {Observable as $} from 'rx-lite';
+import {Observable as $} from 'rx';
 import Element from './element';
 
 var Panel = function(dom, context){

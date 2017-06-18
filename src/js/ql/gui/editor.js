@@ -1,6 +1,6 @@
 'use strict';
 
-import {Observable as $} from 'rx-lite';
+import {Observable as $} from 'rx';
 
 import iblokz from '../../iblokz';
 import ext from '../ext';

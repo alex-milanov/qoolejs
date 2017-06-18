@@ -2194,6 +2194,39 @@
 body {
   font-family: "Play"; }
 
+::-webkit-scrollbar {
+  width: 2px;
+  height: 2px; }
+
+::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px; }
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border: 0px none #ffffff;
+  border-radius: 50px; }
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ffffff; }
+
+::-webkit-scrollbar-thumb:active {
+  background: #000000; }
+
+::-webkit-scrollbar-track {
+  background: #999;
+  border: 0px none #ffffff;
+  border-radius: 50px; }
+
+::-webkit-scrollbar-track:hover {
+  background: #999; }
+
+::-webkit-scrollbar-track:active {
+  background: #555; }
+
+::-webkit-scrollbar-corner {
+  background: transparent; }
+
 .gui .toolbar {
   background: #333;
   color: #ccc;
@@ -2403,6 +2436,7 @@ body {
       bottom: 250px; }
 
 .gui .views {
+  user-select: none;
   position: absolute;
   top: 40px;
   bottom: 0px;

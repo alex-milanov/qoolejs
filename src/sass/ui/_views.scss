@@ -1,5 +1,6 @@
 .gui {
 	.views {
+		user-select: none;
 		position: absolute;
 		top: $ql-toolbar-height;
 		bottom: 0px;
@@ -94,6 +95,6 @@
 
 			}
 		}
-		
+
 	}
 }
