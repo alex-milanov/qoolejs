@@ -134,7 +134,15 @@ const initial = {
   		finish: [95,100,-100],
   		color: 0xaaaa55
   	}
-  ]
+  ],
+  scene: {
+	  children: [
+		  {
+			  name: 'Block',
+			  id: 1
+		  }
+	  ]
+  }
 };
 
 // actions

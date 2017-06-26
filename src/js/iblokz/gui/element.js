@@ -4,6 +4,8 @@ var Element = function(dom){
 
 	this.dom = null;
 
+	console.log(dom)
+
 	var htmlTags = [
 		"div","span","p","ul","li","a","img",
 		"table","tbody","tr","td","thead","th","tfoot",

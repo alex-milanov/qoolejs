@@ -13659,7 +13659,13 @@ var initial = {
     start: [-95, 80, -95],
     finish: [95, 100, -100],
     color: 0xaaaa55
-  }]
+  }],
+  scene: {
+    children: [{
+      name: 'Block',
+      id: 1
+    }]
+  }
 };
 
 // actions
@@ -14063,6 +14069,8 @@ var Element = function Element(dom) {
 
 	this.dom = null;
 
+	console.log(dom);
+
 	var htmlTags = ["div", "span", "p", "ul", "li", "a", "img", "table", "tbody", "tr", "td", "thead", "th", "tfoot", "form", "input", "select", "button", "textarea", "label", "header", "section", "canvas"];
 
 	switch (typeof dom === "undefined" ? "undefined" : _typeof(dom)) {
@@ -14281,7 +14289,7 @@ var state$ = actions$.startWith(function () {
 }).publish();
 
 // hooks
-state$.take(1).delay(100).subscribe(function (state) {
+state$.take(1).delay(300).subscribe(function (state) {
 	// legacy init
 	var editor = new QL.gui.Editor(state.views, state.entities);
 	editor.init();
@@ -14291,11 +14299,11 @@ state$.take(1).delay(100).subscribe(function (state) {
 var ui$ = state$.map(function (state) {
 	return ui({ state: state, actions: actions });
 });
-vdom.patchStream(ui$, '.toolbar');
+vdom.patchStream(ui$, '.gui');
 
 state$.connect();
 
-},{"./actions":20,"./ql":46,"./ui":47,"./util/app":49,"iblokz-data":1,"iblokz-snabbdom-helpers":6,"rx":8}],28:[function(require,module,exports){
+},{"./actions":20,"./ql":46,"./ui":47,"./util/app":51,"iblokz-data":1,"iblokz-snabbdom-helpers":6,"rx":8}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16472,16 +16480,123 @@ var li = _require.li;
 // components
 
 var toolbar = require('./toolbar');
+var panel = require('./panel');
+var views = require('./views');
 
-module.exports = toolbar;
+module.exports = function (_ref) {
+  var state = _ref.state;
+  var actions = _ref.actions;
+  return section('.gui', [toolbar({ state: state, actions: actions }), panel({ state: state, actions: actions }), views({ state: state, actions: actions })]);
+};
 
-/*
-module.exports = ({state, actions}) => section('.gui', [
-  toolbar({state, actions})
-]);
-*/
+},{"./panel":48,"./toolbar":49,"./views":50,"iblokz-snabbdom-helpers":6}],48:[function(require,module,exports){
+'use strict';
 
-},{"./toolbar":48,"iblokz-snabbdom-helpers":6}],48:[function(require,module,exports){
+// dom
+
+var _require = require('iblokz-snabbdom-helpers');
+
+var section = _require.section;
+var div = _require.div;
+var span = _require.span;
+var a = _require.a;
+var p = _require.p;
+var ul = _require.ul;
+var li = _require.li;
+var i = _require.i;
+var form = _require.form;
+var input = _require.input;
+var button = _require.button;
+var canvas = _require.canvas;
+var img = _require.img;
+var label = _require.label;
+
+var _require2 = require('iblokz-data');
+
+var obj = _require2.obj;
+var str = _require2.str;
+var fn = _require2.fn;
+// components
+
+var objProps = [{
+    name: 'name',
+    title: 'Name',
+    type: 'string'
+}, {
+    name: 'pos',
+    title: 'Position',
+    type: 'vector3'
+}, {
+    name: 'scale',
+    title: 'Scale',
+    type: 'vector3'
+}, {
+    name: 'rotation',
+    title: 'Rotation',
+    type: 'vector3'
+}, {
+    name: 'color',
+    title: 'Color',
+    type: 'color'
+}];
+
+module.exports = function (_ref) {
+    var state = _ref.state;
+    var actions = _ref.actions;
+    return section('.panel.left', {
+        class: {
+            opened: true
+        }
+    }, [
+    // object pane
+    section('#object-pane.pane', [section('.pane-title', span('Object [E]dit')), section('.pane-body', section('.section', [ul(objProps.map(function (prop) {
+        return fn.switch(prop.type, {
+            'default': function _default() {
+                return li();
+            },
+            'string': function string() {
+                return li([label(prop.title), input('#object-pane-' + prop.name + '[type="text"]')]);
+            },
+            'vector3': function vector3() {
+                return li([label(prop.title), input('#object-pane-' + prop.name + '-x[type="number"].p30'), input('#object-pane-' + prop.name + '-y[type="number"].p30'), input('#object-pane-' + prop.name + '-z[type="number"].p30')]);
+            },
+            'color': function color() {
+                return li([label(prop.title), input('#object-pane-' + prop.name + '[type="color"]')]);
+            }
+        })();
+    })), button('.btn.update-object-trigger', {
+        attrs: {
+            'data-trigger-method': 'updateObject',
+            'data-trigger-id': false
+        }
+    }, 'Update')]))]),
+    // scene pane
+    section('#scene-pane.pane.active', [section('.pane-title', [span('#scene-title', 'Untitled'), a('.load-scene-trigger', {
+        attrs: {
+            'data-trigger-method': 'loadScene',
+            'title': 'Load Scene'
+        }
+    }, i('.fa.fa-folder-open-o')), a('.save-scene-trigger', {
+        attrs: {
+            'data-trigger-method': 'saveScene',
+            'title': 'Save Scene'
+        }
+    }, i('.fa.fa-save')), a('.new-scene-trigger', {
+        attrs: {
+            'data-trigger-method': 'newScene',
+            'title': 'New Scene'
+        }
+    }, i('.fa.fa-file-o'))]), section('.pane-body', [section('.section', section('.section-title', 'Lights')), section('.section', section('.section-title', 'Cameras')), section('.section', [section('.section-title', 'Meshes'), ul('#mesh-entities.entities', state.scene.children.map(function (entity) {
+        return li(span([entity.name || '', a('.entity-edit-trigger', {
+            attrs: {
+                'data-trigger-method': 'edit',
+                'data-trigger-id': entity.id
+            }
+        })]));
+    }))])])])]);
+};
+
+},{"iblokz-data":1,"iblokz-snabbdom-helpers":6}],49:[function(require,module,exports){
 'use strict';
 
 // dom
@@ -16614,7 +16729,73 @@ module.exports = function (_ref) {
   ]);
 };
 
-},{"iblokz-data":1,"iblokz-snabbdom-helpers":6}],49:[function(require,module,exports){
+},{"iblokz-data":1,"iblokz-snabbdom-helpers":6}],50:[function(require,module,exports){
+'use strict';
+
+// dom
+
+var _require = require('iblokz-snabbdom-helpers');
+
+var section = _require.section;
+var div = _require.div;
+var span = _require.span;
+var a = _require.a;
+var p = _require.p;
+var ul = _require.ul;
+var li = _require.li;
+var i = _require.i;
+var form = _require.form;
+var input = _require.input;
+var button = _require.button;
+var canvas = _require.canvas;
+var img = _require.img;
+var h = _require.h;
+
+var _require2 = require('iblokz-data');
+
+var obj = _require2.obj;
+var str = _require2.str;
+var fn = _require2.fn;
+// components
+
+var layers = ['grid', 'scene', 'selection', 'indicators'];
+var views = {
+    tl: {
+        dom: '#view-tl',
+        perspective: 'top'
+    },
+    tr: {
+        dom: '#view-tr',
+        perspective: '3d'
+    },
+    bl: {
+        dom: '#view-bl',
+        perspective: 'front'
+    },
+    br: {
+        dom: '#view-br',
+        perspective: 'side'
+    }
+};
+
+module.exports = function (_ref) {
+    var state = _ref.state;
+    var actions = _ref.actions;
+    return section('.views', {}, Object.keys(views).map(function (view) {
+        return section(views[view].dom + '.view', [].concat(a('.fullscreen-toggle.fa.fa-expand', {
+            attrs: {
+                'data-toggle-ref': views[view].dom,
+                'data-toggle-class': 'fullscreen',
+                'data-toggle-self': 'fa-compress fa-expand',
+                'title': 'Fullscreen [F]'
+            }
+        }), views[view].perspective === '3d' ? h('canvas.layer-3d') : layers.map(function (layer) {
+            return h('canvas.' + layer + '-layer');
+        })));
+    }));
+};
+
+},{"iblokz-data":1,"iblokz-snabbdom-helpers":6}],51:[function(require,module,exports){
 'use strict';
 
 // lib

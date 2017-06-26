@@ -7,6 +7,7 @@ const {
 } = require('iblokz-snabbdom-helpers');
 const {obj, str, fn} = require('iblokz-data');
 // components
+
 const leftBarTools = [
   {
     type: 'option',

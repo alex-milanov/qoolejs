@@ -45,7 +45,7 @@ const state$ = actions$
 	.publish();
 
 // hooks
-state$.take(1).delay(100).subscribe(state => {
+state$.take(1).delay(300).subscribe(state => {
   // legacy init
   const editor = new QL.gui.Editor(state.views, state.entities);
   editor.init();
@@ -53,6 +53,6 @@ state$.take(1).delay(100).subscribe(state => {
 
 // state -> ui
 const ui$ = state$.map(state => ui({state, actions}));
-vdom.patchStream(ui$, '.toolbar');
+vdom.patchStream(ui$, '.gui');
 
 state$.connect();
