@@ -10,11 +10,11 @@ import Mesh from './mesh';
 import Scene from './scene';
 
 export default {
-  interact,
-  Vector2,
-  Vector3,
-  Quad,
-  BoxGeometry,
-  Mesh,
-  Scene
+	interact,
+	Vector2,
+	Vector3,
+	Quad,
+	BoxGeometry,
+	Mesh,
+	Scene
 };

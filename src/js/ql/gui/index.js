@@ -8,10 +8,10 @@ import View2D from './view2d';
 import Editor from './editor';
 
 export default {
-  Element,
-  Toolbar,
-  Panel,
-  View3D,
-  View2D,
-  Editor
+	Element,
+	Toolbar,
+	Panel,
+	View3D,
+	View2D,
+	Editor
 };

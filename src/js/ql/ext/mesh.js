@@ -1,25 +1,10 @@
-'use strict';
+import THREE from 'three';
 
-var Mesh = function ( geometry, material ) {
+export default class Mesh extends THREE.Mesh {
+	clone() {
+		var geometry = this.geometry.clone();
+		var material = this.material.clone();
 
-	THREE.Mesh.call( this, geometry, material );
+		return new Mesh(geometry, material).copy(this);
+	}
 }
-
-
-Mesh.prototype = Object.create( THREE.Mesh.prototype );
-Mesh.prototype.constructor = THREE.Mesh;
-
-Mesh.prototype.clone = function ( object, recursive ) {
-
-	var geometry = this.geometry.clone();
-	var material = this.material.clone();
-
-	if ( object === undefined ) object = new Mesh( geometry, material );
-
-	THREE.Object3D.prototype.clone.call( this, object, recursive );
-
-	return object;
-
-};
-
-export default Mesh;

@@ -4,13 +4,12 @@
 const Rx = require('rx');
 const $ = Rx.Observable;
 
-
 // iblokz
 const vdom = require('iblokz-snabbdom-helpers');
 const {obj, arr} = require('iblokz-data');
 
 // legacy code
-const QL  = require('./ql').default;
+const QL = require('./ql').default;
 
 // app
 const app = require('./util/app');
@@ -47,9 +46,9 @@ const state$ = actions$
 // hooks
 state$.take(1).delay(300).subscribe(state => {
   // legacy init
-  const editor = new QL.gui.Editor(state.views, state.entities);
-  editor.init();
-})
+	const editor = new QL.gui.Editor(state.views, state.entities);
+	editor.init();
+});
 
 // state -> ui
 const ui$ = state$.map(state => ui({state, actions}));

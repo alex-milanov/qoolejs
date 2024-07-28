@@ -35,7 +35,7 @@
     "eslint-config-google": "^0.6.0",
     "fs-extra": "^0.30.0",
     "livereload": "^0.6.2",
-    "node-sass": "^3.7.0",
+    "node-sass": "^9.0.0",
     "node-serve": "0.0.3",
     "nodemon": "^1.9.2",
     "pug-cli": "^1.0.0-alpha6",

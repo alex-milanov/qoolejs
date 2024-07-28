@@ -1,56 +1,46 @@
-"use strict";
-
 import Vector2 from '../gfx/vector2';
 import Canvas from './canvas';
 
-var Grid = function(dom){
-	Canvas.call(this, dom);
-}
+export default class Grid extends Canvas {
 
-Grid.prototype = Object.create( Canvas.prototype );
-Grid.prototype.constructor = Grid;
+	refresh() {
+		super.refresh();
 
-Grid.prototype.refresh = function(){
+		const ctx = this.ctx;
 
-	Canvas.prototype.refresh.call(this);
+		const center = new Vector2(ctx.canvas.width / 2, ctx.canvas.height / 2);
+		const sizeVector = new Vector2(ctx.canvas.width, ctx.canvas.height);
 
-	var ctx = this.ctx;
+		center.add(this.offset);
 
-	var center = new Vector2(ctx.canvas.width/2,ctx.canvas.height/2);
-	var sizeVector = new Vector2(ctx.canvas.width,ctx.canvas.height);
+		this.line([0, center.y], [sizeVector.x, center.y], '#96DC96');
 
-	center.add(this.offset)
+		this.line([center.x, 0], [center.x, sizeVector.y], '#96DC96');
 
-	this.line([0, center.y], [sizeVector.x, center.y], '#96DC96');
+		let step = 10;
+		step *= this.zoom / 100;
 
-	this.line([center.x, 0], [center.x, sizeVector.y], '#96DC96');
+		const defaultLineColor = '#333';
+		const segmentColor = '#555';
 
-	var step = 10;
+		for (let yPos = step; center.y - yPos > 0; yPos += step) {
+			let lineColor = (Math.floor(yPos / step / 5) === yPos / step / 5) ? segmentColor : defaultLineColor;
+			this.line([0, center.y - yPos], [sizeVector.x, center.y - yPos], lineColor);
+		}
 
-	step *=this.zoom/100;
+		for (let yPos = step; center.y + yPos < sizeVector.y; yPos += step) {
+			let lineColor = (Math.floor(yPos / step / 5) === yPos / step / 5) ? segmentColor : defaultLineColor;
+			this.line([0, center.y + yPos], [sizeVector.x, center.y + yPos], lineColor);
+		}
 
-	var defaultLineColor = '#333';
-	var segmentColor = '#555';
+		for (let xPos = step; center.x - xPos > 0; xPos += step) {
+			let lineColor = (Math.floor(xPos / step / 5) === xPos / step / 5) ? segmentColor : defaultLineColor;
+			this.line([center.x - xPos, 0], [center.x - xPos, sizeVector.y], lineColor);
+		}
 
-	for(var yPos = step; center.y - yPos > 0; yPos+=step){
-		var lineColor = (parseInt(yPos/step/5) === yPos/step/5) ? segmentColor : defaultLineColor;
-		this.line([0, center.y - yPos], [sizeVector.x, center.y - yPos], lineColor);
-	}
-
-	for(var yPos = step; center.y + yPos < sizeVector.y; yPos+=step){
-		var lineColor = (parseInt(yPos/step/5) === yPos/step/5) ? segmentColor : defaultLineColor;
-		this.line([0, center.y + yPos], [sizeVector.x, center.y + yPos], lineColor);
-	}
-
-	for(var xPos = step; center.x - xPos > 0; xPos+=step){
-		var lineColor = (parseInt(xPos/step/5) === xPos/step/5) ? segmentColor : defaultLineColor;
-		this.line([center.x - xPos, 0], [center.x - xPos, sizeVector.y], lineColor);
-	}
-
-	for(var xPos = step; center.x + xPos < sizeVector.x; xPos+=step){
-		var lineColor = (parseInt(xPos/step/5) === xPos/step/5) ? segmentColor : defaultLineColor;
-		this.line([center.x + xPos, 0],[center.x + xPos, sizeVector.y], lineColor);
+		for (let xPos = step; center.x + xPos < sizeVector.x; xPos += step) {
+			let lineColor = (Math.floor(xPos / step / 5) === xPos / step / 5) ? segmentColor : defaultLineColor;
+			this.line([center.x + xPos, 0], [center.x + xPos, sizeVector.y], lineColor);
+		}
 	}
 }
-
-export default Grid;

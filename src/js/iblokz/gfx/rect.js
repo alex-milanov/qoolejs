@@ -1,138 +1,131 @@
-"use strict";
-
 import Vector2 from './vector2';
 
-var Rect = function(x, y, width, height) {
-	this.x = x;
-	this.y = y;
-	this.width = width;
-	this.height = height;
-}
-
-Rect.prototype.set = function(x, y, width, height) {
-	this.x = x;
-	this.y = y;
-	this.width = width;
-	this.height = height;
-	return this;
-}
-
-Rect.prototype.setStart = function(start){
-	this.x = start.x;
-	this.y = start.y;
-	return this;
-}
-
-Rect.prototype.getStart = function(){
-	var start = new Vector2();
-	start.x = this.x;
-	start.y = this.y;
-	return start;
-}
-
-
-Rect.prototype.setEnd = function(end){
-	this.width = end.x - this.x;
-	this.height = end.y - this.y;
-	return this;
-}
-
-Rect.prototype.getEnd = function(){
-	var end = new Vector2();
-	end.x = this.x + this.width;
-	end.y = this.y + this.height;
-	return end;
-}
-
-
-Rect.prototype.getSize = function(){
-	var end = new Vector2();
-	end.x = this.width;
-	end.y = this.height;
-	return end;
-}
-
-Rect.prototype.fromVectors = function(a, b){
-
-	if(a.x <= b.x){
-		this.x = a.x;
-		this.width = b.x - a.x;
-	} else {
-		this.x = b.x;
-		this.width = a.x - b.x;
+export default class Rect {
+	constructor(x, y, width, height) {
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
 	}
 
-	if(a.y <= b.y){
-		this.y = a.y;
-		this.height = b.y - a.y;
-	} else {
-		this.y = b.y;
-		this.height = a.y - b.y;
+	set(x, y, width, height) {
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		return this;
 	}
 
-	return this;
-}
+	setStart(start) {
+		this.x = start.x;
+		this.y = start.y;
+		return this;
+	}
 
-Rect.prototype.pan = function(v) {
-	var start = this.getStart();
-	start.add(v);
-	this.setStart(start);
-	return this;
-}
+	getStart() {
+		var start = new Vector2();
+		start.x = this.x;
+		start.y = this.y;
+		return start;
+	}
 
-Rect.prototype.resize = function(v) {
-	var end = this.getEnd();
-	end.add(v);
-	this.setEnd(end);
-	return this;
-}
+	setEnd(end) {
+		this.width = end.x - this.x;
+		this.height = end.y - this.y;
+		return this;
+	}
 
-Rect.prototype.containsVector = function(v){
-	if((v.x >= this.x && v.x <= this.x+this.width)
-		&& (v.y >= this.y && v.y <= this.y+this.height)){
-		return true;
-	} else {
+	getEnd() {
+		var end = new Vector2();
+		end.x = this.x + this.width;
+		end.y = this.y + this.height;
+		return end;
+	}
+
+	getSize() {
+		var end = new Vector2();
+		end.x = this.width;
+		end.y = this.height;
+		return end;
+	}
+
+	fromVectors(a, b) {
+		if (a.x <= b.x) {
+			this.x = a.x;
+			this.width = b.x - a.x;
+		} else {
+			this.x = b.x;
+			this.width = a.x - b.x;
+		}
+
+		if (a.y <= b.y) {
+			this.y = a.y;
+			this.height = b.y - a.y;
+		} else {
+			this.y = b.y;
+			this.height = a.y - b.y;
+		}
+
+		return this;
+	}
+
+	pan(v) {
+		var start = this.getStart();
+		start.add(v);
+		this.setStart(start);
+		return this;
+	}
+
+	resize(v) {
+		var end = this.getEnd();
+		end.add(v);
+		this.setEnd(end);
+		return this;
+	}
+
+	containsVector(v) {
+		if ((v.x >= this.x && v.x <= this.x + this.width)
+			&& (v.y >= this.y && v.y <= this.y + this.height)) {
+			return true;
+		}
 		return false;
 	}
-}
 
-Rect.prototype.containsRect = function(rect){
-	var start = this.getStart();
-	var end = this.getEnd();
-	if((start.x <= rect.x && rect.x+rect.width <= end.x)
-		&& (start.y <= rect.y && rect.y+rect.height <= end.y)) {
-		return true;
-	} else {
+	containsRect(rect) {
+		var start = this.getStart();
+		var end = this.getEnd();
+		if ((start.x <= rect.x && rect.x + rect.width <= end.x)
+			&& (start.y <= rect.y && rect.y + rect.height <= end.y)) {
+			return true;
+		}
 		return false;
 	}
-}
 
-Rect.prototype.contains = function(obj){
-	if(obj instanceof Rect){
-		return this.containsRect(obj);
+	contains(obj) {
+		if (obj instanceof Rect) {
+			return this.containsRect(obj);
+		}
+		if (obj instanceof Vector2) {
+			return this.containsVector(obj);
+		}
+		return false;
 	}
-	if(obj instanceof Vector2){
-		return this.containsVector(obj);
+
+	copy(rect) {
+		this.x = rect.x || this.x;
+		this.y = rect.y || this.y;
+		this.width = rect.width || this.width;
+		this.height = rect.height || this.height;
+
+		return this;
 	}
-	return false;
+
+	clone() {
+		var newRect = new Rect();
+		newRect.x = this.x;
+		newRect.y = this.y;
+		newRect.width = this.width;
+		newRect.height = this.height;
+		return newRect;
+	}
 }
-
-Rect.prototype.copy = function(rect){
-	this.x = rect.x || this.x;
-	this.y = rect.y || this.y;
-	this.width = rect.width || this.width;
-	this.height = rect.height || this.height;
-
-	return this;
-}
-
-Rect.prototype.clone = function(){
-	var newRect = new Rect();
-	newRect.x = this.x;
-	newRect.y = this.y;
-	newRect.width = this.width;
-	newRect.height = this.height;
-	return newRect;
-}
-
-export default Rect;

@@ -9,13 +9,13 @@ import Canvas from './gui/canvas';
 import Grid from './gui/grid';
 
 export default {
-  gfx: {
-    Rect,
-    Vector2
-  },
-  gui: {
-    Element,
-    Canvas,
-    Grid
-  }
-}
+	gfx: {
+		Rect,
+		Vector2
+	},
+	gui: {
+		Element,
+		Canvas,
+		Grid
+	}
+};
