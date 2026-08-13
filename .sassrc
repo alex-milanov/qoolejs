@@ -1,0 +1,3 @@
+{
+  "includePaths": ["src/sass", "node_modules", "node_modules/font-awesome/scss"]
+}

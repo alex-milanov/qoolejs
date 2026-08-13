@@ -1,20 +1,21 @@
 {
-	"env": {
-		"es6": true,
-		"browser": true,
-		"node": true
-	},
-	"extends": "google",
-	"rules": {
-		"indent": ["error", "tab", {"SwitchCase": 1}],
-		"max-len": ["warn", 120, {"tabWidth": 2}],
-		"no-nested-ternary": 0,
-		"operator-linebreak": ["error", "after", { "overrides": { "?": "before", ":": "before", "&&": "before", "||": "before" } }],
-		"no-return-assign": ["error", "except-parens"],
-		"no-sequences": 0,
-		"dot-notation": 0,
-		"no-negated-condition": 0,
-		"no-unused-vars": 0,
-		"no-unmodified-loop-condition": 0
-	}
+  "root": true,
+  "env": {
+    "browser": true,
+    "es2022": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "globals": {
+    "module": "readonly"
+  },
+  "plugins": ["iblokz-style"],
+  "rules": {
+    "iblokz-style/prefer-const-bindings": "warn",
+    "iblokz-style/no-mutate-const": "warn"
+  },
+  "ignorePatterns": ["node_modules/"]
 }
