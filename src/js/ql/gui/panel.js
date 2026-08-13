@@ -1,6 +1,7 @@
 'use strict';
 
-import {Observable as $} from 'rx';
+import { fromEvent } from 'rxjs';
+import { map } from 'rxjs/operators';
 import Element from './element';
 
 export default class Panel extends Element {
@@ -35,9 +36,9 @@ export default class Panel extends Element {
 			if (entity.selected) el.classList.add("selected");
 
 			if (entity.type === "Mesh") {
-				$.fromEvent(el, 'click').map(() =>
+				fromEvent(el, 'click').pipe(map(() =>
 					context.select(Number(el.getAttribute("data-obj-id")))
-				).subscribe();
+				)).subscribe();
 			}
 
 			switch (entity.type) {

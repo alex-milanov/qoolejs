@@ -1,57 +1,47 @@
-'use strict';
+import { createState, dispatch } from 'iblokz-state';
+import { patchStream } from 'iblokz-snabbdom-helpers';
+import { toVNode } from 'snabbdom';
+import { map } from 'rxjs';
 
-// lib
-const Rx = require('rx');
-const $ = Rx.Observable;
+import actionsTree from './actions';
+import ui from './ui';
+import QL from './ql';
 
-// iblokz
-const vdom = require('iblokz-snabbdom-helpers');
-const {obj, arr} = require('iblokz-data');
-
-// legacy code
-const QL = require('./ql').default;
-
-// app
-const app = require('./util/app');
-let actions = app.adapt(require('./actions'));
+let { actions, state$ } = createState(actionsTree);
 window.actions = actions;
-let ui = require('./ui');
-let actions$;
-
-// hot reloading
-if (module.hot) {
-	// actions
-	actions$ = $.fromEventPattern(
-    h => module.hot.accept("./actions", h)
-	).flatMap(() => {
-		actions = app.adapt(require('./actions'));
-		return actions.stream.startWith(state => state);
-	}).merge(actions.stream);
-	// ui
-	module.hot.accept("./ui", function() {
-		ui = require('./ui');
-		actions.stream.onNext(state => state);
-	});
-} else {
-	actions$ = actions.stream;
-}
-
-// actions -> state
-const state$ = actions$
-	.startWith(() => actions.initial)
-	.scan((state, change) => change(state), {})
-	.map(state => (console.log(state), state))
-	.publish();
-
-// hooks
-state$.take(1).delay(300).subscribe(state => {
-  // legacy init
-	const editor = new QL.gui.Editor(state.views, state.entities);
-	editor.init();
-});
 
 // state -> ui
-const ui$ = state$.map(state => ui({state, actions}));
-vdom.patchStream(ui$, '.gui');
+let vnode$ = state$.pipe(map(state => ui({ state, actions })));
+let patchSubscription = patchStream(vnode$, toVNode(document.body));
 
-state$.connect();
+// legacy editor after layout (double rAF = after paint)
+const bootEditor = () => {
+	const el = document.querySelector('#view-tr');
+	if (!el || el.clientWidth === 0) {
+		requestAnimationFrame(bootEditor);
+		return;
+	}
+	if (window.editor) return;
+	try {
+		const state = state$.getValue();
+		const editor = new QL.gui.Editor(state.views, state.entities);
+		editor.init();
+		window.editor = editor;
+	} catch (err) {
+		console.error('QL editor init failed', err);
+	}
+};
+requestAnimationFrame(() => requestAnimationFrame(bootEditor));
+
+if (module.hot) {
+	module.hot.dispose(function(data) {
+		data.state = state$.getValue();
+		patchSubscription.unsubscribe();
+		state$.complete();
+		window.editor = null;
+		document.body.innerHTML = document.body.innerHTML;
+	});
+	module.hot.accept(function() {
+		dispatch(() => module.hot.data.state);
+	});
+}

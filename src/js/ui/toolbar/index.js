@@ -1,12 +1,7 @@
-'use strict';
-
-// dom
-const {
-  section, div, span, a, p, ul, li, i,
-  form, input, button, canvas, img
-} = require('iblokz-snabbdom-helpers');
-const {obj, str, fn} = require('iblokz-data');
-// components
+import {
+	section, div, a, i, img
+} from 'iblokz-snabbdom-helpers';
+import { str, fn } from 'iblokz-data';
 
 const leftBarTools = [
 	{
@@ -57,12 +52,14 @@ const leftBarTools = [
 	}
 ];
 
-module.exports = ({state, actions}) => section('.toolbar', [
+export default ({ state, actions }) => section('.toolbar', [
 	div('.logo', 'QooleJS'),
-	a('.panel-toggle.fa.fa-bars.toggled', {attrs: {
-		'data-toggle-ref': '.panel.left',
-		'data-toggle-class': 'opened'
-	}}),
+	a('.panel-toggle.fa.fa-bars.toggled', {
+		attrs: {
+			'data-toggle-ref': '.panel.left',
+			'data-toggle-class': 'opened'
+		}
+	}),
 	div('.left-bar', leftBarTools.map(tool => fn.switch(tool.type, {
 		default: () => '',
 		splitter: () => div('.splitter'),
@@ -73,39 +70,14 @@ module.exports = ({state, actions}) => section('.toolbar', [
 			attrs: {
 				'data-option-param': tool.param,
 				'data-option-value': tool.value,
-				'title': `${tool.title} [${tool.shortkey}]`
+				title: `${tool.title} [${tool.shortkey}]`
 			}
 		}, img(`[src="img/icons/${tool.value}.png"]`)),
 		trigger: () => a(`.${str.fromCamelCase(tool.method, '-')}-trigger`, {
 			attrs: {
 				'data-trigger-method': tool.method,
-				'title': `${tool.title} [${tool.shortkey}]`
+				title: `${tool.title} [${tool.shortkey}]`
 			}
 		}, i(tool.icon))
 	})()))
-  /*
-  .right-bar
-    a.undo-trigger(
-      data-trigger-method='undo',
-      title='Undo [Ctrl+Z]'
-    ): i.fa.fa-undo
-    a.redo-trigger(
-      data-trigger-method='redo',
-      title='Redo [Ctrl+Y]'
-    ): i.fa.fa-repeat
-    .splitter
-    a.debug-toggle(
-      data-toggle-ref='.debug-info',
-      data-toggle-class='visible',
-      data-toggle-param='debug',
-      title='Debug [D]'
-    ): i.fa.fa-bug
-    span.debug-info
-      input.indexes(type='number',placeholder='Indexes',value='-1')
-    //- a.fullscreen-toggle(
-    //- 	data-toggle-ref='.views',
-    //- 	data-toggle-class='fullscreen'
-    //- ) [F]ull Screen
-    .debug-keys.fa.fa-keyboard-o
-  */
 ]);

@@ -12,17 +12,23 @@ importers:
         specifier: ^4.7.0
         version: 4.7.0
       iblokz-data:
-        specifier: ^1.0.2
-        version: 1.5.0
+        specifier: ^1.6.0
+        version: 1.6.0
       iblokz-snabbdom-helpers:
-        specifier: ^1.0.0
-        version: 1.2.0
+        specifier: ^2.0.0
+        version: 2.0.0
+      iblokz-state:
+        specifier: ^1.1.0
+        version: 1.1.0
       lodash:
         specifier: ^4.13.1
         version: 4.17.21
-      rx:
-        specifier: ^4.1.0
-        version: 4.1.0
+      rxjs:
+        specifier: ^7.8.2
+        version: 7.8.2
+      snabbdom:
+        specifier: ^3.6.4
+        version: 3.6.4
       three:
         specifier: ^0.78.0
         version: 0.78.0
@@ -998,15 +1004,20 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  html-tags@2.0.0:
-    resolution: {integrity: sha512-+Il6N8cCo2wB/Vd3gqy/8TZhTD3QvcVeQLCnZiGkGCH3JP28IgGAY41giccp2W4R3jfyJPAP318FQTa1yU7K7g==}
-    engines: {node: '>=4'}
+  html-tags@5.1.0:
+    resolution: {integrity: sha512-n6l5uca7/y5joxZ3LUePhzmBFUJ+U2YWzhMa8XUTecSeSlQiZdF5XAd/Q3/WUl0VsXgUwWi8I7CNIwdI5WN1SQ==}
+    engines: {node: '>=20.10'}
 
-  iblokz-data@1.5.0:
-    resolution: {integrity: sha512-sHVuC0rug72Buhyt7Bv8SbznYf+LBpCMYl7WJ+8R374GNe/9zCoi0TaJUUt22qaCEYqlITux+rkAh5XpsTcM3g==}
+  iblokz-data@1.6.0:
+    resolution: {integrity: sha512-et1dywi4DKKnhjpWvXg06bnvrsN+ajP6GKRPr4zcZy2kOv7kocOTWkRv81NWPwutJIqsDPx3VGXR7V0SIUHEhA==}
 
-  iblokz-snabbdom-helpers@1.2.0:
-    resolution: {integrity: sha512-To06xZ0GiS8XACpAoYRZOXpPpgPS2ZD6ZCU3gbVcGGLGmJtO7xSpH0XzNLqeat185ck2R1Utco6voZB54PIwhA==}
+  iblokz-snabbdom-helpers@2.0.0:
+    resolution: {integrity: sha512-nEUHpwozouDXU+7nafFpVX27HHkUcNZGeFG8spCyKqYIfbn9SEUYU4Bbv0j3qM0i9kmoF8xjC3wPOT8V8jWVKA==}
+    engines: {node: '>=18.12.0'}
+
+  iblokz-state@1.1.0:
+    resolution: {integrity: sha512-fg+NSfy4w/3vi/qRttLBoQCTUE2IEqiOZbeZ6fXFABM0TsC1bMmvTOoMyXlS2QZD9hNGekmweMiqKSyLgOf5xQ==}
+    engines: {node: '>=18.12.0'}
 
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
@@ -1352,8 +1363,8 @@ packages:
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
 
-  rx@4.1.0:
-    resolution: {integrity: sha512-CiaiuN6gapkdl+cZUr67W6I8jquN4lkak3vtIsIWCl4XIPP8ffsoyN6/+PuGXnQy8Cu8W2y9Xxh31Rq4M6wUug==}
+  rxjs@7.8.2:
+    resolution: {integrity: sha512-dhKf903U/PQZY6boNNtAGdWbG85WAbjT/1xYoZIC7FAY0yWapOBQVsVrDl58W86//e1VpMNBtRV4MaXfdMySFA==}
 
   safe-buffer@5.2.1:
     resolution: {integrity: sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==}
@@ -1380,8 +1391,9 @@ packages:
     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
     engines: {node: '>=8'}
 
-  snabbdom@0.6.9:
-    resolution: {integrity: sha512-5Xe3jlmBflyDQGfo/9f7NhCI8fq7kwtn2goqzG/1mrFcbMSRF6muuAeXBEXsK3lnAXKc/QO8MccBpOcdVYVE9A==}
+  snabbdom@3.6.4:
+    resolution: {integrity: sha512-VmxEfuw1/Y/eFj5VtMhYnukExpYiPkNzoo3+N3qwAOUDMl8wXgbli5ebR+j0knE3lZ/0eYskLxNcX64uy10N9w==}
+    engines: {node: '>=12.17.0'}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -2638,15 +2650,21 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  html-tags@2.0.0: {}
+  html-tags@5.1.0: {}
 
-  iblokz-data@1.5.0: {}
+  iblokz-data@1.6.0: {}
 
-  iblokz-snabbdom-helpers@1.2.0:
+  iblokz-snabbdom-helpers@2.0.0:
     dependencies:
-      html-tags: 2.0.0
-      iblokz-data: 1.5.0
-      snabbdom: 0.6.9
+      html-tags: 5.1.0
+      iblokz-data: 1.6.0
+      rxjs: 7.8.2
+      snabbdom: 3.6.4
+
+  iblokz-state@1.1.0:
+    dependencies:
+      iblokz-data: 1.6.0
+      rxjs: 7.8.2
 
   ignore@5.3.2: {}
 
@@ -3005,7 +3023,9 @@ snapshots:
     dependencies:
       queue-microtask: 1.2.3
 
-  rx@4.1.0: {}
+  rxjs@7.8.2:
+    dependencies:
+      tslib: 2.8.1
 
   safe-buffer@5.2.1: {}
 
@@ -3034,7 +3054,7 @@ snapshots:
 
   shebang-regex@3.0.0: {}
 
-  snabbdom@0.6.9: {}
+  snabbdom@3.6.4: {}
 
   source-map-js@1.2.1: {}
 

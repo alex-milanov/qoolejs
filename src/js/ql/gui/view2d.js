@@ -1,4 +1,4 @@
-import {Observable as $} from 'rx';
+import { fromEvent } from 'rxjs';
 
 import iblokz from '../../iblokz';
 import ext from '../ext';
@@ -115,21 +115,21 @@ export default class View2D extends Element {
 		};
 
 		// mouse move
-		$.fromEvent(dom, 'mousedown').subscribe(ev => {
+		fromEvent(dom, 'mousedown').subscribe(ev => {
 			_view.interaction.status = "mousedown";
 			_view.interaction.start.set(ev.offsetX, ev.offsetY);
 			_view.interaction.last.set(0, 0);
 			_view.interaction.button = ev.button;
 		});
 
-		$.fromEvent(dom, 'touchstart').subscribe(ev => {
+		fromEvent(dom, 'touchstart').subscribe(ev => {
 			var e = ev.originalEvent;
 			_view.interaction.status = "mousedown";
 			_view.interaction.start.set(e.touches[0].clientX, e.touches[0].clientY);
 			_view.interaction.last.set(0, 0);
 		});
 
-		$.fromEvent(dom, 'mousemove').subscribe(ev => {
+		fromEvent(dom, 'mousemove').subscribe(ev => {
 			if (["mousedown", "mousemove"].indexOf(_view.interaction.status) > -1) {
 				_view.interaction.status = "mousemove";
 
@@ -186,7 +186,7 @@ export default class View2D extends Element {
 			}
 		});
 
-		$.fromEvent(dom, 'touchmove').subscribe(ev => {
+		fromEvent(dom, 'touchmove').subscribe(ev => {
 			var e = ev.originalEvent;
 			ev.preventDefault();
 			if (["mousedown", "mousemove"].indexOf(_view.interaction.status) > -1) {
@@ -244,7 +244,7 @@ export default class View2D extends Element {
 			}
 		});
 
-		$.fromEvent(dom, 'mouseup').subscribe(ev => {
+		fromEvent(dom, 'mouseup').subscribe(ev => {
 			if (ev.button === 0
 				&& (_view.interaction.status === "mousedown"
 				|| _view.interaction.last.equals(new ext.Vector2(0, 0)))
@@ -261,7 +261,7 @@ export default class View2D extends Element {
 			_editor.refreshObjectPane();
 		});
 
-		$.fromEvent(dom, 'touchend').subscribe(ev => {
+		fromEvent(dom, 'touchend').subscribe(ev => {
 			var e = ev.originalEvent;
 			if (_view.interaction.status === "mousedown"
 				|| _view.interaction.last.equals(new ext.Vector2(0, 0))) {
@@ -280,7 +280,7 @@ export default class View2D extends Element {
 			_editor.refreshObjectPane();
 		});
 
-		$.fromEvent(dom, 'wheel').subscribe(ev => {
+		fromEvent(dom, 'wheel').subscribe(ev => {
 			// console.log(event.originalEvent.deltaX, event.originalEvent.deltaY, event.originalEvent.deltaFactor);
 			if (ev.deltaY < 0 && _view.zoom < 400) {
 				_view.zoom += 12.5;

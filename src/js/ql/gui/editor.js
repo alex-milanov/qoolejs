@@ -1,7 +1,5 @@
 'use strict';
 
-import {Observable as $} from 'rx';
-
 import iblokz from '../../iblokz';
 import ext from '../ext';
 import etc from '../etc';

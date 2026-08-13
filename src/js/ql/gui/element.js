@@ -1,8 +1,9 @@
-import {Observable as $} from 'rx';
+import { fromEvent, merge } from 'rxjs';
+import { map } from 'rxjs/operators';
 
-const onAll = (parent, selector, event) => $.merge(...(
+const onAll = (parent, selector, event) => merge(...(
 	Array.from(parent.querySelectorAll(selector))
-		.map(el => $.fromEvent(el, event).map(ev => [ev, el]))
+		.map(el => fromEvent(el, event).pipe(map(ev => [ev, el])))
 ));
 
 export default class Element {

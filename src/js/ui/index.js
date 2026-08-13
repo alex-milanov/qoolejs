@@ -1,14 +1,10 @@
-'use strict';
+import { body } from 'iblokz-snabbdom-helpers';
+import toolbar from './toolbar';
+import panel from './panel';
+import views from './views';
 
-// dom
-const {form, input, section, button, span, canvas, ul, li} = require('iblokz-snabbdom-helpers');
-// components
-const toolbar = require('./toolbar');
-const panel = require('./panel');
-const views = require('./views');
-
-module.exports = ({state, actions}) => section('.gui', [
-  toolbar({state, actions}),
-  panel({state, actions}),
-  views({state, actions})
+export default ({ state, actions }) => body('.gui', [
+	toolbar({ state, actions }),
+	panel({ state, actions }),
+	views({ state, actions })
 ]);

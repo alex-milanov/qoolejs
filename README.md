@@ -20,7 +20,7 @@ pnpm lint     # Biome + eslint-plugin-iblokz-style
 
 ## Upgrade roadmap
 
-1. **Phase 1 (current):** Parcel build tools  
+1. **Phase 1:** Parcel build tools  
 2. **Phase 2:** Shell stack — iblokz-state, RxJS 7, Snabbdom helpers v2 (no `ql` / Three logic changes)  
-3. **Phase 3:** Single dark/light theme + ide-style resizable panels  
+3. **Phase 3 (next):** Single dark/light theme + ide-style resizable panels  
 4. **Phase 4:** Three.js / `ql` structure (brainstorm when ready)

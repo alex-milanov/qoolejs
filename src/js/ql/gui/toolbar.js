@@ -1,4 +1,4 @@
-import {Observable as $} from 'rx';
+import { fromEvent } from 'rxjs';
 import Element from './element';
 
 export default class Toolbar extends Element {
@@ -11,7 +11,7 @@ export default class Toolbar extends Element {
 		context.indexes = [-1];
 
 		[].slice.call(dom.querySelectorAll('.indexes')).map(el =>
-			$.fromEvent(el, 'change').subscribe(() => {
+			fromEvent(el, 'change').subscribe(() => {
 				context.indexes = el.value.split(",");
 			})
 		);
