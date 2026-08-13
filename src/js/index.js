@@ -1,14 +1,35 @@
 import { createState, dispatch } from 'iblokz-state';
 import { patchStream } from 'iblokz-snabbdom-helpers';
 import { toVNode } from 'snabbdom';
-import { map } from 'rxjs';
+import { map, distinctUntilChanged } from 'rxjs';
 
 import actionsTree from './actions';
 import ui from './ui';
 import QL from './ql';
+import {
+	STORAGE_KEY,
+	serializeTheme,
+	applyDocumentTheme
+} from './util/theme';
 
 let { actions, state$ } = createState(actionsTree);
 window.actions = actions;
+
+applyDocumentTheme(state$.getValue().themeMode);
+
+state$
+	.pipe(
+		map(s => s.themeMode),
+		distinctUntilChanged()
+	)
+	.subscribe(mode => {
+		applyDocumentTheme(mode);
+		try {
+			localStorage.setItem(STORAGE_KEY, serializeTheme(mode));
+		} catch (_) {
+			/* ignore */
+		}
+	});
 
 // state -> ui
 let vnode$ = state$.pipe(map(state => ui({ state, actions })));

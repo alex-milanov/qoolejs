@@ -3,11 +3,50 @@ $ql-toolbar-height: 40px;
 $ql-panel-width: 250px;
 $ql-object-pane-height: 250px;
 
-$ql-toolbar-text-color: #ccc;
-$ql-toolbar-background-color: #333;
+// Dark = current Qoole chrome (default)
+.theme-dark,
+:root {
+	--ql-toolbar-bg: #333;
+	--ql-toolbar-text: #ccc;
+	--ql-toolbar-hover-bg: #444;
+	--ql-toolbar-active-bg: #555;
+	--ql-toolbar-hover-text: #fff;
+	--ql-panel-bg: #999;
+	--ql-panel-text: #000;
+	--ql-panel-surface-1: #888;
+	--ql-panel-surface-2: #777;
+	--ql-panel-input-bg: #777;
+	--ql-panel-input-text: #333;
+	--ql-view-bg: #000;
+	--ql-view-border: #555;
+	--ql-view-selected: #579;
+	--ql-view-toggle: #ccc;
+	--ql-gutter: #666;
+	--ql-gutter-active: #579;
+	--ql-scrollbar-thumb: #ccc;
+	--ql-scrollbar-track: #999;
+	--ql-scrollbar-track-active: #555;
+}
 
-$ql-panel-background-color: #999;
-$ql-panel-text-color: #000;
-
-$ql-panel-object-1-color: #888;
-$ql-panel-object-2-color: #777;
+.theme-light {
+	--ql-toolbar-bg: #e4e4e4;
+	--ql-toolbar-text: #333;
+	--ql-toolbar-hover-bg: #d0d0d0;
+	--ql-toolbar-active-bg: #c0c0c0;
+	--ql-toolbar-hover-text: #111;
+	--ql-panel-bg: #d8d8d8;
+	--ql-panel-text: #222;
+	--ql-panel-surface-1: #c8c8c8;
+	--ql-panel-surface-2: #b8b8b8;
+	--ql-panel-input-bg: #f0f0f0;
+	--ql-panel-input-text: #222;
+	--ql-view-bg: #1a1a1a;
+	--ql-view-border: #aaa;
+	--ql-view-selected: #4682b4;
+	--ql-view-toggle: #666;
+	--ql-gutter: #bbb;
+	--ql-gutter-active: #4682b4;
+	--ql-scrollbar-thumb: #888;
+	--ql-scrollbar-track: #ccc;
+	--ql-scrollbar-track-active: #999;
+}

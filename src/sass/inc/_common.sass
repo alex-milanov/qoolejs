@@ -1,6 +1,29 @@
+html,
 body
-	font-family: $ql-font
+	height: 100%
+	margin: 0
+	padding: 0
 
+body,
+body.gui
+	font-family: $ql-font
+	background: var(--ql-view-bg)
+	color: var(--ql-toolbar-text)
+	overflow: hidden
+
+body.gui
+	display: flex
+	flex-direction: column
+	height: 100vh
+	min-height: 100%
+
+.workspace
+	flex: 1 1 auto
+	display: flex
+	flex-direction: row
+	min-height: 0
+	min-width: 0
+	position: relative
 
 ::-webkit-scrollbar
 	width: 2px
@@ -9,20 +32,20 @@ body
 	width: 0px
 	height: 0px
 ::-webkit-scrollbar-thumb
-	background: #ccc
+	background: var(--ql-scrollbar-thumb)
 	border: 0px none #ffffff
 	border-radius: 50px
 ::-webkit-scrollbar-thumb:hover
-	background: #ffffff
+	background: var(--ql-toolbar-hover-text)
 ::-webkit-scrollbar-thumb:active
-	background: #000000
+	background: var(--ql-panel-text)
 ::-webkit-scrollbar-track
-	background: #999
+	background: var(--ql-scrollbar-track)
 	border: 0px none #ffffff
 	border-radius: 50px
 ::-webkit-scrollbar-track:hover
-	background: #999
+	background: var(--ql-scrollbar-track)
 ::-webkit-scrollbar-track:active
-	background: #555
+	background: var(--ql-scrollbar-track-active)
 ::-webkit-scrollbar-corner
 	background: transparent

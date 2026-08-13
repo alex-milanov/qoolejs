@@ -1,98 +1,75 @@
 .gui {
 	.toolbar {
-		background: $ql-toolbar-background-color;
-		color: $ql-toolbar-text-color;
-		top: 0px;
-		right: 0px;
-		left: 0px;
+		background: var(--ql-toolbar-bg);
+		color: var(--ql-toolbar-text);
+		flex: 0 0 $ql-toolbar-height;
 		height: $ql-toolbar-height;
-		position: absolute;
+		display: flex;
+		align-items: stretch;
+		position: relative;
+		z-index: 10;
 		font-size: 18px;
-		> *, a {
-			display: inline-block;
-			height: $ql-toolbar-height;
-			line-height: $ql-toolbar-height;
-			margin: 0px;
-			padding: 0px;
-			position: absolute;
-			top: 0px;
-			img {
-				height: $ql-toolbar-height;
-				margin: 0px;
-				padding: 0px;
-				vertical-align: top;
-			}
-		}
-		.splitter {
-			display: inline-block;
-			width: 40px;
-		}
+		user-select: none;
+
 		.logo {
 			font-size: 24px;
 			font-family: $ql-font;
 			font-weight: 600;
-			left: 40px;
-		}
-		a {
-			min-width: 30px;
-			text-align: center;
-			cursor: pointer;
-			position: relative;
-			&:hover {
-				color: #fff;
-				background: #444;
-			}
-			&.selected, &.toggled {
-				color: #fff;
-				background: #555;
-			}
-		}
-		
-		.debug-keys {
-			display: inline-block;
 			height: $ql-toolbar-height;
 			line-height: $ql-toolbar-height;
-			width: 120px;
-			margin: 0px;
-			padding: 0px 10px;
+			padding: 0 12px 0 4px;
+			flex: 0 0 auto;
 		}
-		.debug-toggle {
-			padding: 0px 5px;
-		}
-		.debug-info {
+
+		.splitter {
 			display: inline-block;
-			margin: 0px;
-			padding: 0px;
-			display: none;
-			.indexes {
-				display: inline-block;
+			width: 24px;
+			flex: 0 0 auto;
+		}
+
+		a {
+			min-width: 30px;
+			height: $ql-toolbar-height;
+			line-height: $ql-toolbar-height;
+			text-align: center;
+			cursor: pointer;
+			display: inline-block;
+			flex: 0 0 auto;
+			img {
 				height: $ql-toolbar-height;
-				line-height: $ql-toolbar-height;
-				width: 50px;
-				padding: 0px 5px;
-				border: 0px;
-				background: #444;
-				font-size: 14px;
-				color: #aaa;
-				outline: none;
-				margin: 0px;
-				padding: 0px;
+				margin: 0;
+				padding: 0;
+				vertical-align: top;
+			}
+			&:hover {
+				color: var(--ql-toolbar-hover-text);
+				background: var(--ql-toolbar-hover-bg);
+			}
+			&.selected, &.toggled {
+				color: var(--ql-toolbar-hover-text);
+				background: var(--ql-toolbar-active-bg);
 			}
 		}
-		.visible {
-			display: inline-block;
-		}
+
 		.panel-toggle {
-			left: 0px;
+			width: 40px;
 		}
+
 		.left-bar {
-			left: $ql-panel-width;
+			display: flex;
+			align-items: stretch;
+			flex: 0 0 auto;
 		}
+
 		.right-bar {
-			right: 0px;
+			margin-left: auto;
+			display: flex;
+			align-items: stretch;
+			padding-right: 4px;
 		}
-		.fullscreen-toggle {
-			width: 100px;
+
+		.theme-toggle {
+			width: 40px;
 		}
 	}
 }

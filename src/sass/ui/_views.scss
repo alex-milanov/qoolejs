@@ -1,27 +1,58 @@
 .gui {
 	.views {
 		user-select: none;
-		position: absolute;
-		top: $ql-toolbar-height;
-		bottom: 0px;
-		right: 0px;
-		left: 0px;
+		position: relative;
+		flex: 1 1 auto;
+		min-width: 0;
+		min-height: 0;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		--views-x: 0.5;
+		--views-y: 0.5;
+
+		.views-row {
+			display: flex;
+			flex-direction: row;
+			min-width: 0;
+			min-height: 0;
+
+			&--top {
+				flex: var(--views-y) 1 0%;
+			}
+			&--bottom {
+				flex: calc(1 - var(--views-y)) 1 0%;
+			}
+		}
+
 		.view {
-			width: 50%;
-			height: 50%;
-			border:1px solid rgba(128,128,128,0);
+			position: relative;
+			min-width: 0;
+			min-height: 0;
+			height: 100%;
+			border: 1px solid transparent;
 			box-sizing: border-box;
+			background: var(--ql-view-bg);
+			overflow: hidden;
+
+			&.view--left {
+				flex: var(--views-x) 1 0%;
+			}
+			&.view--right {
+				flex: calc(1 - var(--views-x)) 1 0%;
+			}
+
 			.fullscreen-toggle {
 				position: absolute;
-				top: 0px;
-				right: 0px;
+				top: 0;
+				right: 0;
 				z-index: 104;
 				width: 35px;
 				height: 35px;
 				line-height: 35px;
 				font-size: 18px;
 				text-align: center;
-				color: #ccc;
+				color: var(--ql-view-toggle);
 				opacity: 0.5;
 				cursor: pointer;
 				&:hover {
@@ -29,52 +60,45 @@
 				}
 			}
 			&.selected {
-				border-color: #579!important;
-				border-size: 1px;
+				border-color: var(--ql-view-selected) !important;
 				box-sizing: border-box;
 			}
-			background: #000;
-			position: absolute;
+
 			&#view-tl {
-				top: 0px;
-				left: 0px;
-				border-left-color: #555;
-				border-bottom-color: #555;
+				border-right-color: transparent;
+				border-bottom-color: transparent;
 			}
 			&#view-tr {
-				top: 0px;
-				right: 0px;
-				box-sizing: inherit;
-				border: 0px;
+				border: 0;
 			}
 			&#view-bl {
-				bottom: 0px;
-				left: 0px;
-				border-right-color: #555;
-				border-top-color: #555;
+				border-right-color: transparent;
+				border-top-color: transparent;
 			}
 			&#view-br {
-				bottom: 0px;
-				right: 0px;
-				border-left-color: #555;
-				border-top-color: #555;
+				border-left-color: transparent;
+				border-top-color: transparent;
 			}
+
+			/* Position against .views (not the flex row) so fullscreen fills the workspace */
 			&.fullscreen {
-				top: 0px;
-				left: 0px;
-				right: 0px;
-				bottom: 0px;
-				width: 100%;
-				height: 100%;
-				border-width: 0px;
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				width: auto !important;
+				height: auto !important;
+				flex: none !important;
+				border-width: 0;
 				z-index: 200;
 			}
 			canvas {
 				position: absolute;
-				top: 0px;
-				bottom: 0px;
-				left: 0px;
-				right: 0px;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
 				width: 100%;
 				height: 100%;
 				&.grid-layer {
@@ -92,9 +116,7 @@
 				&.indicators-layer {
 					z-index: 103;
 				}
-
 			}
 		}
-
 	}
 }

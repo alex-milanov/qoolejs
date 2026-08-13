@@ -31,9 +31,12 @@ const objProps = [
 	}
 ];
 
-export default ({ state, actions }) => section('.panel.left', {
+export default ({ state, actions, width = 250 }) => section('.panel.left', {
 	class: {
-		opened: true
+		opened: !!state.sideBar
+	},
+	style: {
+		width: state.sideBar ? `${width}px` : '0px'
 	}
 }, [
 	section('#object-pane.pane', [

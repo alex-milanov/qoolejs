@@ -1,6 +1,11 @@
 import { obj } from 'iblokz-data';
+import { getInitialThemeMode } from '../util/theme';
+import { loadLayout, saveLayout, clampLayout } from '../util/layout';
 
 export const initial = {
+	themeMode: getInitialThemeMode(),
+	sideBar: true,
+	layout: loadLayout(),
 	views: {
 		tl: {
 			dom: '#view-tl',
@@ -144,10 +149,23 @@ export const initial = {
 };
 
 export const set = (key, value) => state => obj.patch(state, key, value);
-export const toggle = key => state => obj.patch(state, key, obj.sub(state, key));
+export const toggle = key => state => obj.patch(state, key, !obj.sub(state, key));
+
+export const toggleTheme = () => state => obj.patch(
+	state,
+	'themeMode',
+	state.themeMode === 'light' ? 'dark' : 'light'
+);
+
+export const setLayout = patch => state => {
+	const layout = saveLayout({ ...(state.layout || {}), ...patch });
+	return obj.patch(state, 'layout', clampLayout(layout));
+};
 
 export default {
 	initial,
 	set,
-	toggle
+	toggle,
+	toggleTheme,
+	setLayout
 };

@@ -1,0 +1,46 @@
+.split-gutter
+	flex: 0 0 auto
+	background: var(--ql-gutter)
+	position: relative
+	z-index: 5
+	transition: background-color .15s ease
+
+	&::after
+		content: ''
+		position: absolute
+		inset: 0
+
+	&:hover,
+	body.is-resizing-x &,
+	body.is-resizing-y &
+		background: var(--ql-gutter-active)
+
+	&.hidden
+		display: none
+
+	&--x
+		width: 4px
+		margin: 0 -1px
+		cursor: col-resize
+		&::after
+			left: -3px
+			right: -3px
+
+	&--y
+		height: 4px
+		margin: -1px 0
+		cursor: row-resize
+		width: 100%
+		&::after
+			top: -3px
+			bottom: -3px
+
+body.is-resizing-x,
+body.is-resizing-x *
+	cursor: col-resize !important
+	user-select: none !important
+
+body.is-resizing-y,
+body.is-resizing-y *
+	cursor: row-resize !important
+	user-select: none !important
