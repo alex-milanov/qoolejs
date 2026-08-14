@@ -26,6 +26,19 @@ export default class Element {
 		// impl toggleable interraction with data attributes
 		onAll(this.dom, '[class*=\'-toggle\']', 'click')
 			.subscribe(([ev, el]) => {
+				// Fullscreen is owned by the editor so selection + exclusive FS stay in sync
+				if (el.classList.contains('fullscreen-toggle')) {
+					ev.preventDefault();
+					const editor = context.editor || context;
+					const refSel = el.getAttribute('data-toggle-ref');
+					const refEl = refSel && document.querySelector(refSel);
+					const view = editor.views && editor.views.find(v => v.dom === refEl);
+					if (view && typeof editor.toggleFullscreen === 'function') {
+						editor.toggleFullscreen(view);
+					}
+					return;
+				}
+
 				el.classList.toggle('toggled');
 				let toggleRefEl = document.querySelector(el.getAttribute('data-toggle-ref'));
 				let toggleClass = el.getAttribute('data-toggle-class');

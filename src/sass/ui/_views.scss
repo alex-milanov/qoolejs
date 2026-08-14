@@ -46,7 +46,7 @@
 				position: absolute;
 				top: 0;
 				right: 0;
-				z-index: 104;
+				z-index: 106;
 				width: 35px;
 				height: 35px;
 				line-height: 35px;
@@ -60,8 +60,22 @@
 				}
 			}
 			&.selected {
-				border-color: var(--ql-view-selected) !important;
-				box-sizing: border-box;
+				.fullscreen-toggle {
+					opacity: 0.9;
+					color: var(--ql-view-selected);
+				}
+
+				/* Overlay above canvases (inset box-shadow sits under them) */
+				&::after {
+					content: '';
+					position: absolute;
+					inset: 0;
+					z-index: 105;
+					pointer-events: none;
+					box-sizing: border-box;
+					// border: 2px solid var(--ql-view-selected);
+					box-shadow: inset 0 0 3px 1px var(--ql-view-selected);
+				}
 			}
 
 			&#view-tl {

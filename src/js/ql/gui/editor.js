@@ -269,7 +269,7 @@ export default class Editor extends Element {
 				}
 
 				if (keyCode === "F".charCodeAt(0)) {
-					_editor.activeView.dom.querySelector(".fullscreen-toggle").click();
+					_editor.toggleFullscreen();
 					keyCombo = "F";
 				}
 
@@ -399,8 +399,29 @@ export default class Editor extends Element {
 		this.activeView.dom.classList.add('selected');
 	}
 
+	toggleFullscreen(view) {
+		const target = view || this.activeView;
+		if (!target) return;
+
+		this.selectView(target);
+		const entering = !target.dom.classList.contains('fullscreen');
+
+		this.views.forEach(v => {
+			const on = entering && v === target;
+			const btn = v.dom.querySelector('.fullscreen-toggle');
+			v.dom.classList.toggle('fullscreen', on);
+			if (btn) {
+				btn.classList.toggle('toggled', on);
+				btn.classList.toggle('fa-compress', on);
+				btn.classList.toggle('fa-expand', !on);
+			}
+		});
+	}
+
 	selectNextView(direction) {
 		var index = this.views.indexOf(this.activeView);
+		const wasFullscreen = this.activeView
+			&& this.activeView.dom.classList.contains('fullscreen');
 
 		index += direction;
 
@@ -410,7 +431,21 @@ export default class Editor extends Element {
 			index = this.views.length - 1;
 		}
 
-		this.selectView(this.views[index]);
+		const next = this.views[index];
+		this.selectView(next);
+
+		if (wasFullscreen) {
+			this.views.forEach(v => {
+				const on = v === next;
+				const btn = v.dom.querySelector('.fullscreen-toggle');
+				v.dom.classList.toggle('fullscreen', on);
+				if (btn) {
+					btn.classList.toggle('toggled', on);
+					btn.classList.toggle('fa-compress', on);
+					btn.classList.toggle('fa-expand', !on);
+				}
+			});
+		}
 	}
 
 	select(_objId) {

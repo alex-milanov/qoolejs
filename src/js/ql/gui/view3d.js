@@ -81,6 +81,97 @@ export default class View3D extends Element {
 
 		// this.renderer.shadowMap.cullFace = THREE.CullFaceBack;
 		// this.renderer.shadowMap.enabled = true;
+
+		this.selectionHelper = null;
+		this._selectionId = null;
+		this._selectionMode = null;
+		this._selectionFaceId = null;
+		this._selectionFacePrev = null;
+	}
+
+	selectionColor() {
+		switch (this.editor.params['obj-mode']) {
+			case 'scale':
+				return 0xDCDC33;
+			case 'rotate':
+				return 0x33DC33;
+			case 'move':
+			default:
+				return 0xDC3333;
+		}
+	}
+
+	clearSelectionFaces() {
+		if (this._selectionFaceId == null) return;
+		const prev = this.scene.getObjectById(this._selectionFaceId);
+		if (prev && prev.material && this._selectionFacePrev) {
+			prev.material.opacity = this._selectionFacePrev.opacity;
+			prev.material.transparent = this._selectionFacePrev.transparent;
+		}
+		this._selectionFaceId = null;
+		this._selectionFacePrev = null;
+	}
+
+	applySelectionFaces(mesh) {
+		if (this._selectionFaceId === mesh.id) return;
+		this.clearSelectionFaces();
+		this._selectionFacePrev = {
+			opacity: mesh.material.opacity,
+			transparent: mesh.material.transparent
+		};
+		mesh.material.transparent = true;
+		mesh.material.opacity = 0.9;
+		this._selectionFaceId = mesh.id;
+	}
+
+	clearSelectionHelper() {
+		this.clearSelectionFaces();
+		if (this.selectionHelper) {
+			this.scene.remove(this.selectionHelper);
+			if (this.selectionHelper.geometry) this.selectionHelper.geometry.dispose();
+			if (this.selectionHelper.material) this.selectionHelper.material.dispose();
+			this.selectionHelper = null;
+		}
+		this._selectionId = null;
+		this._selectionMode = null;
+	}
+
+	updateSelectionHelper() {
+		const selected = this.scene.selected;
+		const selectedId = selected && selected.type === 'Mesh' ? selected.id : null;
+		const mode = this.editor.params['obj-mode'];
+
+		if (!selectedId) {
+			this.clearSelectionHelper();
+			return;
+		}
+
+		this.applySelectionFaces(selected);
+
+		if (this._selectionId !== selectedId || this._selectionMode !== mode) {
+			// Rebuild edges only; keep face opacity via applySelectionFaces above
+			if (this.selectionHelper) {
+				this.scene.remove(this.selectionHelper);
+				if (this.selectionHelper.geometry) this.selectionHelper.geometry.dispose();
+				if (this.selectionHelper.material) this.selectionHelper.material.dispose();
+				this.selectionHelper = null;
+			}
+			selected.updateMatrixWorld(true);
+			this.selectionHelper = new THREE.BoxHelper(selected, this.selectionColor());
+			this.selectionHelper.name = '__selectionHelper';
+			this.selectionHelper.userData.selectionHelper = true;
+			// Draw on top of the mesh (match 2D selection overlay visibility)
+			this.selectionHelper.material.depthTest = false;
+			this.selectionHelper.material.transparent = true;
+			this.selectionHelper.renderOrder = 999;
+			this.selectionHelper.frustumCulled = false;
+			this.scene.add(this.selectionHelper);
+			this._selectionId = selectedId;
+			this._selectionMode = mode;
+		} else if (this.selectionHelper) {
+			selected.updateMatrixWorld(true);
+			this.selectionHelper.update(selected);
+		}
 	}
 
 	addBlock(entity) {
@@ -144,6 +235,8 @@ export default class View3D extends Element {
 		function onDocumentMouseDown(event) {
 			event.preventDefault();
 
+			scope.editor.selectView(scope);
+
 			mouse.x = event.offsetX / scope.canvas.clientWidth * 2 - 1; // ( event.clientX / scope.canvas.clientWidth ) * 2 - 1;
 			mouse.y = -event.offsetY / scope.canvas.clientHeight * 2 + 1; // ( event.clientY / scope.canvas.clientHeight ) * 2 + 1;
 
@@ -182,6 +275,7 @@ export default class View3D extends Element {
 				scope.scene.add( particle );*/
 			} else {
 				scope.scene.selected = null;
+				scope.editor.panel.refresh();
 			}
 
 			/*
@@ -215,6 +309,7 @@ export default class View3D extends Element {
 			this.canvas.height / 2
 		];
 
+		this.updateSelectionHelper();
 		this.renderer.render(this.scene, this.camera);
 
 		// draw text
